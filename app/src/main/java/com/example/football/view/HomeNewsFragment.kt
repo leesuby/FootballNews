@@ -20,9 +20,11 @@ class HomeNewsFragment : Fragment() {
     private lateinit var adapterNewlist : RecyclerNewsAdapter
     private lateinit var newsList : RecyclerView
     private val newsViewModel : NewsViewModel by activityViewModels()
+
     interface GetIDContent{
         fun showDetail(idContent: Int)
     }
+
     lateinit var  getIDContent: GetIDContent
 
     override fun onCreateView(

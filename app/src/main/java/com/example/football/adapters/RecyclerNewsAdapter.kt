@@ -6,6 +6,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.football.model.Content
 import com.example.football.R
 import com.example.football.utils.Helpers
@@ -44,8 +46,9 @@ class RecyclerNewsAdapter: RecyclerView.Adapter<RecyclerNewsAdapter.ViewHolder>(
 
         holder.itemTitle.text = news.title
 
-        if(news.avatar_url.isNotEmpty()) Picasso.get().load(news.avatar_url).into(holder.itemImageNews)
-        if(news.publisher_logo.isNotEmpty()) Picasso.get().load(news.publisher_logo).into(holder.itemLogo)
+        if(news.avatar_url.isNotEmpty()) Glide.with(holder.itemView).load(news.avatar_url).diskCacheStrategy(
+            DiskCacheStrategy.NONE).centerCrop().into(holder.itemImageNews)
+        if(news.publisher_logo.isNotEmpty()) Glide.with(holder.itemView).load(news.publisher_logo).into(holder.itemLogo)
 
 
     }

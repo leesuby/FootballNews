@@ -10,11 +10,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class DetailsViewModel : ViewModel() {
-    var  DetailNew : MutableLiveData<DetailBaoMoiData>
-
-    init{
-        DetailNew = MutableLiveData()
-    }
+    var  DetailNew : MutableLiveData<DetailBaoMoiData> = MutableLiveData()
 
     fun getDetailNewObservable() : MutableLiveData<DetailBaoMoiData> {
         return DetailNew
