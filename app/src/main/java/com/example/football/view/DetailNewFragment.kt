@@ -13,22 +13,31 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.core.view.marginTop
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.football.R
+import com.example.football.adapters.RecyclerNewsAdapter
+import com.example.football.model.HomeBaoMoiData
 import com.example.football.model.detail.Content
+import com.example.football.model.detail.Data
+import com.example.football.model.detail.DetailBaoMoiData
+import com.example.football.model.detail.Related
 import com.example.football.utils.Helpers
 import com.example.football.utils.Helpers.Companion.margin
 import com.example.football.viewmodel.DetailsViewModel
+import com.example.football.viewmodel.NewsViewModel
 
 
-class DetailNewFragment : Fragment() {
+class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
 
     private lateinit var viewFragment :View
     private lateinit var detailViewModel : DetailsViewModel
-    private lateinit var data : Content
-
+    private lateinit var data : Data
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -39,17 +48,16 @@ class DetailNewFragment : Fragment() {
         val bundle = arguments
         val message = bundle!!.getInt("idContent")
 
-
         detailViewModel = ViewModelProvider(this).get(DetailsViewModel::class.java)
         detailViewModel.getDetailNewObservable().observe(viewLifecycleOwner, Observer {
             if (it == null){
                 Toast.makeText(this.context,"No result found", Toast.LENGTH_SHORT).show()
             }else{
                 //get content
-                data = it.data.content
+                data = it.data
 
                 //set content
-                setContent(data)
+                setContent(data.content,data.related)
             }
         })
 
@@ -58,7 +66,7 @@ class DetailNewFragment : Fragment() {
         return viewFragment
     }
 
-    fun setContent(data: Content){
+    fun setContent(data: Content,related: Related){
         val title : TextView = viewFragment.findViewById(R.id.tv_detailTitle)
         val layout : LinearLayout = viewFragment.findViewById(R.id.lo_detail)
 
@@ -89,11 +97,11 @@ class DetailNewFragment : Fragment() {
                     //set style base on subtype
                     if(!body.subtype.isNullOrBlank()){
                         if(body.subtype.equals("media-caption")){
-                            text.textSize=18f
+                            text.textSize=16f
                             text.textAlignment=View.TEXT_ALIGNMENT_CENTER
                         }
                         else
-                            text.textSize=24f
+                            text.textSize=22f
                     }
                     else
                         text.textSize=23f
@@ -149,5 +157,62 @@ class DetailNewFragment : Fragment() {
                 else -> {}
             }
         }
+
+
+        //relate news
+        var relateNews : TextView = TextView(context)
+        relateNews.textSize= 22f
+        relateNews.setTypeface(null, Typeface.ITALIC)
+        relateNews.text= related.title
+        layout.addView(relateNews)
+        relateNews.margin(top = 20f, bottom = 8f)
+
+
+        var layoutManager : RecyclerView.LayoutManager? = null
+        var adapterNewlist : RecyclerNewsAdapter
+        var newsList : RecyclerView? = context?.let { RecyclerView(it) }
+        var newsViewModel : NewsViewModel? = null
+        layoutManager = LinearLayoutManager(this.context)
+
+        newsList?.layoutManager = layoutManager
+
+        adapterNewlist = RecyclerNewsAdapter()
+        adapterNewlist.setOnItemClickListener(object : RecyclerNewsAdapter.onItemClickListener{
+            override fun onItemClick(idContent: Int) {
+                showDetail(idContent)
+            }
+        })
+        newsList?.adapter = adapterNewlist
+
+        newsViewModel?.getListNewsObservable()?.observe(viewLifecycleOwner, Observer<HomeBaoMoiData>{
+            if (it == null){
+                Toast.makeText(this.context,"No result found", Toast.LENGTH_SHORT).show()
+            }else{
+                adapterNewlist.ListNews = related.contents.toMutableList()
+                adapterNewlist.notifyDataSetChanged()
+            }
+        })
+
+        adapterNewlist.ListNews=related.contents.toMutableList()
+        layout.addView(newsList)
+
     }
+
+    //
+    override fun showDetail(idContent: Int) {
+        val fragment = DetailNewFragment()
+
+        val bundle = Bundle()
+        bundle.putInt("idContent", idContent)
+        fragment.arguments = bundle
+
+        val fram = parentFragmentManager.beginTransaction()
+        fram.replace(R.id.fragment_main,fragment)
+
+        fram.addToBackStack("${fragment.toString()}").commit()
+    }
+
+
+
+
 }

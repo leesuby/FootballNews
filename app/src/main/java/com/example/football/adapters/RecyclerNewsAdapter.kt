@@ -8,6 +8,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestOptions
 import com.example.football.model.Content
 import com.example.football.R
 import com.example.football.utils.Helpers
@@ -42,12 +44,24 @@ class RecyclerNewsAdapter: RecyclerView.Adapter<RecyclerNewsAdapter.ViewHolder>(
     override fun onBindViewHolder(holder: RecyclerNewsAdapter.ViewHolder, position: Int) {
         val news : Content = ListNews.get(position)
 
+
         holder.itemTime.text = Helpers.CalculateDistanceTime(news.date)
 
         holder.itemTitle.text = news.title
 
-        if(news.avatar_url.isNotEmpty()) Glide.with(holder.itemView).load(news.avatar_url).diskCacheStrategy(
-            DiskCacheStrategy.NONE).centerCrop().into(holder.itemImageNews)
+        if(news.avatar_url.isNotEmpty())
+            Glide.with(holder.itemView)
+            .load(news.avatar_url)
+            .centerCrop()
+            .apply(
+                RequestOptions()
+                    .transform(RoundedCorners(20))
+                    .error(R.drawable.ic_launcher_background)
+                    .skipMemoryCache(true)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE))
+            .into(holder.itemImageNews)
+
+
         if(news.publisher_logo.isNotEmpty()) Glide.with(holder.itemView).load(news.publisher_logo).into(holder.itemLogo)
 
 
