@@ -20,6 +20,7 @@ class HomeNewsFragment : Fragment() {
     private lateinit var adapterNewlist : RecyclerNewsAdapter
     private lateinit var newsList : RecyclerView
     private val newsViewModel : NewsViewModel by activityViewModels()
+    private lateinit var views :View
 
     interface GetIDContent{
         fun showDetail(idContent: Int)
@@ -27,15 +28,37 @@ class HomeNewsFragment : Fragment() {
 
     lateinit var  getIDContent: GetIDContent
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        layoutManager = LinearLayoutManager(this.context)
+        adapterNewlist = RecyclerNewsAdapter()
+        newsViewModel.getListNews(context)
+
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view: View = inflater.inflate(R.layout.fragment_news,container,false)
+        views = inflater.inflate(R.layout.fragment_news,container,false)
+        return views
+    }
 
-        layoutManager = LinearLayoutManager(this.context)
-        newsList = view.findViewById(R.id.RV_news)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        //init view
+        super.onViewCreated(view, savedInstanceState)
+        initView()
+    }
+
+    override fun onDestroy() {
+        //set
+        super.onDestroy()
+    }
+
+
+    fun initView(){
+        newsList = views.findViewById(R.id.RV_news)
         newsList.layoutManager = layoutManager
 
         adapterNewlist = RecyclerNewsAdapter()
@@ -54,24 +77,6 @@ class HomeNewsFragment : Fragment() {
                 adapterNewlist.notifyDataSetChanged()
             }
         })
-        newsViewModel.getListNews()
-
-        return view
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        //init view
-        initView()
-        super.onViewCreated(view, savedInstanceState)
-    }
-
-    override fun onDestroy() {
-        //set
-        super.onDestroy()
-    }
-
-    fun initView(){
-
     }
 }
 

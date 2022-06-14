@@ -40,6 +40,18 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
     private lateinit var viewFragment :View
     private lateinit var detailViewModel : DetailsViewModel
     private lateinit var data : Data
+    private var message : Int = 0
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val bundle = arguments
+        message = bundle!!.getInt("idContent")
+
+        //initial ViewModel and data
+        detailViewModel = ViewModelProvider(this).get(DetailsViewModel::class.java)
+        detailViewModel.getDetailNew(message,context)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -47,10 +59,16 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
     ): View? {
         viewFragment = inflater.inflate(R.layout.fragment_detail,container,false)
 
-        val bundle = arguments
-        val message = bundle!!.getInt("idContent")
+        return viewFragment
+    }
 
-        detailViewModel = ViewModelProvider(this).get(DetailsViewModel::class.java)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        bindViewModel()
+
+    }
+
+    private fun bindViewModel(){
         detailViewModel.getDetailNewObservable().observe(viewLifecycleOwner, Observer {
             if (it == null){
                 Toast.makeText(this.context,"No result found", Toast.LENGTH_SHORT).show()
@@ -62,13 +80,9 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
                 setContent(data.content,data.related)
             }
         })
-
-        detailViewModel.getDetailNew(message)
-
-        return viewFragment
     }
 
-    fun setContent(data: Content,related: Related){
+    private fun setContent(data: Content, related: Related){
         val title : TextView = viewFragment.findViewById(R.id.tv_detailTitle)
         val layout : LinearLayout = viewFragment.findViewById(R.id.lo_detail)
 

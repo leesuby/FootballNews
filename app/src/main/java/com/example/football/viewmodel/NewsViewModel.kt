@@ -1,5 +1,6 @@
 package com.example.football.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.football.model.HomeBaoMoiData
@@ -14,8 +15,8 @@ class NewsViewModel : ViewModel() {
         return recyclerListNews
     }
 
-    fun getListNews(){
-        repo.getListNews(recyclerListNews)
+    fun getListNews(context: Context?){
+        repo.getListNews(recyclerListNews,context)
     }
 
 }

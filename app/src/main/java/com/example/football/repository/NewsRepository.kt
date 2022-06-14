@@ -1,5 +1,6 @@
 package com.example.football.repository
 
+import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import com.example.football.model.HomeBaoMoiData
 import com.example.football.model.detail.DetailBaoMoiData
@@ -7,8 +8,8 @@ import com.example.football.model.detail.DetailBaoMoiData
 interface NewsRepository  {
 
     //get list news to show on Home
-    fun getListNews(data :MutableLiveData<HomeBaoMoiData>)
+    fun getListNews(data :MutableLiveData<HomeBaoMoiData>,context: Context?)
 
     //get content of a new to show on detail news
-    fun getDetailNews(data : MutableLiveData<DetailBaoMoiData>,id: Int)
+    fun getDetailNews(data : MutableLiveData<DetailBaoMoiData>,id: Int,context: Context?)
 }

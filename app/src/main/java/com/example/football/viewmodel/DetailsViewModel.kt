@@ -1,5 +1,6 @@
 package com.example.football.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.football.model.detail.DetailBaoMoiData
@@ -15,8 +16,8 @@ class DetailsViewModel : ViewModel() {
     }
 
 
-    fun getDetailNew(id: Int){
-        repo.getDetailNews(DetailNew,id)
+    fun getDetailNew(id: Int,context: Context?){
+        repo.getDetailNews(DetailNew,id,context)
     }
 
 }
