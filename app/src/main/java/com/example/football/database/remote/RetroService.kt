@@ -1,4 +1,4 @@
-package com.example.football.database
+package com.example.football.database.remote
 
 import com.example.football.model.detail.DetailBaoMoiData
 import com.example.football.model.HomeBaoMoiData

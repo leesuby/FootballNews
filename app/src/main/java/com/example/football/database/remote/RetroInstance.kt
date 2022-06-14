@@ -1,4 +1,4 @@
-package com.example.football.database
+package com.example.football.database.remote
 
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor

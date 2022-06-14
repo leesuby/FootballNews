@@ -18,29 +18,14 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+
+        //initial Home Fragment
         val fragment = HomeNewsFragment()
         fragment.getIDContent=this
-
         showFragment(fragment,false)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.getItemId() === android.R.id.home) {
-            //Title bar back press triggers onBackPressed()
-            onBackPressed()
-            return true
-        }
-        return super.onOptionsItemSelected(item)
-    }
 
-    //Both navigation bar back press and title bar back press will trigger this method
-    override fun onBackPressed() {
-        if (supportFragmentManager.backStackEntryCount > 0) {
-            supportFragmentManager.popBackStack()
-        } else {
-            super.onBackPressed()
-        }
-    }
 
     fun showFragment (fragment: Fragment,addtoBackStack : Boolean = true){
         val fram = supportFragmentManager.beginTransaction()
@@ -62,5 +47,23 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
 
         showFragment(fragment)
 
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.getItemId() === android.R.id.home) {
+            //Title bar back press triggers onBackPressed()
+            onBackPressed()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    //Both navigation bar back press and title bar back press will trigger this method
+    override fun onBackPressed() {
+        if (supportFragmentManager.backStackEntryCount > 0) {
+            supportFragmentManager.popBackStack()
+        } else {
+            super.onBackPressed()
+        }
     }
 }

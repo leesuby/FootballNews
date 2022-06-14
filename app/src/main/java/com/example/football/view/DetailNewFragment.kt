@@ -1,6 +1,8 @@
 package com.example.football.view
 
 
+import android.graphics.Color
+import android.graphics.ColorFilter
 import android.graphics.Typeface
 import android.net.Uri
 import android.os.Build
@@ -82,7 +84,7 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
 
         //description
         var description : TextView = TextView(context)
-        description.textSize= 23f
+        description.textSize= 20f
         description.setTypeface(null, Typeface.BOLD)
         description.text= data.description
         layout.addView(description)
@@ -101,10 +103,10 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
                             text.textAlignment=View.TEXT_ALIGNMENT_CENTER
                         }
                         else
-                            text.textSize=22f
+                            text.textSize=20f
                     }
                     else
-                        text.textSize=23f
+                        text.textSize=20f
 
                     //convert html tag
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -158,6 +160,11 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
             }
         }
 
+        //spacing
+        var space : View = View(context)
+        space.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 10)
+        space.setBackgroundColor(Color.LTGRAY)
+        layout.addView(space)
 
         //relate news
         var relateNews : TextView = TextView(context)
@@ -198,7 +205,7 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
 
     }
 
-    //
+    //Replace Detail news Fragment with news Details new when user click on Related News
     override fun showDetail(idContent: Int) {
         val fragment = DetailNewFragment()
 
