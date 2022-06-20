@@ -1,8 +1,8 @@
 package com.example.football.view
 
 
+import android.annotation.SuppressLint
 import android.graphics.Color
-import android.graphics.ColorFilter
 import android.graphics.Typeface
 import android.net.Uri
 import android.os.Build
@@ -13,24 +13,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.core.view.marginTop
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.football.R
-import com.example.football.adapters.RecyclerNewsAdapter
-import com.example.football.model.HomeBaoMoiData
-import com.example.football.model.detail.Content
-import com.example.football.model.detail.Data
-import com.example.football.model.detail.DetailBaoMoiData
-import com.example.football.model.detail.Related
+import com.example.football.database.model.detail.Content
+import com.example.football.database.model.detail.Data
+import com.example.football.database.model.detail.Related
 import com.example.football.utils.Helpers
 import com.example.football.utils.Helpers.Companion.margin
+import com.example.football.view.adapters.RecyclerNewsAdapter
 import com.example.football.viewmodel.DetailsViewModel
 import com.example.football.viewmodel.NewsViewModel
 
@@ -56,7 +50,7 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         viewFragment = inflater.inflate(R.layout.fragment_detail,container,false)
 
         return viewFragment
@@ -69,35 +63,36 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
     }
 
     private fun bindViewModel(){
-        detailViewModel.getDetailNewObservable().observe(viewLifecycleOwner, Observer {
-            if (it == null){
-                Toast.makeText(this.context,"No result found", Toast.LENGTH_SHORT).show()
-            }else{
+        detailViewModel.getDetailNewObservable().observe(viewLifecycleOwner) {
+            if (it == null) {
+                Toast.makeText(this.context, "No result found", Toast.LENGTH_SHORT).show()
+            } else {
                 //get content
                 data = it.data
 
                 //set content
-                setContent(data.content,data.related)
+                setContent(data.content, data.related)
             }
-        })
+        }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun setContent(data: Content, related: Related){
         val title : TextView = viewFragment.findViewById(R.id.tv_detailTitle)
         val layout : LinearLayout = viewFragment.findViewById(R.id.lo_detail)
 
         //title
-        title.setText(data.title)
+        title.text = data.title
 
         //time
-        var time : TextView = TextView(context)
+        val time = TextView(context)
         time.textSize=18f
         time.text=Helpers.CalculateDistanceTime(data.date)
         layout.addView(time)
         time.margin(top = 8f)
 
         //description
-        var description : TextView = TextView(context)
+        val description = TextView(context)
         description.textSize= 20f
         description.setTypeface(null, Typeface.BOLD)
         description.text= data.description
@@ -106,43 +101,39 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
 
         //body
         for(body in data.body){
-            when{
-                body.type.equals("text") -> {
-                    var text : TextView = TextView(context)
+            when (body.type) {
+                "text" -> {
+                    val text = TextView(context)
 
                     //set style base on subtype
                     if(!body.subtype.isNullOrBlank()){
-                        if(body.subtype.equals("media-caption")){
+                        if(body.subtype == "media-caption"){
                             text.textSize=16f
                             text.textAlignment=View.TEXT_ALIGNMENT_CENTER
-                        }
-                        else
+                        } else
                             text.textSize=20f
-                    }
-                    else
+                    } else
                         text.textSize=20f
 
                     //convert html tag
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                        text.setText(Html.fromHtml(
-                            body.content, Html.FROM_HTML_MODE_COMPACT));
+                        text.text = Html.fromHtml(
+                            body.content, Html.FROM_HTML_MODE_COMPACT)
                     } else {
-                        text.setText(Html.fromHtml(body.content));
+                        text.text = Html.fromHtml(body.content)
                     }
 
                     layout.addView(text)
                     text.margin(top = 8f, bottom = 8f)
 
                 }
-
-                body.type.equals("image") ->{
-                    var img : ImageView = ImageView(context)
+                "image" -> {
+                    val img = ImageView(context)
                     Glide.with(this).load(body.originUrl).into(img)
                     layout.addView(img)
                 }
-
-                body.type.equals("video") ->{
-                    val videoView: VideoView = VideoView(context)
+                "video" -> {
+                    val videoView = VideoView(context)
 
                     // Uri object to refer the
                     // resource from the videoUrl
@@ -169,19 +160,18 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
                     layout.addView(videoView)
                     Log.e("body",body.content)
                 }
-
                 else -> {}
             }
         }
 
         //spacing
-        var space : View = View(context)
+        val space = View(context)
         space.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 10)
         space.setBackgroundColor(Color.LTGRAY)
         layout.addView(space)
 
         //relate news
-        var relateNews : TextView = TextView(context)
+        val relateNews = TextView(context)
         relateNews.textSize= 22f
         relateNews.setTypeface(null, Typeface.ITALIC)
         relateNews.text= related.title
@@ -189,15 +179,14 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
         relateNews.margin(top = 20f, bottom = 8f)
 
 
-        var layoutManager : RecyclerView.LayoutManager? = null
-        var adapterNewlist : RecyclerNewsAdapter
-        var newsList : RecyclerView? = context?.let { RecyclerView(it) }
-        var newsViewModel : NewsViewModel? = null
+        val layoutManager: RecyclerView.LayoutManager?
+        val newsList : RecyclerView? = context?.let { RecyclerView(it) }
+        val newsViewModel : NewsViewModel? = null
         layoutManager = LinearLayoutManager(this.context)
 
         newsList?.layoutManager = layoutManager
 
-        adapterNewlist = RecyclerNewsAdapter()
+        val adapterNewlist = RecyclerNewsAdapter()
         adapterNewlist.setOnItemClickListener(object : RecyclerNewsAdapter.onItemClickListener{
             override fun onItemClick(idContent: Int) {
                 showDetail(idContent)
@@ -205,14 +194,14 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
         })
         newsList?.adapter = adapterNewlist
 
-        newsViewModel?.getListNewsObservable()?.observe(viewLifecycleOwner, Observer<HomeBaoMoiData>{
-            if (it == null){
-                Toast.makeText(this.context,"No result found", Toast.LENGTH_SHORT).show()
-            }else{
+        newsViewModel?.getListNewsObservable()?.observe(viewLifecycleOwner) {
+            if (it == null) {
+                Toast.makeText(this.context, "No result found", Toast.LENGTH_SHORT).show()
+            } else {
                 adapterNewlist.ListNews = related.contents.toMutableList()
                 adapterNewlist.notifyDataSetChanged()
             }
-        })
+        }
 
         adapterNewlist.ListNews=related.contents.toMutableList()
         layout.addView(newsList)
@@ -230,7 +219,7 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
         val fram = parentFragmentManager.beginTransaction()
         fram.replace(R.id.fragment_main,fragment)
 
-        fram.addToBackStack("${fragment.toString()}").commit()
+        fram.addToBackStack(fragment.toString()).commit()
     }
 
 

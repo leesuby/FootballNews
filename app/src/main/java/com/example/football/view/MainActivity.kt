@@ -7,7 +7,9 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.football.R
+import com.example.football.utils.MainApplication
 import com.example.football.viewmodel.NewsViewModel
+
 
 class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
 
@@ -17,7 +19,6 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
 
         //initial Home Fragment
         val fragment = HomeNewsFragment()

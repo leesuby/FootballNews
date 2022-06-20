@@ -1,7 +1,7 @@
 package com.example.football.database.remote
 
-import com.example.football.model.detail.DetailBaoMoiData
-import com.example.football.model.HomeBaoMoiData
+import com.example.football.database.model.detail.DetailBaoMoiData
+import com.example.football.database.model.HomeBaoMoiData
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Headers

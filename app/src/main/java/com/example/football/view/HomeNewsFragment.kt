@@ -10,12 +10,18 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.football.adapters.RecyclerNewsAdapter
-import com.example.football.model.HomeBaoMoiData
+import com.example.football.view.adapters.RecyclerNewsAdapter
+import com.example.football.database.model.HomeBaoMoiData
 import com.example.football.R
 import com.example.football.viewmodel.NewsViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.coroutineContext
 
-class HomeNewsFragment : Fragment() {
+class HomeNewsFragment : Fragment() , CoroutineScope {
     private var layoutManager : RecyclerView.LayoutManager? = null
     private lateinit var adapterNewlist : RecyclerNewsAdapter
     private lateinit var newsList : RecyclerView
@@ -30,10 +36,9 @@ class HomeNewsFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        layoutManager = LinearLayoutManager(this.context)
-        adapterNewlist = RecyclerNewsAdapter()
-        newsViewModel.getListNews(context)
 
+        adapterNewlist = RecyclerNewsAdapter()
+        CoroutineScope(coroutineContext).launch { newsViewModel.getListNews(context) }
     }
 
     override fun onCreateView(
@@ -58,6 +63,7 @@ class HomeNewsFragment : Fragment() {
 
 
     fun initView(){
+        layoutManager = LinearLayoutManager(this.context)
         newsList = views.findViewById(R.id.RV_news)
         newsList.layoutManager = layoutManager
 
@@ -77,6 +83,10 @@ class HomeNewsFragment : Fragment() {
                 adapterNewlist.notifyDataSetChanged()
             }
         })
+
     }
+
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main
 }
 

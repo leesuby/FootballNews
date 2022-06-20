@@ -1,22 +1,27 @@
 package com.example.football.viewmodel
 
 import android.content.Context
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.football.model.HomeBaoMoiData
+import com.example.football.database.model.BaoMoiDatabase
+import com.example.football.database.model.HomeBaoMoiData
+import com.example.football.database.model.home.ContentDao
 import com.example.football.repository.NewsRepositoryImpl
 
 class NewsViewModel : ViewModel() {
 
-    var recyclerListNews : MutableLiveData<HomeBaoMoiData> = MutableLiveData()
-    var repo : NewsRepositoryImpl = NewsRepositoryImpl()
+    private val _recyclerListNews : MutableLiveData<HomeBaoMoiData> = MutableLiveData()
+    private val recyclerListNews : LiveData<HomeBaoMoiData> = _recyclerListNews
+    var contentDao : ContentDao = BaoMoiDatabase.getDatabase().ContentDao()
+    var repo : NewsRepositoryImpl = NewsRepositoryImpl(contentDao)
 
-    fun getListNewsObservable() : MutableLiveData<HomeBaoMoiData>{
+    fun getListNewsObservable() : LiveData<HomeBaoMoiData>{
         return recyclerListNews
     }
 
-    fun getListNews(context: Context?){
-        repo.getListNews(recyclerListNews,context)
+    suspend fun getListNews(context: Context?){
+        repo.getListNews(recyclerListNews as MutableLiveData,context)
     }
 
 }
