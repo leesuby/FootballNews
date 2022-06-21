@@ -39,7 +39,8 @@ class NewsRepositoryImpl() : NewsRepository {
         }
         else{
             //offline mode
-
+            NewsLocal.loadDetailContent(data,id)
+            Toast.makeText(context,"No Internet",Toast.LENGTH_SHORT).show()
         }
 
 

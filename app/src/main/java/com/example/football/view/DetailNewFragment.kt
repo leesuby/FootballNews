@@ -129,7 +129,10 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
                 }
                 "image" -> {
                     val img = ImageView(context)
-                    Glide.with(this).load(body.originUrl).into(img)
+                    if(Helpers.internet)
+                        Glide.with(this).load(body.originUrl).into(img)
+                    else
+                        Glide.with(this).load(body.imageBitmap).into(img)
                     layout.addView(img)
                 }
                 "video" -> {

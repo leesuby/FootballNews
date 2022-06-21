@@ -1,4 +1,4 @@
-package com.example.football.data.local.database
+package com.example.football.data.local.database.home
 
 import android.graphics.Bitmap
 import androidx.room.Entity

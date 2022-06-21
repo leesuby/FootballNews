@@ -4,5 +4,5 @@ import com.example.football.data.model.Content
 
 data class Related(
     val contents: List<Content>,
-    val title: String
+    val title: String = "Tin khác"
 )

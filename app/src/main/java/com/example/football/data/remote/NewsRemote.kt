@@ -1,10 +1,10 @@
 package com.example.football.data.remote
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.example.football.data.local.NewsLocal
 import com.example.football.data.model.HomeBaoMoiData
 import com.example.football.data.model.detail.DetailBaoMoiData
-import com.example.football.data.local.database.HomeContentDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -36,7 +36,7 @@ class NewsRemote {
             })
         }
 
-        fun loadContentNews(data : MutableLiveData<DetailBaoMoiData>, id: Int){
+        fun loadContentNews(data : MutableLiveData<DetailBaoMoiData>, id: Int,isSave: Boolean = false){
             val retroInstance = RetroInstance.getRetroInstance().create(RetroService::class.java)
             val call = retroInstance.getDetailNew(id)
             call.enqueue(object : Callback<DetailBaoMoiData> {
@@ -45,6 +45,12 @@ class NewsRemote {
                 }
                 override fun onResponse(call: Call<DetailBaoMoiData>, response: Response<DetailBaoMoiData>) {
                     data.postValue(response.body())
+
+                    if(isSave){
+                        GlobalScope.launch(Dispatchers.IO){
+                            NewsLocal.saveDetailContentNews(data)
+                        }
+                    }
                 }
             })
         }

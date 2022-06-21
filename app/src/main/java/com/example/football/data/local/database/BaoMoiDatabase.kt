@@ -4,15 +4,27 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.example.football.data.model.Content
+import com.example.football.data.local.database.detail.*
+import com.example.football.data.local.database.home.HomeContent
+import com.example.football.data.local.database.home.HomeContentDao
 import com.example.football.utils.Helpers
 import com.example.football.utils.MainApplication
 
-@Database(entities = [HomeContent::class], version = 1)
+@Database(entities = [
+    HomeContent::class,
+    DetailContent::class,
+    BodyDetailContent::class,
+    RelatedContent::class
+                     ], version = 1)
+
 @TypeConverters(Helpers::class)
+
 abstract class BaoMoiDatabase : RoomDatabase(){
 
-    abstract fun homeContentDao() : HomeContentDao
+    abstract fun HomeContentDao() : HomeContentDao
+    abstract fun DetailContentDao() : DetailContentDao
+    abstract fun BodyDetailContentDao() : BodyDetailContentDao
+    abstract fun RelatedContentDao() : RelatedContentDao
 
     companion object{
 
@@ -27,7 +39,7 @@ abstract class BaoMoiDatabase : RoomDatabase(){
                 val instance = Room.databaseBuilder(
                     MainApplication.applicationContext(),
                     BaoMoiDatabase::class.java,
-                    "baomoi_database_ver1"
+                    "baomoi_database_ver6"
                 ).build()
                 INSTANCE = instance
                 return instance

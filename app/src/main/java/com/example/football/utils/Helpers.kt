@@ -7,7 +7,9 @@ import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import androidx.room.TypeConverter
-import com.example.football.data.local.database.HomeContent
+import com.example.football.data.local.database.detail.BodyDetailContent
+import com.example.football.data.local.database.detail.DetailContent
+import com.example.football.data.local.database.home.HomeContent
 import com.example.football.data.model.Content
 import java.io.BufferedInputStream
 import java.io.ByteArrayOutputStream
@@ -53,7 +55,10 @@ class Helpers {
         fun Context.dpToPx(dp: Float): Int = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.displayMetrics).toInt()
 
         // Function to establish connection and load image
-        fun mLoad(string: String): Bitmap? {
+        fun mLoad(string: String?): Bitmap? {
+            if(string.isNullOrBlank())
+                return null
+
             val url: URL = mStringToURL(string)!!
             val connection: HttpURLConnection?
             try {
@@ -92,19 +97,51 @@ class Helpers {
             return listContent
         }
 
+        // convert list Detail and Body to Content
+        fun convert(
+            detailContent: List<DetailContent>,
+            bodyDetailContent: List<BodyDetailContent>,
+        ): com.example.football.data.model.detail.Content {
+            var listBody: MutableList<com.example.football.data.model.detail.Body> = mutableListOf()
+            var detailContent = detailContent.get(0)
+            for (body in bodyDetailContent) {
+                var b = com.example.football.data.model.detail.Body(
+                    content = body.content,
+                    type = body.type,
+                    subtype = body.subtype,
+                    imageBitmap = body.originUrl
+                )
+                listBody.add(b)
+            }
+
+            return com.example.football.data.model.detail.Content(
+                body = listBody,
+                date = detailContent.date,
+                title = detailContent.title,
+                description = detailContent.description,
+                content_id = detailContent.content_id
+            )
+        }
+
     }
 
     //convert Bitmap to ByteArray
     @TypeConverter
-    fun fromBitmap(bitmap: Bitmap): ByteArray{
+    fun fromBitmap(bitmap: Bitmap?): ByteArray{
         val outputStream = ByteArrayOutputStream()
+
+        if (bitmap == null)
+            return outputStream.toByteArray()
+
         bitmap.compress(Bitmap.CompressFormat.PNG,100,outputStream)
         return outputStream.toByteArray()
     }
 
     //convert ByteArray to Bitmap
     @TypeConverter
-    fun toBitmap(byteArray: ByteArray) : Bitmap{
+    fun toBitmap(byteArray: ByteArray?) : Bitmap?{
+        if(byteArray== null)
+            return null
         return BitmapFactory.decodeByteArray(byteArray,0,byteArray.size)
     }
 }

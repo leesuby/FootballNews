@@ -1,11 +1,11 @@
-package com.example.football.data.local.database
+package com.example.football.data.local.database.home
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.football.data.model.Content
+import com.example.football.data.local.database.home.HomeContent
 
 @Dao
 interface HomeContentDao {
