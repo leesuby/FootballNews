@@ -19,9 +19,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.football.R
-import com.example.football.database.model.detail.Content
-import com.example.football.database.model.detail.Data
-import com.example.football.database.model.detail.Related
+import com.example.football.data.model.detail.Content
+import com.example.football.data.model.detail.Data
+import com.example.football.data.model.detail.Related
 import com.example.football.utils.Helpers
 import com.example.football.utils.Helpers.Companion.margin
 import com.example.football.view.adapters.RecyclerNewsAdapter

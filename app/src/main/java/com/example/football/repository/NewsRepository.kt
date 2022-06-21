@@ -1,10 +1,9 @@
 package com.example.football.repository
 
 import android.content.Context
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.football.database.model.HomeBaoMoiData
-import com.example.football.database.model.detail.DetailBaoMoiData
+import com.example.football.data.model.HomeBaoMoiData
+import com.example.football.data.model.detail.DetailBaoMoiData
 
 interface NewsRepository  {
 

@@ -10,7 +10,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
-import com.example.football.database.model.Content
+import com.example.football.data.model.Content
 import com.example.football.R
 import com.example.football.utils.Helpers
 
@@ -47,20 +47,29 @@ class RecyclerNewsAdapter: RecyclerView.Adapter<RecyclerNewsAdapter.ViewHolder>(
 
         holder.itemTitle.text = news.title
 
-        if(news.avatar_url.isNotEmpty())
-            Glide.with(holder.itemView)
-            .load(news.avatar_url)
-            .centerCrop()
-            .apply(
-                RequestOptions()
-                    .transform(RoundedCorners(20))
-                    .error(R.drawable.ic_launcher_background)
-                    .skipMemoryCache(true)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE))
-            .into(holder.itemImageNews)
+
+        if(Helpers.internet==true) {
+            if (news.avatar_url.isNotEmpty()) {
+                Glide.with(holder.itemView)
+                    .load(news.avatar_url)
+                    .centerCrop()
+                    .apply(
+                        RequestOptions()
+                            .transform(RoundedCorners(20))
+                            .error(R.drawable.ic_launcher_background)
+                            .skipMemoryCache(true)
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    )
+                    .into(holder.itemImageNews)
+            }
+            if(news.publisher_logo.isNotEmpty())
+                Glide.with(holder.itemView).load(news.publisher_logo).into(holder.itemLogo)
+        }else {
+            holder.itemImageNews.setImageBitmap(news.avatar_bitmap)
+            holder.itemLogo.setImageBitmap(news.logo_bitmap)
+        }
 
 
-        if(news.publisher_logo.isNotEmpty()) Glide.with(holder.itemView).load(news.publisher_logo).into(holder.itemLogo)
 
 
     }

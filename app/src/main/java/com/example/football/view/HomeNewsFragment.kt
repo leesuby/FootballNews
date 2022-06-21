@@ -11,15 +11,13 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.football.view.adapters.RecyclerNewsAdapter
-import com.example.football.database.model.HomeBaoMoiData
+import com.example.football.data.model.HomeBaoMoiData
 import com.example.football.R
 import com.example.football.viewmodel.NewsViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.coroutineContext
 
 class HomeNewsFragment : Fragment() , CoroutineScope {
     private var layoutManager : RecyclerView.LayoutManager? = null

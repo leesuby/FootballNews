@@ -5,31 +5,26 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 import android.widget.Toast
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.football.database.local.NewsLocal
-import com.example.football.database.model.Content
-import com.example.football.database.remote.NewsRemote
-import com.example.football.database.model.HomeBaoMoiData
-import com.example.football.database.model.detail.DetailBaoMoiData
-import com.example.football.database.model.home.ContentDao
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
+import com.example.football.data.local.NewsLocal
+import com.example.football.data.remote.NewsRemote
+import com.example.football.data.model.HomeBaoMoiData
+import com.example.football.data.model.detail.DetailBaoMoiData
+import com.example.football.utils.Helpers
 
-class NewsRepositoryImpl(private val contentDao: ContentDao) : NewsRepository {
+class NewsRepositoryImpl() : NewsRepository {
 
     override suspend fun getListNews(data : MutableLiveData<HomeBaoMoiData>, context: Context?) {
 
-        //online mode
-        if (isNetworkAvailable(context)){
+
+        Helpers.internet = isNetworkAvailable(context)
+        if (Helpers.internet){ //online mode
+
             //get data from request API and save to local database
-            NewsRemote.loadListNews(contentDao,data)
+            NewsRemote.loadListNews(data)
         }
         else{ //offline mode
-
-            NewsLocal.loadListNews(contentDao,data)
+            NewsLocal.loadListNews(data)
             Toast.makeText(context,"No Internet",Toast.LENGTH_SHORT).show()
         }
 
@@ -38,6 +33,7 @@ class NewsRepositoryImpl(private val contentDao: ContentDao) : NewsRepository {
     override fun getDetailNews(data : MutableLiveData<DetailBaoMoiData>,id: Int,context: Context?) {
 
         //online mode
+        Helpers.internet = isNetworkAvailable(context)
         if (isNetworkAvailable(context)){
             NewsRemote.loadContentNews(data,id)
         }

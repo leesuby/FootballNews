@@ -1,0 +1,16 @@
+package com.example.football.data.local.database
+
+import android.graphics.Bitmap
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import com.example.football.data.model.Content
+
+@Entity(tableName = "ContentHome")
+data class HomeContent(
+    @PrimaryKey
+    val content_id: Int,
+    val title: String,
+    val date: Int,
+    val publisher_logo: Bitmap?,
+    val avatar: Bitmap?
+)
