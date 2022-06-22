@@ -28,7 +28,7 @@ class NewsRemote {
                 override fun onResponse(call: Call<HomeBaoMoiData>, response: Response<HomeBaoMoiData>) {
                     data.postValue(response.body())
 
-                    if (Helpers.OfflineMode)
+                    if (Helpers.isOfflineMode)
                     //New background thread for save data to local
                     GlobalScope.launch(Dispatchers.IO){
                         NewsLocal.saveData(data)
@@ -48,7 +48,7 @@ class NewsRemote {
                 override fun onResponse(call: Call<DetailBaoMoiData>, response: Response<DetailBaoMoiData>) {
                     data.postValue(response.body())
 
-                    if (Helpers.OfflineMode){
+                    if (Helpers.isOfflineMode){
                     if(isSave){
                         GlobalScope.launch(Dispatchers.IO){
                             NewsLocal.saveDetailContentNews(data)

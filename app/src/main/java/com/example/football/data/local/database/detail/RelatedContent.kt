@@ -13,6 +13,6 @@ data class RelatedContent(
     val related_id: Int,
     val title: String,
     val date: Int,
-    val publisher_logo: Bitmap?,
-    val avatar: Bitmap?
+    val publisher_logo: String?,
+    val avatar: String?
 )

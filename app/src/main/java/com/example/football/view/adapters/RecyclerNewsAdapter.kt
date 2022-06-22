@@ -50,8 +50,8 @@ class RecyclerNewsAdapter: RecyclerView.Adapter<RecyclerNewsAdapter.ViewHolder>(
         holder.itemTitle.text = news.title
 
 
-        if(Helpers.internet==true) {
-            if (news.avatar_url.isNotEmpty()) {
+        if(Helpers.internet) {
+            if (!news.avatar_url.isNullOrBlank()) {
                 Glide.with(holder.itemView)
                     .load(news.avatar_url)
                     .centerCrop()
@@ -64,11 +64,11 @@ class RecyclerNewsAdapter: RecyclerView.Adapter<RecyclerNewsAdapter.ViewHolder>(
                     )
                     .into(holder.itemImageNews)
             }
-            if(news.publisher_logo.isNotEmpty())
+            if(!news.publisher_logo.isNullOrBlank())
                 Glide.with(holder.itemView).load(news.publisher_logo).into(holder.itemLogo)
         }else {
             Glide.with(holder.itemView).load(File(news.avatar_url)).into(holder.itemImageNews)
-            Log.e("error",File(news.avatar_url).absolutePath)
+            Glide.with(holder.itemView).load(File(news.publisher_logo)).into(holder.itemLogo)
         }
 
 

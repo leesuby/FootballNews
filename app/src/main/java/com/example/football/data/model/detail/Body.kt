@@ -6,9 +6,8 @@ data class Body(
     val content: String,
     val duration: String = "",
     val height: Int = 0,
-    val originUrl: String?= "",
+    val originUrl: String?,
     val subtype: String?,
     val type: String,
-    val width: Int = 0,
-    val imageBitmap: Bitmap?
+    val width: Int = 0
 )

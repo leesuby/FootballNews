@@ -27,6 +27,7 @@ import com.example.football.utils.Helpers.Companion.margin
 import com.example.football.view.adapters.RecyclerNewsAdapter
 import com.example.football.viewmodel.DetailsViewModel
 import com.example.football.viewmodel.NewsViewModel
+import java.io.File
 
 
 class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
@@ -34,6 +35,10 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
     private lateinit var viewFragment :View
     private lateinit var detailViewModel : DetailsViewModel
     private lateinit var data : Data
+
+    private lateinit var title : TextView
+    private lateinit var layout : LinearLayout
+
     private var message : Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,6 +63,8 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        title = viewFragment.findViewById(R.id.tv_detailTitle)
+        layout = viewFragment.findViewById(R.id.lo_detail)
         bindViewModel()
 
     }
@@ -65,11 +72,10 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
     private fun bindViewModel(){
         detailViewModel.getDetailNewObservable().observe(viewLifecycleOwner) {
             if (it == null) {
-                Toast.makeText(this.context, "No result found", Toast.LENGTH_SHORT).show()
+                title.text="Không có dữ liệu Offline về bài báo này.Xin hãy xem ở chế độ Online"
             } else {
                 //get content
                 data = it.data
-
                 //set content
                 setContent(data.content, data.related)
             }
@@ -78,8 +84,7 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
 
     @SuppressLint("NotifyDataSetChanged")
     private fun setContent(data: Content, related: Related){
-        val title : TextView = viewFragment.findViewById(R.id.tv_detailTitle)
-        val layout : LinearLayout = viewFragment.findViewById(R.id.lo_detail)
+
 
         //title
         title.text = data.title
@@ -132,7 +137,7 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
                     if(Helpers.internet)
                         Glide.with(this).load(body.originUrl).into(img)
                     else
-                        Glide.with(this).load(body.imageBitmap).into(img)
+                        Glide.with(this).load(File(body.originUrl)).into(img)
                     layout.addView(img)
                 }
                 "video" -> {

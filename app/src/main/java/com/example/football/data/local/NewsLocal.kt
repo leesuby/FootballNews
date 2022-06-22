@@ -80,7 +80,7 @@ class NewsLocal {
                     content_id = content.content_id,
                     type = body.type,
                     content = body.content,
-                    originUrl = Helpers.mLoad(body.originUrl),
+                    originUrl = Helpers.saveImageToExternalStorage(body.originUrl,content.content_id.toString(),num.toString()),
                     subtype = body.subtype,
                     body_id = num
                 )
@@ -95,8 +95,8 @@ class NewsLocal {
                     related_id = content.content_id,
                     title = relatedNews.title,
                     date = relatedNews.date,
-                    avatar = Helpers.mLoad(relatedNews.avatar_url),
-                    publisher_logo = Helpers.mLoad(relatedNews.publisher_logo)
+                    avatar = Helpers.saveImageToExternalStorage(relatedNews.avatar_url,relatedNews.content_id.toString(),"avatar"),
+                    publisher_logo = Helpers.saveImageToExternalStorage(relatedNews.publisher_logo,relatedNews.content_id.toString(),"logo")
                 )
 
                 relatedContentDao.addRelatedContent(relatedContent)
@@ -114,18 +114,25 @@ class NewsLocal {
 
         fun loadDetailContent(data: MutableLiveData<DetailBaoMoiData>,id : Int){
             GlobalScope.launch(Dispatchers.IO) {
-                data.postValue(
-                    DetailBaoMoiData(
-                        com.example.football.data.model.detail.Data(
-                            "", Helpers.convert(
-                                detailContentDao.readAllSynchronous(id),
-                                bodyDetailContentDao.readAllSynchronous(id)
-                            ),Related(Helpers.convert(relatedContentDao.readAllSynchronous(id)))
-                        ),
-                        0,
-                        ""
+                if(detailContentDao.readAllSynchronous(id).isEmpty()){
+                    data.postValue(null)
+                }
+                else {
+                    data.postValue(
+                        DetailBaoMoiData(
+                            com.example.football.data.model.detail.Data(
+                                "",
+                                Helpers.convert(
+                                    detailContentDao.readAllSynchronous(id),
+                                    bodyDetailContentDao.readAllSynchronous(id)
+                                ),
+                                Related(Helpers.convert(relatedContentDao.readAllSynchronous(id)))
+                            ),
+                            0,
+                            ""
+                        )
                     )
-                )
+                }
             }
         }
 

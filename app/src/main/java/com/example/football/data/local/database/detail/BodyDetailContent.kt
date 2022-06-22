@@ -16,7 +16,7 @@ import androidx.room.PrimaryKey
 data class BodyDetailContent(
     val content_id: Int,
     val content: String,
-    val originUrl: Bitmap?,
+    val originUrl: String?,
     val subtype: String? ="",
     val type: String,
     val body_id: Int

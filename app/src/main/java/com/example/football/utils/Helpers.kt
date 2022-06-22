@@ -23,7 +23,7 @@ import java.util.*
 class Helpers {
     companion object {
         var internet : Boolean = true
-        var OfflineMode : Boolean = false
+        var isOfflineMode : Boolean = false
         val AppName = "BongDaMoi"
         val seperator = "/"
 
@@ -76,9 +76,10 @@ class Helpers {
             return null
         }
 
-        fun saveImageToExternalStorage(url: String,nameC: String,nameI : String):String{
+        fun saveImageToExternalStorage(url: String?,nameC: String,nameI : String):String?{
+
             //get Bitmap from URL
-            var bitmap = mLoad(url)
+            var bitmap: Bitmap? = mLoad(url) ?: return null
 
             // Get the external storage directory path
             val dirpath = Environment.getExternalStorageDirectory().absolutePath
@@ -93,13 +94,11 @@ class Helpers {
             val file = File(path,"/${nameI}.png")
 
             try {
-
-                Log.e("logg",file.absolutePath)
                 // Get the file output stream
-                val stream: OutputStream = FileOutputStream(file.absolutePath)
+                val stream: FileOutputStream = FileOutputStream(file.absolutePath)
 
                 // Compress the bitmap
-                bitmap!!.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+                bitmap!!.compress(Bitmap.CompressFormat.PNG, 100, stream)
 
                 // Flush the output stream
                 stream.flush()
@@ -153,7 +152,7 @@ class Helpers {
                     content = body.content,
                     type = body.type,
                     subtype = body.subtype,
-                    imageBitmap = body.originUrl
+                    originUrl = body.originUrl
                 )
                 listBody.add(b)
             }

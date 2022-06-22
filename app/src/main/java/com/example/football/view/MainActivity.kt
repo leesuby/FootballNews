@@ -34,10 +34,12 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        //check permission for save data on local for OFFLINE mode
         if(!managePermissions.checkPermission()){
             managePermissions.showAlert()
         }
         else{
+            Helpers.isOfflineMode = true
             val fragment = HomeNewsFragment()
             fragment.getIDContent = this
             showFragment(fragment, false)
@@ -77,6 +79,7 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
         return super.onOptionsItemSelected(item)
     }
 
+
     //Both navigation bar back press and title bar back press will trigger this method
     override fun onBackPressed() {
         if (supportFragmentManager.backStackEntryCount > 0) {
@@ -85,7 +88,6 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
             super.onBackPressed()
         }
     }
-
 
 
     //Check request for Android 9 below
@@ -101,7 +103,7 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
                 val WRITE_EXTERNAL_STORAGE = grantResults[1] == PackageManager.PERMISSION_GRANTED
                 if (READ_EXTERNAL_STORAGE && WRITE_EXTERNAL_STORAGE) {
                     // perform action when allow permission success
-                    Helpers.OfflineMode=true
+                    Helpers.isOfflineMode=true
 
                     val fragment = HomeNewsFragment()
                     fragment.getIDContent = this
@@ -115,14 +117,14 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
         }
     }
 
-    // Check request for android 10 above
+    // Check request for android 11 above
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 2296) {
             if (SDK_INT >= Build.VERSION_CODES.R) {
                 if (Environment.isExternalStorageManager()) {
                     // perform action when allow permission success
-                    Helpers.OfflineMode=true
+                    Helpers.isOfflineMode=true
 
                     val fragment = HomeNewsFragment()
                     fragment.getIDContent = this
