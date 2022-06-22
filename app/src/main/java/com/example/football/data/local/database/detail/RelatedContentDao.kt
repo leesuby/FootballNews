@@ -20,6 +20,6 @@ interface RelatedContentDao {
 
     @Query("SELECT content_id , title , date , publisher_logo, avatar  " +
             " FROM contentrelated" +
-            " WHERE contentrelated.content_id = :id  ")
+            " WHERE contentrelated.related_id = :id  ")
     suspend fun readAllSynchronous(id: Int) : List<HomeContent>
 }

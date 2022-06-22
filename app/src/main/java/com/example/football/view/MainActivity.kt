@@ -1,31 +1,49 @@
 package com.example.football.view
 
+import android.Manifest
+import android.Manifest.permission.READ_EXTERNAL_STORAGE
+import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+import android.app.AlertDialog
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
+import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
+import android.os.Environment
+import android.provider.Settings
 import android.util.Log
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.football.R
-import com.example.football.utils.MainApplication
+import com.example.football.utils.Helpers
+import com.example.football.utils.ManagePermissions
 import com.example.football.viewmodel.NewsViewModel
 
 
 class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
-
     private val viewModel: NewsViewModel by viewModels()
-
+    private val managePermissions : ManagePermissions = ManagePermissions(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        //initial Home Fragment
-        val fragment = HomeNewsFragment()
-        fragment.getIDContent=this
-        showFragment(fragment,false)
-    }
+        if(!managePermissions.checkPermission()){
+            managePermissions.showAlert()
+        }
+        else{
+            val fragment = HomeNewsFragment()
+            fragment.getIDContent = this
+            showFragment(fragment, false)
+        }
 
+    }
 
 
     fun showFragment (fragment: Fragment,addtoBackStack : Boolean = true){
@@ -67,4 +85,56 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
             super.onBackPressed()
         }
     }
+
+
+
+    //Check request for Android 9 below
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            123 -> if (grantResults.size > 0) {
+                val READ_EXTERNAL_STORAGE = grantResults[0] == PackageManager.PERMISSION_GRANTED
+                val WRITE_EXTERNAL_STORAGE = grantResults[1] == PackageManager.PERMISSION_GRANTED
+                if (READ_EXTERNAL_STORAGE && WRITE_EXTERNAL_STORAGE) {
+                    // perform action when allow permission success
+                    Helpers.OfflineMode=true
+
+                    val fragment = HomeNewsFragment()
+                    fragment.getIDContent = this
+                    showFragment(fragment, false)
+
+                } else {
+                    Toast.makeText(this, "Allow permission for storage access!", Toast.LENGTH_SHORT)
+                        .show()
+                }
+            }
+        }
+    }
+
+    // Check request for android 10 above
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 2296) {
+            if (SDK_INT >= Build.VERSION_CODES.R) {
+                if (Environment.isExternalStorageManager()) {
+                    // perform action when allow permission success
+                    Helpers.OfflineMode=true
+
+                    val fragment = HomeNewsFragment()
+                    fragment.getIDContent = this
+                    showFragment(fragment, false)
+
+                } else {
+                    Toast.makeText(this, "Allow permission for storage access!", Toast.LENGTH_SHORT)
+                        .show()
+                }
+            }
+        }
+    }
+
+
 }

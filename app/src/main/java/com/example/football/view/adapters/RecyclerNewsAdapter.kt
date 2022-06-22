@@ -1,5 +1,6 @@
 package com.example.football.view.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +14,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.football.data.model.Content
 import com.example.football.R
 import com.example.football.utils.Helpers
+import java.io.File
 
 class RecyclerNewsAdapter: RecyclerView.Adapter<RecyclerNewsAdapter.ViewHolder>() {
 
@@ -65,8 +67,8 @@ class RecyclerNewsAdapter: RecyclerView.Adapter<RecyclerNewsAdapter.ViewHolder>(
             if(news.publisher_logo.isNotEmpty())
                 Glide.with(holder.itemView).load(news.publisher_logo).into(holder.itemLogo)
         }else {
-            holder.itemImageNews.setImageBitmap(news.avatar_bitmap)
-            holder.itemLogo.setImageBitmap(news.logo_bitmap)
+            Glide.with(holder.itemView).load(File(news.avatar_url)).into(holder.itemImageNews)
+            Log.e("error",File(news.avatar_url).absolutePath)
         }
 
 

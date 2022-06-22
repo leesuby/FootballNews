@@ -3,6 +3,8 @@ package com.example.football.utils
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.os.Environment
+import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
@@ -11,18 +13,19 @@ import com.example.football.data.local.database.detail.BodyDetailContent
 import com.example.football.data.local.database.detail.DetailContent
 import com.example.football.data.local.database.home.HomeContent
 import com.example.football.data.model.Content
-import java.io.BufferedInputStream
-import java.io.ByteArrayOutputStream
-import java.io.IOException
-import java.io.InputStream
+import java.io.*
 import java.net.HttpURLConnection
 import java.net.MalformedURLException
 import java.net.URL
+import java.nio.file.Files
 import java.util.*
 
 class Helpers {
     companion object {
         var internet : Boolean = true
+        var OfflineMode : Boolean = false
+        val AppName = "BongDaMoi"
+        val seperator = "/"
 
         //calculate time to show time between now and posted time of that news
         fun CalculateDistanceTime(date: Int) : String{
@@ -73,6 +76,47 @@ class Helpers {
             return null
         }
 
+        fun saveImageToExternalStorage(url: String,nameC: String,nameI : String):String{
+            //get Bitmap from URL
+            var bitmap = mLoad(url)
+
+            // Get the external storage directory path
+            val dirpath = Environment.getExternalStorageDirectory().absolutePath
+
+            val path = dirpath + seperator + AppName + seperator + nameC
+
+            // Create a folder to save the image
+            val directory = File(path)
+            directory.mkdirs()
+
+            // Create a file for save image
+            val file = File(path,"/${nameI}.png")
+
+            try {
+
+                Log.e("logg",file.absolutePath)
+                // Get the file output stream
+                val stream: OutputStream = FileOutputStream(file.absolutePath)
+
+                // Compress the bitmap
+                bitmap!!.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+
+                // Flush the output stream
+                stream.flush()
+
+                // Close the output stream
+                stream.close()
+
+
+            } catch (e: IOException){ // Catch the exception
+                e.printStackTrace()
+
+            }
+
+            // Return the saved image path to uri
+            return file.absolutePath
+        }
+
         // Function to convert string to URL
         private fun mStringToURL(string: String): URL? {
             try {
@@ -90,8 +134,8 @@ class Helpers {
                 var c = Content(content_id = content.content_id,
                     title = content.title,
                     date = content.date,
-                    avatar_bitmap = content.avatar,
-                    logo_bitmap = content.publisher_logo)
+                    avatar_url = content.avatar,
+                    publisher_logo = content.publisher_logo)
                     listContent.add(c)
             }
             return listContent

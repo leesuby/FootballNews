@@ -37,8 +37,9 @@ class NewsLocal {
                     content.content_id,
                     content.title,
                     content.date,
-                    Helpers.mLoad(content.publisher_logo),
-                    Helpers.mLoad(content.avatar_url))
+                    Helpers.saveImageToExternalStorage(content.publisher_logo,content.content_id.toString(),"logo"),
+                    Helpers.saveImageToExternalStorage(content.avatar_url,content.content_id.toString(),"avatar"))
+
 
                 homeContentDao.addContent(homeContent)
             }

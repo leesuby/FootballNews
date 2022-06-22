@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.example.football.data.local.NewsLocal
 import com.example.football.data.model.HomeBaoMoiData
 import com.example.football.data.model.detail.DetailBaoMoiData
+import com.example.football.utils.Helpers
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -27,6 +28,7 @@ class NewsRemote {
                 override fun onResponse(call: Call<HomeBaoMoiData>, response: Response<HomeBaoMoiData>) {
                     data.postValue(response.body())
 
+                    if (Helpers.OfflineMode)
                     //New background thread for save data to local
                     GlobalScope.launch(Dispatchers.IO){
                         NewsLocal.saveData(data)
@@ -46,11 +48,12 @@ class NewsRemote {
                 override fun onResponse(call: Call<DetailBaoMoiData>, response: Response<DetailBaoMoiData>) {
                     data.postValue(response.body())
 
+                    if (Helpers.OfflineMode){
                     if(isSave){
                         GlobalScope.launch(Dispatchers.IO){
                             NewsLocal.saveDetailContentNews(data)
                         }
-                    }
+                    }}
                 }
             })
         }

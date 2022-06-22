@@ -33,6 +33,4 @@ data class Content constructor(
     val title: String,
     val url: String="",
     val images: List<Image>? = null,
-    var avatar_bitmap : Bitmap?,
-    var logo_bitmap: Bitmap?
 )

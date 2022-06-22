@@ -27,6 +27,7 @@ class HomeNewsFragment : Fragment() , CoroutineScope {
     private lateinit var views :View
 
     interface GetIDContent{
+
         fun showDetail(idContent: Int)
     }
 
