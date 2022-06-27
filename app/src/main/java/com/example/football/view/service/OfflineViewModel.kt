@@ -17,8 +17,8 @@ class OfflineViewModel : ViewModel() {
         return recyclerListNews
     }
 
-    fun getListNews(context: Context?){
-        repo.getListNews(recyclerListNews as MutableLiveData,context)
+    fun getListNews(context: Context?, loadToSave : Boolean = false){
+        repo.getListNews(recyclerListNews as MutableLiveData, context,loadToSave)
     }
 
 }

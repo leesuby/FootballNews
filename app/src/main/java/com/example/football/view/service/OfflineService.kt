@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.example.football.data.local.NewsLocal
 import com.example.football.data.model.HomeBaoMoiData
+import com.example.football.utils.Helpers
 
 import com.example.football.viewmodel.NewsViewModel
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -24,7 +25,7 @@ class OfflineService : LifecycleService(){
         super.onCreate()
 
         GlobalScope.launch(Dispatchers.IO) {
-            newsViewModel.getListNews(this@OfflineService)
+            newsViewModel.getListNews(this@OfflineService,true)
         }
 
     }
@@ -37,8 +38,8 @@ class OfflineService : LifecycleService(){
             }else{
                 val list = MutableLiveData<HomeBaoMoiData>()
                 list.postValue(it)
+                Log.e("error",it.toString())
                 GlobalScope.launch(Dispatchers.IO) {
-                    Log.e("eeeee",list.value.toString())
                     NewsLocal.saveData(list)
                 }
 

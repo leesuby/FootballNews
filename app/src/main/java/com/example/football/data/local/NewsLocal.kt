@@ -43,6 +43,9 @@ class NewsLocal {
 
                 homeContentDao.addContent(homeContent)
             }
+
+            //list news is saved to database
+            Helpers.isListNewsSaved = true
         }
 
         //save detail contents news to local

@@ -49,10 +49,23 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
                 val intent = Intent(this, OfflineService::class.java)
                 startService(intent)
             }
-            //start fragment
-            val fragment = HomeNewsFragment()
-            fragment.getIDContent = this
-            showFragment(fragment, false)
+
+            //splash screen for waiting download data
+            val fragmentSplash = SplashFragment()
+            showFragment(fragmentSplash,false)
+
+            //Thread check data is saved and load list news
+            GlobalScope.launch(Dispatchers.Default){
+                while(!Helpers.isListNewsSaved){
+                  if(Helpers.isListNewsSaved)
+                      break
+                }
+
+                //start fragment
+                val fragmentHome = HomeNewsFragment()
+                fragmentHome.getIDContent = this@MainActivity
+                showFragment(fragmentHome, false)
+            }
         }
 
 

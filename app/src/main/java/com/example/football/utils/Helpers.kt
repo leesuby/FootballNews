@@ -25,6 +25,7 @@ class Helpers {
     companion object {
         var internet : Boolean = true
         var isOfflineMode : Boolean = false
+        var isListNewsSaved : Boolean = false
         val AppName = "BongDaMoi"
         val seperator = "/"
 

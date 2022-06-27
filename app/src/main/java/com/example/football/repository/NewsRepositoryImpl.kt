@@ -17,11 +17,15 @@ import com.example.football.utils.Helpers
 class NewsRepositoryImpl() : NewsRepository {
     var detailContentDao : DetailContentDao = BaoMoiDatabase.getDatabase().DetailContentDao()
 
-    override fun getListNews(data : MutableLiveData<HomeBaoMoiData>, context: Context?) {
+    override fun getListNews(data : MutableLiveData<HomeBaoMoiData>, context: Context?, loadToSave : Boolean) {
         if (Helpers.internet){ //online mode
             //get data from request API and save to local database
-            NewsRemote.loadListNews(data)
+            if(Helpers.isOfflineMode && !loadToSave)
+                NewsLocal.loadListNews(data)
+            else
+                NewsRemote.loadListNews(data)
         }
+
         else{ //offline mode
             NewsLocal.loadListNews(data)
             Toast.makeText(context,"No Internet",Toast.LENGTH_SHORT).show()
