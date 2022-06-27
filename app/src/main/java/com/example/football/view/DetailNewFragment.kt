@@ -85,8 +85,12 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
                 //get content
                 data = it.data
                 //TODO : check null for fail data
+
+                if(data.content.title.isNullOrBlank())
+                    title.text="Không có dữ liệu Offline về bài báo này.Xin hãy xem ở chế độ Online"
+                else
                 //set content
-                setContent(data.content, data.related)
+                    setContent(data.content, data.related)
             }
         }
     }
@@ -141,11 +145,14 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
 
                 }
                 "image" -> {
+                   if(body.originUrl.isNullOrBlank())
+                       continue
                     val img = ImageView(context)
                     if(Helpers.internet)
                         Glide.with(this).load(body.originUrl).into(img)
                     else
                         Glide.with(this).load(File(body.originUrl)).into(img)
+
                     layout.addView(img)
                 }
                 "video" -> {

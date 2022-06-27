@@ -34,6 +34,10 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        //splash screen for waiting download data
+        val fragmentSplash = SplashFragment()
+        showFragment(fragmentSplash,false)
+
         //register broadcast to check internet
         registerNetworkReceiver()
 
@@ -44,28 +48,7 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
         else{
             Helpers.isOfflineMode = true
 
-            //start service
-            if(Helpers.internet){
-                val intent = Intent(this, OfflineService::class.java)
-                startService(intent)
-            }
-
-            //splash screen for waiting download data
-            val fragmentSplash = SplashFragment()
-            showFragment(fragmentSplash,false)
-
-            //Thread check data is saved and load list news
-            GlobalScope.launch(Dispatchers.Default){
-                while(!Helpers.isListNewsSaved){
-                  if(Helpers.isListNewsSaved)
-                      break
-                }
-
-                //start fragment
-                val fragmentHome = HomeNewsFragment()
-                fragmentHome.getIDContent = this@MainActivity
-                showFragment(fragmentHome, false)
-            }
+            loadListonOfflineMode()
         }
 
 
@@ -84,6 +67,42 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
         val intentFilter = IntentFilter()
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION)
         registerReceiver(checkConnectionReceiver, intentFilter)
+
+    }
+
+    //use to load list if user enable write and read SD
+    private fun loadListonOfflineMode(){
+        Helpers.isOfflineMode = true
+
+        //start service
+        if(Helpers.internet){
+            val intent = Intent(this, OfflineService::class.java)
+            startService(intent)
+
+            //Thread check data is saved and load list news
+            GlobalScope.launch(Dispatchers.Default){
+                while(!Helpers.isListNewsSaved){
+                    if(Helpers.isListNewsSaved)
+                        break
+                }
+
+                //start fragment
+                val fragmentHome = HomeNewsFragment()
+                fragmentHome.getIDContent = this@MainActivity
+                showFragment(fragmentHome, false)
+            }
+        }
+
+        else{
+            //start fragment
+            val fragmentHome = HomeNewsFragment()
+            fragmentHome.getIDContent = this@MainActivity
+            showFragment(fragmentHome, false)
+
+        }
+
+
+
 
     }
 
@@ -141,20 +160,15 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
                 val READ_EXTERNAL_STORAGE = grantResults[0] == PackageManager.PERMISSION_GRANTED
                 val WRITE_EXTERNAL_STORAGE = grantResults[1] == PackageManager.PERMISSION_GRANTED
                 if (READ_EXTERNAL_STORAGE && WRITE_EXTERNAL_STORAGE) {
-                    // perform action when allow permission success
-                    Helpers.isOfflineMode=true
-
-                    val fragment = HomeNewsFragment()
-                    fragment.getIDContent = this
-                    showFragment(fragment, false)
-
+                    loadListonOfflineMode()
+                    }
                 } else {
                     Toast.makeText(this, "Allow permission for storage access!", Toast.LENGTH_SHORT)
                         .show()
                 }
             }
         }
-    }
+
 
     // Check request for android 11 above
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -162,13 +176,8 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
         if (requestCode == 2296) {
             if (SDK_INT >= Build.VERSION_CODES.R) {
                 if (Environment.isExternalStorageManager()) {
-                    // perform action when allow permission success
-                    Helpers.isOfflineMode=true
-
-                    val fragment = HomeNewsFragment()
-                    fragment.getIDContent = this
-                    showFragment(fragment, false)
-
+                    loadListonOfflineMode()
+                    }
                 } else {
                     Toast.makeText(this, "Allow permission for storage access!", Toast.LENGTH_SHORT)
                         .show()
@@ -177,5 +186,3 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
         }
     }
 
-
-}
