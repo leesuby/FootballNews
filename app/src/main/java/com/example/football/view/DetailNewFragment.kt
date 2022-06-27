@@ -27,7 +27,12 @@ import com.example.football.utils.Helpers.Companion.margin
 import com.example.football.view.adapters.RecyclerNewsAdapter
 import com.example.football.viewmodel.DetailsViewModel
 import com.example.football.viewmodel.NewsViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import java.io.File
+import kotlin.coroutines.coroutineContext
 
 
 class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
@@ -48,7 +53,10 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
 
         //initial ViewModel and data
         detailViewModel = ViewModelProvider(this).get(DetailsViewModel::class.java)
-        detailViewModel.getDetailNew(message,context)
+
+        CoroutineScope(Dispatchers.IO).launch {
+            detailViewModel.getDetailNew(message,context)
+        }
     }
 
     override fun onCreateView(

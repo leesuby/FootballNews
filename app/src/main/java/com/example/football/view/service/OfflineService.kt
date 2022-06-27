@@ -3,6 +3,7 @@
 package com.example.football.view.service
 
 import android.content.Intent
+import android.util.Log
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -34,9 +35,10 @@ class OfflineService : LifecycleService(){
             if (it == null){
 
             }else{
+                val list = MutableLiveData<HomeBaoMoiData>()
+                list.postValue(it)
                 GlobalScope.launch(Dispatchers.IO) {
-                    val list = MutableLiveData<HomeBaoMoiData>()
-                    list.postValue(it)
+                    Log.e("eeeee",list.value.toString())
                     NewsLocal.saveData(list)
                 }
 

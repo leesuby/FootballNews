@@ -147,7 +147,7 @@ class Helpers {
             bodyDetailContent: List<BodyDetailContent>,
         ): com.example.football.data.model.detail.Content {
             var listBody: MutableList<com.example.football.data.model.detail.Body> = mutableListOf()
-            var detailContent = detailContent.get(0)
+            var detailContent = detailContent[0]
             for (body in bodyDetailContent) {
                 var b = com.example.football.data.model.detail.Body(
                     content = body.content,

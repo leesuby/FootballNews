@@ -18,4 +18,7 @@ interface DetailContentDao {
 
     @Query("SELECT * FROM ContentDetail WHERE content_id = :id ")
     suspend fun readAllSynchronous(id: Int) : List<DetailContent>
+
+    @Query("SELECT EXISTS(SELECT * FROM contentdetail WHERE content_id = :id)")
+    fun isRowIsExist(id : Int) : Boolean
 }

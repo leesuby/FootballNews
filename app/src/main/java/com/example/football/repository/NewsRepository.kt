@@ -11,5 +11,5 @@ interface NewsRepository  {
     fun getListNews(data : MutableLiveData<HomeBaoMoiData>, context: Context?)
 
     //get content of a new to show on detail news
-    fun getDetailNews(data : MutableLiveData<DetailBaoMoiData>,id: Int,context: Context?)
+    suspend fun getDetailNews(data : MutableLiveData<DetailBaoMoiData>,id: Int,context: Context?)
 }

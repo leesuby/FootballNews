@@ -33,13 +33,13 @@ class NewsLocal {
         private suspend fun saveListNews(homeData: MutableLiveData<HomeBaoMoiData>){
             for (content in homeData.value!!.data!!.contents)
             {
+                Log.e("error",content.toString())
                 var homeContent = HomeContent(
                     content.content_id,
                     content.title,
                     content.date,
                     Helpers.saveImageToExternalStorage(content.publisher_logo,content.content_id.toString(),"logo"),
                     Helpers.saveImageToExternalStorage(content.avatar_url,content.content_id.toString(),"avatar"))
-
 
                 homeContentDao.addContent(homeContent)
             }
@@ -64,14 +64,7 @@ class NewsLocal {
             var content = getDataFromRetro.value!!.data.content
             var related = getDataFromRetro.value!!.data.related.contents
 
-            //get basic info of news
-            var detailContent = DetailContent(
-                content.content_id,
-                content.title,
-                content.date,
-                content.description
-            )
-            detailContentDao.addDetailContent(detailContent)
+
 
             //get body of news
             var num =0
@@ -102,6 +95,14 @@ class NewsLocal {
                 relatedContentDao.addRelatedContent(relatedContent)
             }
 
+            //get basic info of news
+            var detailContent = DetailContent(
+                content.content_id,
+                content.title,
+                content.date,
+                content.description
+            )
+            detailContentDao.addDetailContent(detailContent)
         }
 
         //load list news from local
