@@ -22,7 +22,7 @@
         android:theme="@style/Theme.Football">
 
         <receiver
-            android:name=".view.CheckConnectionReceiver"
+            android:name=".view.broadcast.CheckConnectionReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name = "android.net.conn.CONNECTIVITY_CHANGE"
@@ -30,6 +30,10 @@
                 <action android:name = "android.net.wifi.WIFI_STATE_CHANGED" />
             </intent-filter>
         </receiver>
+
+        <service android:name=".view.service.OfflineService"
+            android:enabled="true">
+        </service>
 
         <activity
             android:name=".view.MainActivity"

@@ -6,6 +6,7 @@ import com.example.football.data.local.NewsLocal
 import com.example.football.data.model.HomeBaoMoiData
 import com.example.football.data.model.detail.DetailBaoMoiData
 import com.example.football.utils.Helpers
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -20,7 +21,7 @@ class NewsRemote {
         //request API get list new data
         fun loadListNews(data : MutableLiveData<HomeBaoMoiData>){
             val retroInstance = RetroInstance.getRetroInstance().create(RetroService::class.java)
-            val call = retroInstance.getNewsList()
+            val call = retroInstance.getNewsList(0,20)
             call.enqueue(object : Callback<HomeBaoMoiData> {
                 override fun onFailure(call: Call<HomeBaoMoiData>, t: Throwable) {
                     data.postValue(null)
@@ -28,18 +29,12 @@ class NewsRemote {
 
                 override fun onResponse(call: Call<HomeBaoMoiData>, response: Response<HomeBaoMoiData>) {
                     data.postValue(response.body())
-
-                    if (Helpers.isOfflineMode)
-                    //New background thread for save data to local
-                    GlobalScope.launch(Dispatchers.IO){
-                        NewsLocal.saveData(data)
-                    }
-
                 }
             })
         }
 
-        fun loadContentNews(data : MutableLiveData<DetailBaoMoiData>, id: Int,isSave: Boolean = false){
+        @OptIn(DelicateCoroutinesApi::class)
+        fun loadContentNews(data : MutableLiveData<DetailBaoMoiData>, id: Int, isSave: Boolean = false){
             val retroInstance = RetroInstance.getRetroInstance().create(RetroService::class.java)
             val call = retroInstance.getDetailNew(id)
             call.enqueue(object : Callback<DetailBaoMoiData> {

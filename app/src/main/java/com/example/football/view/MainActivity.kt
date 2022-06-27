@@ -8,6 +8,7 @@ import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import android.os.Environment
+import android.util.Log
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -16,7 +17,12 @@ import androidx.fragment.app.Fragment
 import com.example.football.R
 import com.example.football.utils.Helpers
 import com.example.football.utils.ManagePermissions
+import com.example.football.view.broadcast.CheckConnectionReceiver
+import com.example.football.view.service.OfflineService
 import com.example.football.viewmodel.NewsViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 
 class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
@@ -28,13 +34,22 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        //register broadcast to check internet
         registerNetworkReceiver()
+
         //check permission for save data on local for OFFLINE mode
         if(!managePermissions.checkPermission()){
             managePermissions.showAlert()
         }
         else{
             Helpers.isOfflineMode = true
+
+            //start service
+            if(Helpers.internet){
+                val intent = Intent(this, OfflineService::class.java)
+                startService(intent)
+            }
+            //start fragment
             val fragment = HomeNewsFragment()
             fragment.getIDContent = this
             showFragment(fragment, false)
@@ -47,9 +62,12 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver(checkConnectionReceiver)
+
     }
 
     private fun registerNetworkReceiver(){
+        Helpers.internet=CheckConnectionReceiver.isNetworkAvailable(this)
+
         val intentFilter = IntentFilter()
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION)
         registerReceiver(checkConnectionReceiver, intentFilter)
@@ -60,10 +78,10 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
         val fram = supportFragmentManager.beginTransaction()
         fram.replace(R.id.fragment_main,fragment)
 
-        if (addtoBackStack == false)
+        if (!addtoBackStack)
             fram.commit()
         else
-            fram.addToBackStack("${fragment.toString()}").commit()
+            fram.addToBackStack(fragment.toString()).commit()
 
     }
 

@@ -14,7 +14,7 @@ import com.example.football.utils.Helpers
 
 class NewsRepositoryImpl() : NewsRepository {
 
-    override suspend fun getListNews(data : MutableLiveData<HomeBaoMoiData>, context: Context?) {
+    override fun getListNews(data : MutableLiveData<HomeBaoMoiData>, context: Context?) {
         if (Helpers.internet){ //online mode
             //get data from request API and save to local database
             NewsRemote.loadListNews(data)

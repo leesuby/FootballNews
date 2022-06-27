@@ -1,18 +1,25 @@
 package com.example.football.view
 
+import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.football.view.adapters.RecyclerNewsAdapter
 import com.example.football.data.model.HomeBaoMoiData
 import com.example.football.R
+import com.example.football.utils.Helpers
+import com.example.football.view.service.OfflineService
 import com.example.football.viewmodel.NewsViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -37,7 +44,9 @@ class HomeNewsFragment : Fragment() , CoroutineScope {
         super.onCreate(savedInstanceState)
 
         adapterNewlist = RecyclerNewsAdapter()
-        CoroutineScope(coroutineContext).launch { newsViewModel.getListNews(context) }
+        CoroutineScope(coroutineContext).launch {
+            newsViewModel.getListNews(context)
+        }
     }
 
     override fun onCreateView(
@@ -61,6 +70,7 @@ class HomeNewsFragment : Fragment() , CoroutineScope {
     }
 
 
+    @SuppressLint("NotifyDataSetChanged")
     fun initView(){
         layoutManager = LinearLayoutManager(this.context)
         newsList = views.findViewById(R.id.RV_news)
@@ -82,6 +92,8 @@ class HomeNewsFragment : Fragment() , CoroutineScope {
                 adapterNewlist.notifyDataSetChanged()
             }
         })
+
+
 
     }
 

@@ -11,7 +11,7 @@ interface RetroService {
 
     @GET("contents/home")
     @Headers("api_key: bm_fresher_2022")
-    fun getNewsList() : Call<HomeBaoMoiData>
+    fun getNewsList(@Query("start") start : Int,@Query("size") size: Int) : Call<HomeBaoMoiData>
 
     @GET("contents/detail")
     @Headers("api_key: bm_fresher_2022")

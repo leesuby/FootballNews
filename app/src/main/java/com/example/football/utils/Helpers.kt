@@ -13,6 +13,7 @@ import com.example.football.data.local.database.detail.BodyDetailContent
 import com.example.football.data.local.database.detail.DetailContent
 import com.example.football.data.local.database.home.HomeContent
 import com.example.football.data.model.Content
+import com.example.football.view.broadcast.CheckConnectionReceiver
 import java.io.*
 import java.net.HttpURLConnection
 import java.net.MalformedURLException
