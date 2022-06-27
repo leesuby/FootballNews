@@ -1,5 +1,6 @@
 package com.example.football.view.adapters
 
+import android.annotation.SuppressLint
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -44,14 +45,12 @@ class RecyclerNewsAdapter: RecyclerView.Adapter<RecyclerNewsAdapter.ViewHolder>(
     override fun onBindViewHolder(holder: RecyclerNewsAdapter.ViewHolder, position: Int) {
         val news : Content = ListNews.get(position)
 
+        holder.itemTime.text = if (news.date == null) "Không có dữ liệu" else Helpers.CalculateDistanceTime(news.date)
+        holder.itemTitle.text = news.title ?: "Không có dữ liệu"
 
-        holder.itemTime.text = Helpers.CalculateDistanceTime(news.date)
-
-        holder.itemTitle.text = news.title
-
-
-        if(Helpers.internet) {
-            if (!news.avatar_url.isNullOrBlank()) {
+        if (!news.avatar_url.isNullOrBlank())
+        {
+            if(Helpers.internet){
                 Glide.with(holder.itemView)
                     .load(news.avatar_url)
                     .centerCrop()
@@ -64,12 +63,20 @@ class RecyclerNewsAdapter: RecyclerView.Adapter<RecyclerNewsAdapter.ViewHolder>(
                     )
                     .into(holder.itemImageNews)
             }
-            if(!news.publisher_logo.isNullOrBlank())
-                Glide.with(holder.itemView).load(news.publisher_logo).into(holder.itemLogo)
-        }else {
-            Glide.with(holder.itemView).load(File(news.avatar_url)).into(holder.itemImageNews)
-            Glide.with(holder.itemView).load(File(news.publisher_logo)).into(holder.itemLogo)
+            else{
+                Glide.with(holder.itemView).load(File(news.avatar_url)).into(holder.itemImageNews)
+            }
         }
+
+        if(!news.publisher_logo.isNullOrBlank()){
+            if(Helpers.internet){
+                Glide.with(holder.itemView).load(news.publisher_logo).into(holder.itemLogo)
+            }
+            else{
+                Glide.with(holder.itemView).load(File(news.publisher_logo)).into(holder.itemLogo)
+            }
+        }
+
 
 
 

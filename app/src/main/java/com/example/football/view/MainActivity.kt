@@ -1,24 +1,17 @@
 package com.example.football.view
 
-import android.Manifest
-import android.Manifest.permission.READ_EXTERNAL_STORAGE
-import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-import android.app.AlertDialog
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
-import android.net.Uri
+import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import android.os.Environment
-import android.provider.Settings
-import android.util.Log
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.football.R
 import com.example.football.utils.Helpers
@@ -29,11 +22,13 @@ import com.example.football.viewmodel.NewsViewModel
 class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
     private val viewModel: NewsViewModel by viewModels()
     private val managePermissions : ManagePermissions = ManagePermissions(this)
+    private val checkConnectionReceiver : CheckConnectionReceiver = CheckConnectionReceiver()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        registerNetworkReceiver()
         //check permission for save data on local for OFFLINE mode
         if(!managePermissions.checkPermission()){
             managePermissions.showAlert()
@@ -45,8 +40,21 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
             showFragment(fragment, false)
         }
 
+
     }
 
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(checkConnectionReceiver)
+    }
+
+    private fun registerNetworkReceiver(){
+        val intentFilter = IntentFilter()
+        intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION)
+        registerReceiver(checkConnectionReceiver, intentFilter)
+
+    }
 
     fun showFragment (fragment: Fragment,addtoBackStack : Boolean = true){
         val fram = supportFragmentManager.beginTransaction()
@@ -98,7 +106,7 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
-            123 -> if (grantResults.size > 0) {
+            123 -> if (grantResults.isNotEmpty()) {
                 val READ_EXTERNAL_STORAGE = grantResults[0] == PackageManager.PERMISSION_GRANTED
                 val WRITE_EXTERNAL_STORAGE = grantResults[1] == PackageManager.PERMISSION_GRANTED
                 if (READ_EXTERNAL_STORAGE && WRITE_EXTERNAL_STORAGE) {

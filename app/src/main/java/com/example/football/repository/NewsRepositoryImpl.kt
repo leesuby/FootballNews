@@ -15,11 +15,7 @@ import com.example.football.utils.Helpers
 class NewsRepositoryImpl() : NewsRepository {
 
     override suspend fun getListNews(data : MutableLiveData<HomeBaoMoiData>, context: Context?) {
-
-
-        Helpers.internet = isNetworkAvailable(context)
         if (Helpers.internet){ //online mode
-
             //get data from request API and save to local database
             NewsRemote.loadListNews(data)
         }
@@ -31,10 +27,7 @@ class NewsRepositoryImpl() : NewsRepository {
     }
 
     override fun getDetailNews(data : MutableLiveData<DetailBaoMoiData>,id: Int,context: Context?) {
-
-        //online mode
-        Helpers.internet = isNetworkAvailable(context)
-        if (isNetworkAvailable(context)){
+        if (Helpers.internet){
             NewsRemote.loadContentNews(data,id)
         }
         else{
@@ -46,31 +39,4 @@ class NewsRepositoryImpl() : NewsRepository {
 
     }
 
-
-    private fun isNetworkAvailable(context: Context?): Boolean {
-        if (context == null) return false
-        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            val capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
-            if (capabilities != null) {
-                when {
-                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> {
-                        return true
-                    }
-                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> {
-                        return true
-                    }
-                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> {
-                        return true
-                    }
-                }
-            }
-        } else {
-            val activeNetworkInfo = connectivityManager.activeNetworkInfo
-            if (activeNetworkInfo != null && activeNetworkInfo.isConnected) {
-                return true
-            }
-        }
-        return false
-    }
 }

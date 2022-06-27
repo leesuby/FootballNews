@@ -76,6 +76,7 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
             } else {
                 //get content
                 data = it.data
+                //TODO : check null for fail data
                 //set content
                 setContent(data.content, data.related)
             }
@@ -84,7 +85,6 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
 
     @SuppressLint("NotifyDataSetChanged")
     private fun setContent(data: Content, related: Related){
-
 
         //title
         title.text = data.title
@@ -213,6 +213,10 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
 
         adapterNewlist.ListNews=related.contents.toMutableList()
         layout.addView(newsList)
+
+    }
+
+    private fun checkDataNull(data: Data){
 
     }
 

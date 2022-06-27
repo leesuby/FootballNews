@@ -15,11 +15,9 @@ class DetailsViewModel : ViewModel() {
     private val DetailNew : LiveData<DetailBaoMoiData> = _DetailNew
     var repo : NewsRepositoryImpl = NewsRepositoryImpl()
 
-
     fun getDetailNewObservable() : LiveData<DetailBaoMoiData> {
         return DetailNew
     }
-
 
     fun getDetailNew(id: Int,context: Context?){
         repo.getDetailNews(DetailNew as MutableLiveData<DetailBaoMoiData>,id,context)

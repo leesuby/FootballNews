@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import kotlin.concurrent.thread
 
 class NewsRemote {
     companion object{
@@ -48,7 +49,7 @@ class NewsRemote {
                 override fun onResponse(call: Call<DetailBaoMoiData>, response: Response<DetailBaoMoiData>) {
                     data.postValue(response.body())
 
-                    if (Helpers.isOfflineMode){
+                    if(Helpers.isOfflineMode){
                     if(isSave){
                         GlobalScope.launch(Dispatchers.IO){
                             NewsLocal.saveDetailContentNews(data)
