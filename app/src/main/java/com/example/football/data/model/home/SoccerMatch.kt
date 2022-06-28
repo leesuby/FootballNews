@@ -1,6 +1,6 @@
 package com.example.football.data.model
 
-data class SoccerMatche(
+data class SoccerMatch(
     val away_scored: Int,
     val away_scored_note: String,
     val away_team: AwayTeam,

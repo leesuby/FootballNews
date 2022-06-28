@@ -36,7 +36,7 @@
         android:layout_height="30dp"
         android:layout_marginStart="12dp"
         android:layout_toRightOf="@id/img_news"
-        android:src="@drawable/ic_launcher_background"
+        android:src="@mipmap/img_no_image"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/img_news" />
 

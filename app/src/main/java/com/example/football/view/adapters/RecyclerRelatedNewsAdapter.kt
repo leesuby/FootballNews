@@ -17,18 +17,18 @@ import com.example.football.R
 import com.example.football.utils.Helpers
 import java.io.File
 
-class RecyclerNewsAdapter: RecyclerView.Adapter<RecyclerNewsAdapter.ViewHolder>() {
+class RecyclerRelatedNewsAdapter: RecyclerView.Adapter<RecyclerRelatedNewsAdapter.ViewHolder>() {
 
 
-    private lateinit var mListener : onItemClickListener
+    private lateinit var mListener : onNewsClickListener
 
-    var ListNews = mutableListOf<Content>()
+    var listNews = mutableListOf<Content>()
 
-    interface onItemClickListener{
+    interface onNewsClickListener{
         fun onItemClick(idContent: Int)
     }
 
-    fun setOnItemClickListener(listener: onItemClickListener){
+    fun setOnItemClickListener(listener: onNewsClickListener){
         mListener=listener
     }
 
@@ -36,14 +36,14 @@ class RecyclerNewsAdapter: RecyclerView.Adapter<RecyclerNewsAdapter.ViewHolder>(
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): RecyclerNewsAdapter.ViewHolder {
+    ): RecyclerRelatedNewsAdapter.ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.custom_news,parent,false)
         return ViewHolder(v,mListener)
     }
 
 
-    override fun onBindViewHolder(holder: RecyclerNewsAdapter.ViewHolder, position: Int) {
-        val news : Content = ListNews.get(position)
+    override fun onBindViewHolder(holder: RecyclerRelatedNewsAdapter.ViewHolder, position: Int) {
+        val news : Content = listNews.get(position)
 
         holder.itemTime.text = if (news.date == null) "Không có dữ liệu" else Helpers.CalculateDistanceTime(news.date)
         holder.itemTitle.text = news.title ?: "Không có dữ liệu"
@@ -55,8 +55,8 @@ class RecyclerNewsAdapter: RecyclerView.Adapter<RecyclerNewsAdapter.ViewHolder>(
                     .load(news.avatar_url)
                     .centerCrop()
                     .apply(
-                        RequestOptions()
-                            .transform(RoundedCorners(20))
+                        RequestOptions
+                            .bitmapTransform(RoundedCorners(20))
                             .error(R.drawable.ic_launcher_background)
                             .skipMemoryCache(true)
                             .diskCacheStrategy(DiskCacheStrategy.NONE)
@@ -64,7 +64,11 @@ class RecyclerNewsAdapter: RecyclerView.Adapter<RecyclerNewsAdapter.ViewHolder>(
                     .into(holder.itemImageNews)
             }
             else{
-                Glide.with(holder.itemView).load(File(news.avatar_url)).into(holder.itemImageNews)
+                Glide.with(holder.itemView)
+                    .load(File(news.avatar_url))
+                    .centerCrop()
+                    .apply(RequestOptions.bitmapTransform(RoundedCorners(10)))
+                    .into(holder.itemImageNews)
             }
         }
 
@@ -84,10 +88,10 @@ class RecyclerNewsAdapter: RecyclerView.Adapter<RecyclerNewsAdapter.ViewHolder>(
     }
 
     override fun getItemCount(): Int {
-        return ListNews.size
+        return listNews.size
     }
 
-    inner class ViewHolder(itemView: View,listener: onItemClickListener) : RecyclerView.ViewHolder(itemView) {
+    inner class ViewHolder(itemView: View,listener: onNewsClickListener) : RecyclerView.ViewHolder(itemView) {
         var itemImageNews : ImageView
         var itemTitle : TextView
         var itemLogo : ImageView
@@ -100,7 +104,7 @@ class RecyclerNewsAdapter: RecyclerView.Adapter<RecyclerNewsAdapter.ViewHolder>(
             itemTime = itemView.findViewById(R.id.tv_time)
 
             itemView.setOnClickListener{
-                listener.onItemClick(ListNews.get(adapterPosition).content_id)
+                listener.onItemClick(listNews.get(adapterPosition).content_id)
             }
         }
 

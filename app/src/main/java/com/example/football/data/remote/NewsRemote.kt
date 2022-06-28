@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.example.football.data.local.NewsLocal
 import com.example.football.data.model.HomeBaoMoiData
 import com.example.football.data.model.detail.DetailBaoMoiData
+import com.example.football.data.model.home.MatchHomeBaoMoiData
 import com.example.football.utils.Helpers
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -50,6 +51,20 @@ class NewsRemote {
                             NewsLocal.saveDetailContentNews(data)
                         }
                     }}
+                }
+            })
+        }
+
+        fun loadListMatchHome(data : MutableLiveData<MatchHomeBaoMoiData>){
+            val retroInstance = RetroInstance.getRetroInstance().create(RetroService::class.java)
+            val call = retroInstance.getMatchByDates(0,0,0,20)
+            call.enqueue(object : Callback<MatchHomeBaoMoiData> {
+                override fun onFailure(call: Call<MatchHomeBaoMoiData>, t: Throwable) {
+                    data.postValue(null)
+                }
+
+                override fun onResponse(call: Call<MatchHomeBaoMoiData>, response: Response<MatchHomeBaoMoiData>) {
+                    data.postValue(response.body())
                 }
             })
         }

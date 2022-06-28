@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import com.example.football.data.model.HomeBaoMoiData
 import com.example.football.data.model.detail.DetailBaoMoiData
+import com.example.football.data.model.home.MatchHomeBaoMoiData
 
 interface NewsRepository  {
 
@@ -12,4 +13,6 @@ interface NewsRepository  {
 
     //get content of a new to show on detail news
     suspend fun getDetailNews(data : MutableLiveData<DetailBaoMoiData>,id: Int,context: Context?)
+
+    fun getListMatchNews(data : MutableLiveData<MatchHomeBaoMoiData>)
 }

@@ -24,15 +24,13 @@ import com.example.football.data.model.detail.Data
 import com.example.football.data.model.detail.Related
 import com.example.football.utils.Helpers
 import com.example.football.utils.Helpers.Companion.margin
-import com.example.football.view.adapters.RecyclerNewsAdapter
+import com.example.football.view.adapters.RecyclerRelatedNewsAdapter
 import com.example.football.viewmodel.DetailsViewModel
 import com.example.football.viewmodel.NewsViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import java.io.File
-import kotlin.coroutines.coroutineContext
 
 
 class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
@@ -209,8 +207,8 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
 
         newsList?.layoutManager = layoutManager
 
-        val adapterNewlist = RecyclerNewsAdapter()
-        adapterNewlist.setOnItemClickListener(object : RecyclerNewsAdapter.onItemClickListener{
+        val adapterNewlist = RecyclerRelatedNewsAdapter()
+        adapterNewlist.setOnItemClickListener(object : RecyclerRelatedNewsAdapter.onNewsClickListener{
             override fun onItemClick(idContent: Int) {
                 showDetail(idContent)
             }
@@ -221,12 +219,12 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
             if (it == null) {
                 Toast.makeText(this.context, "No result found", Toast.LENGTH_SHORT).show()
             } else {
-                adapterNewlist.ListNews = related.contents.toMutableList()
+                adapterNewlist.listNews = related.contents.toMutableList()
                 adapterNewlist.notifyDataSetChanged()
             }
         }
 
-        adapterNewlist.ListNews=related.contents.toMutableList()
+        adapterNewlist.listNews=related.contents.toMutableList()
         layout.addView(newsList)
 
     }

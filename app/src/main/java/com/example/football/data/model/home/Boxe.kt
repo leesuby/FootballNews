@@ -10,7 +10,7 @@ data class Boxe(
     val section_box_id: Int,
     val segment_ids: List<Any>,
     val soccer_competitions: List<SoccerCompetition>,
-    val soccer_matches: List<SoccerMatche>,
+    val soccer_matches: List<SoccerMatch>,
     val title: String,
     val videos: List<Video>,
     val zone: String
