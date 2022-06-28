@@ -39,9 +39,11 @@ class HomeNewsFragment : Fragment() , CoroutineScope {
         super.onCreate(savedInstanceState)
 
         adapterNewlist = RecyclerHomeAdapter()
+        //get data for home
         CoroutineScope(coroutineContext).launch {
             newsViewModel.getListNews(context)
             newsViewModel.getListMatch()
+            newsViewModel.getListCompetition()
         }
     }
 
@@ -94,6 +96,15 @@ class HomeNewsFragment : Fragment() , CoroutineScope {
                 Toast.makeText(this.context, "No result found", Toast.LENGTH_SHORT).show()
             } else {
                 adapterNewlist.listMatch = it.data.soccer_match.toMutableList()
+                adapterNewlist.notifyDataSetChanged()
+            }
+        }
+
+        newsViewModel.getListCompetitionObservable().observe(viewLifecycleOwner){
+            if (it == null) {
+                Toast.makeText(this.context, "No result found", Toast.LENGTH_SHORT).show()
+            } else {
+                adapterNewlist.listCompetition = it.data.soccer_competitions.toMutableList()
                 adapterNewlist.notifyDataSetChanged()
             }
         }

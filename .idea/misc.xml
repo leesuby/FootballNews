@@ -10,6 +10,8 @@
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.19610507246376813" />
         <entry key="app/src/main/res/layout/activity_splash.xml" value="0.115861479264643" />
         <entry key="app/src/main/res/layout/ativity_detail.xml" value="0.10099637681159421" />
+        <entry key="app/src/main/res/layout/custom_competition.xml" value="0.20906677246093752" />
+        <entry key="app/src/main/res/layout/custom_homecompetition.xml" value="0.42936553955078127" />
         <entry key="app/src/main/res/layout/custom_homematch.xml" value="0.47288818359375007" />
         <entry key="app/src/main/res/layout/custom_matchs.xml" value="0.1" />
         <entry key="app/src/main/res/layout/custom_news.xml" value="0.4307692307692308" />

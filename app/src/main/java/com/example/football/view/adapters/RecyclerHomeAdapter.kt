@@ -1,5 +1,6 @@
 package com.example.football.view.adapters
 
+import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +15,8 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.example.football.data.model.Content
 import com.example.football.R
+import com.example.football.data.model.Competition
+import com.example.football.data.model.SoccerCompetition
 import com.example.football.data.model.SoccerMatch
 import com.example.football.utils.Helpers
 import java.io.File
@@ -25,6 +28,7 @@ class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var listNews = mutableListOf<Content>()
     var listMatch = mutableListOf<SoccerMatch>()
+    var listCompetition = mutableListOf<SoccerCompetition>()
 
     interface onNewsClickListener {
         fun onItemClick(idContent: Int)
@@ -39,7 +43,10 @@ class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (position == 0) 1 else 2
+        return if (position == 0) 1
+        else {
+            if (position==4) 3 else 2
+        }
     }
 
     inner class ViewHolderNews(itemView: View, listener: onNewsClickListener) :
@@ -72,6 +79,15 @@ class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     }
 
+    inner class ViewHolderCompetition(itemView: View) :
+        RecyclerView.ViewHolder(itemView){
+        var itemCompetitionRecyclerView: RecyclerView
+
+        init {
+            itemCompetitionRecyclerView = itemView.findViewById(R.id.RV_homeCompetition)
+        }
+    }
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -82,9 +98,13 @@ class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 v = LayoutInflater.from(parent.context).inflate(R.layout.custom_matchs, parent, false)
                 ViewHolderMatch(v)
             }
-            else -> {
+            2 -> {
                 v = LayoutInflater.from(parent.context).inflate(R.layout.custom_news, parent, false)
                 ViewHolderNews(v, mListener)
+            }
+            else -> {
+                v = LayoutInflater.from(parent.context).inflate(R.layout.custom_competition, parent, false)
+                ViewHolderCompetition(v)
             }
         }
 
@@ -113,27 +133,7 @@ class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                     )
                 holder.itemTitle.text = news.title ?: "Không có dữ liệu"
 
-                if (!news.avatar_url.isNullOrBlank()) {
-                    if (Helpers.internet) {
-                        Glide.with(holder.itemView)
-                            .load(news.avatar_url)
-                            .centerCrop()
-                            .apply(
-                                RequestOptions
-                                    .bitmapTransform(RoundedCorners(20))
-                                    .error(R.drawable.ic_launcher_background)
-                                    .skipMemoryCache(true)
-                                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                            )
-                            .into(holder.itemImageNews)
-                    } else {
-                        Glide.with(holder.itemView)
-                            .load(File(news.avatar_url))
-                            .centerCrop()
-                            .apply(RequestOptions.bitmapTransform(RoundedCorners(10)))
-                            .into(holder.itemImageNews)
-                    }
-                }
+                Helpers.checkandLoadImageGlide(news.avatar_url,holder.itemImageNews,holder.itemView.context)
 
                 if (!news.publisher_logo.isNullOrBlank()) {
                     if (Helpers.internet) {
@@ -143,6 +143,15 @@ class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                             .into(holder.itemLogo)
                     }
                 }
+            }
+            3 ->{
+                holder as ViewHolderCompetition
+                val layoutManager = LinearLayoutManager(holder.itemView.context,LinearLayoutManager.HORIZONTAL,false)
+                val adapter = RecyclerCompetitionHomeAdapter()
+                adapter.listCompetition = listCompetition
+
+                holder.itemCompetitionRecyclerView.layoutManager=layoutManager
+                holder.itemCompetitionRecyclerView.adapter=adapter
             }
 
         }

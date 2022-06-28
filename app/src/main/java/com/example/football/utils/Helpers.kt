@@ -8,7 +8,13 @@ import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.room.TypeConverter
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestOptions
+import com.example.football.R
 import com.example.football.data.local.database.detail.BodyDetailContent
 import com.example.football.data.local.database.detail.DetailContent
 import com.example.football.data.local.database.home.HomeContent
@@ -166,6 +172,31 @@ class Helpers {
                 description = detailContent.description,
                 content_id = detailContent.content_id
             )
+        }
+
+        fun checkandLoadImageGlide(url: String?, view : ImageView,context : Context){
+            if (!url.isNullOrBlank())
+            {
+                if(Helpers.internet){
+                    Glide.with(context)
+                        .load(url)
+                        .apply(
+                            RequestOptions
+                                .bitmapTransform(RoundedCorners(20))
+                                .error(R.drawable.ic_launcher_background)
+                                .skipMemoryCache(true)
+                                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        )
+                        .into(view)
+                }
+                else{
+                    Glide.with(context)
+                        .load(url)
+                        .centerCrop()
+                        .apply(RequestOptions.bitmapTransform(RoundedCorners(20)))
+                        .into(view)
+                }
+            }
         }
 
     }

@@ -2,6 +2,7 @@ package com.example.football.data.remote
 
 import com.example.football.data.model.detail.DetailBaoMoiData
 import com.example.football.data.model.HomeBaoMoiData
+import com.example.football.data.model.home.CompetitionHomeBaoMoiData
 import com.example.football.data.model.home.MatchHomeBaoMoiData
 import retrofit2.Call
 import retrofit2.http.GET
@@ -15,8 +16,7 @@ interface RetroService {
     fun getNewsList(
         @Query("start") start: Int,
         @Query("size") size: Int
-    )
-            : Call<HomeBaoMoiData>
+    ): Call<HomeBaoMoiData>
 
     @GET("contents/detail")
     @Headers("api_key: bm_fresher_2022")
@@ -30,4 +30,8 @@ interface RetroService {
         @Query("start") start: Int,
         @Query("size") size: Int
     ): Call<MatchHomeBaoMoiData>
+
+    @GET("competitions/hot")
+    @Headers("api_key: bm_fresher_2022")
+    fun getCompetitions() : Call<CompetitionHomeBaoMoiData>
 }

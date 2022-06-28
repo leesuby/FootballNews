@@ -12,6 +12,7 @@ import com.example.football.data.local.database.detail.DetailContentDao
 import com.example.football.data.remote.NewsRemote
 import com.example.football.data.model.HomeBaoMoiData
 import com.example.football.data.model.detail.DetailBaoMoiData
+import com.example.football.data.model.home.CompetitionHomeBaoMoiData
 import com.example.football.data.model.home.MatchHomeBaoMoiData
 import com.example.football.utils.Helpers
 
@@ -39,6 +40,17 @@ class NewsRepositoryImpl() : NewsRepository {
     override fun getListMatchNews(data : MutableLiveData<MatchHomeBaoMoiData>){
         if (Helpers.internet){ //online mode
             NewsRemote.loadListMatchHome(data)
+        }
+
+        else{ //offline mode
+//            NewsLocal.loadListMatchHome(data)
+//            Toast.makeText(context,"No Internet",Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    override fun getListCompetitionNews(data: MutableLiveData<CompetitionHomeBaoMoiData>) {
+        if (Helpers.internet){ //online mode
+            NewsRemote.loadCompetitionHome(data)
         }
 
         else{ //offline mode

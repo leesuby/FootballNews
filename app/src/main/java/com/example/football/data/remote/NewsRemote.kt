@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.example.football.data.local.NewsLocal
 import com.example.football.data.model.HomeBaoMoiData
 import com.example.football.data.model.detail.DetailBaoMoiData
+import com.example.football.data.model.home.CompetitionHomeBaoMoiData
 import com.example.football.data.model.home.MatchHomeBaoMoiData
 import com.example.football.utils.Helpers
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -64,6 +65,20 @@ class NewsRemote {
                 }
 
                 override fun onResponse(call: Call<MatchHomeBaoMoiData>, response: Response<MatchHomeBaoMoiData>) {
+                    data.postValue(response.body())
+                }
+            })
+        }
+
+        fun loadCompetitionHome(data : MutableLiveData<CompetitionHomeBaoMoiData>){
+            val retroInstance = RetroInstance.getRetroInstance().create(RetroService::class.java)
+            val call = retroInstance.getCompetitions()
+            call.enqueue(object : Callback<CompetitionHomeBaoMoiData> {
+                override fun onFailure(call: Call<CompetitionHomeBaoMoiData>, t: Throwable) {
+                    data.postValue(null)
+                }
+
+                override fun onResponse(call: Call<CompetitionHomeBaoMoiData>, response: Response<CompetitionHomeBaoMoiData>) {
                     data.postValue(response.body())
                 }
             })

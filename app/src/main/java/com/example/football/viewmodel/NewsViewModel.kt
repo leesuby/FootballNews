@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.football.data.model.HomeBaoMoiData
+import com.example.football.data.model.home.CompetitionHomeBaoMoiData
 import com.example.football.data.model.home.MatchHomeBaoMoiData
 import com.example.football.repository.NewsRepositoryImpl
 
@@ -15,6 +16,9 @@ class NewsViewModel : ViewModel() {
 
     private val _recyclerListMatchNews : MutableLiveData<MatchHomeBaoMoiData> = MutableLiveData()
     private val recyclerListMatchNews : LiveData<MatchHomeBaoMoiData> = _recyclerListMatchNews
+
+    private val _recyclerListComepetitionNews : MutableLiveData<CompetitionHomeBaoMoiData> = MutableLiveData()
+    private val recyclerListComepetitionNews : LiveData<CompetitionHomeBaoMoiData> = _recyclerListComepetitionNews
 
     var repo : NewsRepositoryImpl = NewsRepositoryImpl()
 
@@ -32,5 +36,13 @@ class NewsViewModel : ViewModel() {
 
     fun getListMatch(){
         repo.getListMatchNews(recyclerListMatchNews as MutableLiveData)
+    }
+
+    fun getListCompetitionObservable() : LiveData<CompetitionHomeBaoMoiData>{
+        return recyclerListComepetitionNews
+    }
+
+    fun getListCompetition(){
+        repo.getListCompetitionNews(recyclerListComepetitionNews as MutableLiveData)
     }
 }

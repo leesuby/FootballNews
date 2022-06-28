@@ -61,54 +61,11 @@ class RecyclerMatchHomeAdapter : RecyclerView.Adapter<RecyclerMatchHomeAdapter.M
         holder.itemCompetitionName.text = match.competition.competition_name
         holder.itemTeam1Name.text = match.home_team.team_name
         holder.itemTeam2Name.text = match.away_team.team_name
+
+        Helpers.checkandLoadImageGlide(match.home_team.team_logo,holder.itemTeam1Logo,holder.itemView.context)
+        Helpers.checkandLoadImageGlide(match.away_team.team_logo,holder.itemTeam2Logo,holder.itemView.context)
+
         var convert = SimpleDateFormat("HH:mm dd MMM yyyy")
-
-
-
-        if (!match.home_team.team_logo.isNullOrBlank())
-        {
-            if(Helpers.internet){
-                Glide.with(holder.itemView)
-                    .load(match.home_team.team_logo)
-                    .apply(
-                        RequestOptions
-                            .bitmapTransform(RoundedCorners(20))
-                            .error(R.drawable.ic_launcher_background)
-                            .skipMemoryCache(true)
-                            .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    )
-                    .into(holder.itemTeam1Logo)
-            }
-            else{
-                Glide.with(holder.itemView)
-                    .load(match.home_team.team_logo)
-                    .centerCrop()
-                    .apply(RequestOptions.bitmapTransform(RoundedCorners(20)))
-                    .into(holder.itemTeam1Logo)
-            }
-        }
-
-        if(!match.away_team.team_logo.isNullOrBlank()){
-            if(Helpers.internet){
-                Glide.with(holder.itemView)
-                    .load(match.away_team.team_logo)
-                    .apply(
-                        RequestOptions
-                            .bitmapTransform(RoundedCorners(20))
-                            .error(R.drawable.ic_launcher_background)
-                            .skipMemoryCache(true)
-                            .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    )
-                    .into(holder.itemTeam2Logo)
-            }
-            else{
-                Glide.with(holder.itemView)
-                    .load(match.away_team.team_logo)
-                    .centerCrop()
-                    .apply(RequestOptions.bitmapTransform(RoundedCorners(20)))
-                    .into(holder.itemTeam2Logo)
-            }
-        }
 
 
     }

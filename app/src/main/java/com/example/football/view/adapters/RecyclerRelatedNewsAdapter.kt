@@ -48,29 +48,7 @@ class RecyclerRelatedNewsAdapter: RecyclerView.Adapter<RecyclerRelatedNewsAdapte
         holder.itemTime.text = if (news.date == null) "Không có dữ liệu" else Helpers.CalculateDistanceTime(news.date)
         holder.itemTitle.text = news.title ?: "Không có dữ liệu"
 
-        if (!news.avatar_url.isNullOrBlank())
-        {
-            if(Helpers.internet){
-                Glide.with(holder.itemView)
-                    .load(news.avatar_url)
-                    .centerCrop()
-                    .apply(
-                        RequestOptions
-                            .bitmapTransform(RoundedCorners(20))
-                            .error(R.drawable.ic_launcher_background)
-                            .skipMemoryCache(true)
-                            .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    )
-                    .into(holder.itemImageNews)
-            }
-            else{
-                Glide.with(holder.itemView)
-                    .load(File(news.avatar_url))
-                    .centerCrop()
-                    .apply(RequestOptions.bitmapTransform(RoundedCorners(10)))
-                    .into(holder.itemImageNews)
-            }
-        }
+        Helpers.checkandLoadImageGlide(news.avatar_url,holder.itemImageNews,holder.itemView.context)
 
         if(!news.publisher_logo.isNullOrBlank()){
             if(Helpers.internet){
