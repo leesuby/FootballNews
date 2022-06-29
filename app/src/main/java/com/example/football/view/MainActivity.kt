@@ -14,13 +14,14 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
-import androidx.navigation.findNavController
-import androidx.navigation.ui.setupWithNavController
 import com.example.football.R
 import com.example.football.utils.Helpers
 import com.example.football.utils.ManagePermissions
@@ -39,13 +40,26 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
     private val checkConnectionReceiver : CheckConnectionReceiver = CheckConnectionReceiver()
     private lateinit var actionAppBar : Toolbar
     private lateinit var navBar : BottomNavigationView
+    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var toggle: ActionBarDrawerToggle
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        actionAppBar = findViewById(R.id.toolbar)
+        drawerLayout = findViewById(R.id.layout_drawer)
         navBar = findViewById(R.id.bottomNavigationView)
+
+        //set up for tool bar
+        setupToolbar()
+
+        //set up for toggle
+        setupDrawerToggle()
+
+//        actionAppBar.setNavigationIcon(R.drawable.ic_baseline_arrow_back)
+//        actionAppBar.setNavigationOnClickListener(View.OnClickListener {
+//            //What to do on back clicked
+//        })
 
 //        navBar.setupWithNavController(findNavController(R.id.fragment_main))
 
@@ -76,6 +90,45 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
 
     }
 
+    private fun setupToolbar(){
+        actionAppBar = findViewById(R.id.toolbar)
+        actionAppBar.title=""
+
+        setSupportActionBar(actionAppBar)
+
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        supportActionBar?.setHomeButtonEnabled(true)
+
+    }
+
+    private fun setupDrawerToggle() {
+        toggle = ActionBarDrawerToggle(
+            this,
+            drawerLayout,
+            actionAppBar,
+            R.string.app_name,
+            R.string.app_name
+        )
+
+        //This is necessary to change the icon of the Drawer Toggle upon state change.
+        toggle.toolbarNavigationClickListener = View.OnClickListener {
+            if (toggle.isDrawerIndicatorEnabled) {
+                drawerLayout.openDrawer(GravityCompat.START)
+            } else {
+                onBackPressed()
+            }
+        }
+
+        drawerLayout.addDrawerListener(toggle)
+        toggle.syncState()
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
+    }
+
     private fun startSplashScreen() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window.setDecorFitsSystemWindows(false)
@@ -88,7 +141,7 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
 
         val mConstrainLayout = findViewById<FrameLayout>(R.id.fragment_main)
         val lp = mConstrainLayout.layoutParams as ConstraintLayout.LayoutParams
-        lp.matchConstraintPercentHeight = 1f
+        lp.matchConstraintPercentHeight = 0.95f
         mConstrainLayout.layoutParams = lp
 
         val fragmentSplash = SplashFragment()
@@ -125,8 +178,9 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
                 launch(Dispatchers.Main) {
                     val mConstrainLayout = findViewById<FrameLayout>(R.id.fragment_main)
                     val lp = mConstrainLayout.layoutParams as ConstraintLayout.LayoutParams
-                    lp.matchConstraintPercentHeight = 0.84f
+                    lp.matchConstraintPercentHeight = 0.81f
                     mConstrainLayout.layoutParams = lp
+
 
                     actionAppBar.visibility= View.VISIBLE
                     navBar.visibility= View.VISIBLE
@@ -171,6 +225,15 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
 
         showFragment(fragment)
 
+        showBackButton(true)
+
+    }
+
+    private fun showBackButton(isBack: Boolean) {
+        toggle.isDrawerIndicatorEnabled = !isBack
+        supportActionBar!!.setDisplayHomeAsUpEnabled(isBack)
+
+        toggle.syncState()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -187,6 +250,8 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
     override fun onBackPressed() {
         if (supportFragmentManager.backStackEntryCount > 0) {
             supportFragmentManager.popBackStack()
+            if(supportFragmentManager.backStackEntryCount==1)
+                showBackButton(false)
         } else {
             super.onBackPressed()
         }

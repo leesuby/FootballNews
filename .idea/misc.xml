@@ -13,7 +13,7 @@
         <entry key="app/src/main/res/drawable/ic_baseline_schedule.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_baseline_standing.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.1933876811594203" />
         <entry key="app/src/main/res/layout/activity_splash.xml" value="0.115861479264643" />
         <entry key="app/src/main/res/layout/ativity_detail.xml" value="0.10099637681159421" />
         <entry key="app/src/main/res/layout/custom_competition.xml" value="0.10775862068965517" />
@@ -28,6 +28,7 @@
         <entry key="app/src/main/res/layout/fragment_news.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_schedule_news.xml" value="0.17272338606241983" />
         <entry key="app/src/main/res/layout/fragment_standing_news.xml" value="0.14052583862194015" />
+        <entry key="app/src/main/res/layout/navigator_header.xml" value="0.19021759033203123" />
         <entry key="app/src/main/res/menu-v26/bottom_menu.xml" value="0.1" />
         <entry key="app/src/main/res/menu/bottom_menu.xml" value="0.10750695088044486" />
       </map>

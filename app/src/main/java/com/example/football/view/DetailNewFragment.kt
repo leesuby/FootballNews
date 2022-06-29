@@ -2,6 +2,7 @@ package com.example.football.view
 
 
 import android.annotation.SuppressLint
+import android.app.ActionBar
 import android.graphics.Color
 import android.graphics.Typeface
 import android.net.Uri
@@ -41,13 +42,18 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
 
     private lateinit var title : TextView
     private lateinit var layout : LinearLayout
-
+    private var toolbar: ActionBar? = activity?.actionBar
     private var message : Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val bundle = arguments
         message = bundle!!.getInt("idContent")
+
+        toolbar?.setDisplayShowHomeEnabled(true);
+        toolbar?.setDisplayHomeAsUpEnabled(false);
+        toolbar?.setHomeButtonEnabled(true);
+        toolbar?.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back)
 
         //initial ViewModel and data
         detailViewModel = ViewModelProvider(this).get(DetailsViewModel::class.java)
