@@ -1,5 +1,6 @@
 package com.example.football.view
 
+
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
@@ -8,18 +9,25 @@ import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import android.os.Environment
-import android.util.Log
 import android.view.MenuItem
+import android.view.View
+import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
+import androidx.navigation.ui.setupWithNavController
 import com.example.football.R
 import com.example.football.utils.Helpers
 import com.example.football.utils.ManagePermissions
 import com.example.football.view.broadcast.CheckConnectionReceiver
 import com.example.football.view.service.OfflineService
 import com.example.football.viewmodel.NewsViewModel
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -29,14 +37,20 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
     private val viewModel: NewsViewModel by viewModels()
     private val managePermissions : ManagePermissions = ManagePermissions(this)
     private val checkConnectionReceiver : CheckConnectionReceiver = CheckConnectionReceiver()
+    private lateinit var actionAppBar : Toolbar
+    private lateinit var navBar : BottomNavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        actionAppBar = findViewById(R.id.toolbar)
+        navBar = findViewById(R.id.bottomNavigationView)
+
+//        navBar.setupWithNavController(findNavController(R.id.fragment_main))
+
         //splash screen for waiting download data
-        val fragmentSplash = SplashFragment()
-        showFragment(fragmentSplash,false)
+        startSplashScreen()
 
         //register broadcast to check internet
         registerNetworkReceiver()
@@ -49,6 +63,7 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
             Helpers.isOfflineMode = true
 
             loadListonOfflineMode()
+
         }
 
 
@@ -59,6 +74,25 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
         super.onDestroy()
         unregisterReceiver(checkConnectionReceiver)
 
+    }
+
+    private fun startSplashScreen() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            window.setDecorFitsSystemWindows(false)
+        } else {
+            window.decorView.systemUiVisibility =
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        }
+
+        window.statusBarColor = ContextCompat.getColor(this, android.R.color.transparent)
+
+        val mConstrainLayout = findViewById<FrameLayout>(R.id.fragment_main)
+        val lp = mConstrainLayout.layoutParams as ConstraintLayout.LayoutParams
+        lp.matchConstraintPercentHeight = 1f
+        mConstrainLayout.layoutParams = lp
+
+        val fragmentSplash = SplashFragment()
+        showFragment(fragmentSplash, false)
     }
 
     private fun registerNetworkReceiver(){
@@ -84,7 +118,21 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
                 while(!Helpers.isListNewsSaved){
                     if(Helpers.isListNewsSaved)
                         break
+
                 }
+
+                //Run UI on Main Thread(UI Thread)
+                launch(Dispatchers.Main) {
+                    val mConstrainLayout = findViewById<FrameLayout>(R.id.fragment_main)
+                    val lp = mConstrainLayout.layoutParams as ConstraintLayout.LayoutParams
+                    lp.matchConstraintPercentHeight = 0.84f
+                    mConstrainLayout.layoutParams = lp
+
+                    actionAppBar.visibility= View.VISIBLE
+                    navBar.visibility= View.VISIBLE
+
+                }
+
 
                 //start fragment
                 val fragmentHome = HomeNewsFragment()
@@ -100,9 +148,6 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
             showFragment(fragmentHome, false)
 
         }
-
-
-
 
     }
 
@@ -129,7 +174,7 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.getItemId() === android.R.id.home) {
+        if (item.getItemId() == android.R.id.home) {
             //Title bar back press triggers onBackPressed()
             onBackPressed()
             return true

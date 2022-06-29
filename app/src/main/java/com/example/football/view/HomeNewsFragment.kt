@@ -8,13 +8,10 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.football.view.adapters.RecyclerHomeAdapter
-import com.example.football.data.model.HomeBaoMoiData
 import com.example.football.R
-import com.example.football.data.model.SoccerMatch
 import com.example.football.viewmodel.NewsViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -52,7 +49,7 @@ class HomeNewsFragment : Fragment() , CoroutineScope {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        views = inflater.inflate(R.layout.fragment_news,container,false)
+        views = inflater.inflate(R.layout.fragment_home_news,container,false)
         return views
     }
 

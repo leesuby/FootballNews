@@ -7,8 +7,13 @@
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/border_boxhome.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/border_matchhome.xml" value="0.155" />
+        <entry key="app/src/main/res/drawable/ic_baseline_club.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_baseline_home.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_baseline_home1.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_baseline_schedule.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_baseline_standing.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.19610507246376813" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_splash.xml" value="0.115861479264643" />
         <entry key="app/src/main/res/layout/ativity_detail.xml" value="0.10099637681159421" />
         <entry key="app/src/main/res/layout/custom_competition.xml" value="0.10775862068965517" />
@@ -17,8 +22,14 @@
         <entry key="app/src/main/res/layout/custom_matchs.xml" value="0.1" />
         <entry key="app/src/main/res/layout/custom_news.xml" value="0.36764705882352944" />
         <entry key="app/src/main/res/layout/customview_news.xml" value="0.14933675130208332" />
+        <entry key="app/src/main/res/layout/fragment_club_news.xml" value="0.14052583862194015" />
         <entry key="app/src/main/res/layout/fragment_detail.xml" value="0.10410334346504559" />
+        <entry key="app/src/main/res/layout/fragment_home_news.xml" value="0.14052583862194015" />
         <entry key="app/src/main/res/layout/fragment_news.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_schedule_news.xml" value="0.17272338606241983" />
+        <entry key="app/src/main/res/layout/fragment_standing_news.xml" value="0.14052583862194015" />
+        <entry key="app/src/main/res/menu-v26/bottom_menu.xml" value="0.1" />
+        <entry key="app/src/main/res/menu/bottom_menu.xml" value="0.10750695088044486" />
       </map>
     </option>
   </component>

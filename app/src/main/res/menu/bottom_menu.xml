@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/menu_home"
+        android:title="@string/menu_home"
+        android:icon="@drawable/ic_baseline_home1"
+        android:iconTint="@color/bluegreen"
+        />
+
+    <item android:id="@+id/menu_standing"
+        android:title="@string/menu_standing"
+        android:icon="@drawable/ic_baseline_standing"
+        android:iconTint="@color/bluegreen"/>
+
+    <item android:id="@+id/menu_schedule"
+        android:title="@string/menu_schedule"
+        android:icon="@drawable/ic_baseline_schedule"
+        android:iconTint="@color/bluegreen"/>
+
+    <item android:id="@+id/menu_club"
+        android:title="@string/menu_club"
+        android:icon="@drawable/ic_baseline_club"
+        android:iconTint="@color/bluegreen"/>
+</menu>

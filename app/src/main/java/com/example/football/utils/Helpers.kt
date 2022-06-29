@@ -192,8 +192,7 @@ class Helpers {
                 else{
                     Glide.with(context)
                         .load(url)
-                        .centerCrop()
-                        .apply(RequestOptions.bitmapTransform(RoundedCorners(20)))
+                        .apply(RequestOptions.bitmapTransform(RoundedCorners(15)))
                         .into(view)
                 }
             }
