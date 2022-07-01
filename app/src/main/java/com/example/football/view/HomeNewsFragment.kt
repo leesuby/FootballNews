@@ -8,10 +8,12 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.football.view.adapters.RecyclerHomeAdapter
 import com.example.football.R
+import com.example.football.view.decor.HomeDecorate
 import com.example.football.viewmodel.NewsViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -78,6 +80,9 @@ class HomeNewsFragment : Fragment() , CoroutineScope {
             }
         })
         newsList.adapter = adapterNewlist
+
+        this.context?.let { HomeDecorate(it,R.drawable.line_divider) }
+            ?.let { newsList.addItemDecoration(it) }
 
         newsViewModel.getListNewsObservable().observe(viewLifecycleOwner) {
             if (it == null) {

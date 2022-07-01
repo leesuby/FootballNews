@@ -1,6 +1,7 @@
 package com.example.football.view.adapters
 
 import android.annotation.SuppressLint
+import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -18,9 +19,13 @@ import com.example.football.utils.Helpers
 import com.example.football.utils.Helpers.Companion.margin
 import java.io.File
 import java.text.SimpleDateFormat
+import java.util.*
 
 class RecyclerMatchHomeAdapter : RecyclerView.Adapter<RecyclerMatchHomeAdapter.MatchViewHolder>() {
 
+    private val MATCH_DONE = 0
+    private val MATCH_GOING = 1
+    private val MATCH_COMING = 2
     var listMatch = mutableListOf<SoccerMatch>()
 
     inner class MatchViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -31,6 +36,8 @@ class RecyclerMatchHomeAdapter : RecyclerView.Adapter<RecyclerMatchHomeAdapter.M
         var itemTeam2Name: TextView
         var itemTeam1Logo: ImageView
         var itemTeam2Logo: ImageView
+        var itemTeam1Score: TextView
+        var itemTeam2Score: TextView
 
         init{
             itemMatchLine = itemView.findViewById(R.id.match_lineHome)
@@ -40,6 +47,8 @@ class RecyclerMatchHomeAdapter : RecyclerView.Adapter<RecyclerMatchHomeAdapter.M
             itemTeam1Logo = itemView.findViewById(R.id.img_matchteam1Home)
             itemTeam2Name = itemView.findViewById(R.id.tv_nameteam2Home)
             itemTeam2Logo = itemView.findViewById(R.id.img_matchteam2Home)
+            itemTeam1Score = itemView.findViewById(R.id.tv_scoreteam1Home)
+            itemTeam2Score = itemView.findViewById(R.id.tv_scoreteam2Home)
 
         }
 
@@ -51,12 +60,38 @@ class RecyclerMatchHomeAdapter : RecyclerView.Adapter<RecyclerMatchHomeAdapter.M
     }
 
 
-    @SuppressLint("SimpleDateFormat")
+    @SuppressLint("SimpleDateFormat", "SetTextI18n")
     override fun onBindViewHolder(holder: MatchViewHolder, position: Int) {
         val match = listMatch[position]
+        var convertTime = SimpleDateFormat("hh:mm a", Locale.getDefault())
+        var convertDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 
         if(position!=0)
             holder.itemView.margin(left = 10f)
+
+        when(match.match_status){
+
+            MATCH_GOING -> {holder.itemMatchLine.setBackgroundColor(Color.RED)
+                holder.itemTime.text= convertTime.format(match.start_time.toLong()) + " " + convertDate.format(match.start_time.toLong())
+                holder.itemTeam1Score.text = match.home_scored.toString()
+                holder.itemTeam2Score.text = match.away_scored.toString()
+            }
+
+            MATCH_COMING -> {holder.itemMatchLine.setBackgroundColor(Color.GREEN)
+                holder.itemTime.text= convertTime.format(match.start_time.toLong()) + " " + convertDate.format(match.start_time.toLong())
+            }
+
+            MATCH_DONE ->{ holder.itemMatchLine.setBackgroundColor(Color.GRAY)
+                holder.itemTime.text = "Kết thúc"
+                holder.itemTeam1Score.text = match.home_scored.toString()
+                holder.itemTeam2Score.text = match.away_scored.toString()
+
+            }
+
+            else -> {holder.itemMatchLine.setBackgroundColor(Color.LTGRAY)
+                holder.itemTime.text= convertTime.format(match.start_time.toLong()) + " " + convertDate.format(match.start_time.toLong())
+            }
+        }
 
         holder.itemCompetitionName.text = match.competition.competition_name
         holder.itemTeam1Name.text = match.home_team.team_name
@@ -65,7 +100,7 @@ class RecyclerMatchHomeAdapter : RecyclerView.Adapter<RecyclerMatchHomeAdapter.M
         Helpers.checkandLoadImageGlide(match.home_team.team_logo,holder.itemTeam1Logo,holder.itemView.context)
         Helpers.checkandLoadImageGlide(match.away_team.team_logo,holder.itemTeam2Logo,holder.itemView.context)
 
-        var convert = SimpleDateFormat("HH:mm dd MMM yyyy")
+
 
 
     }

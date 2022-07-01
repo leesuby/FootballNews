@@ -3,6 +3,7 @@ package com.example.football.utils
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.os.Build
 import android.os.Environment
 import android.util.Log
 import android.util.TypedValue
@@ -19,6 +20,7 @@ import com.example.football.data.local.database.detail.BodyDetailContent
 import com.example.football.data.local.database.detail.DetailContent
 import com.example.football.data.local.database.home.HomeContent
 import com.example.football.data.model.Content
+import com.example.football.view.MainActivity
 import com.example.football.view.broadcast.CheckConnectionReceiver
 import java.io.*
 import java.net.HttpURLConnection
@@ -34,18 +36,19 @@ class Helpers {
         var isListNewsSaved : Boolean = false
         val AppName = "BongDaMoi"
         val seperator = "/"
+        var cacheDir : String = ""
 
         //calculate time to show time between now and posted time of that news
         fun CalculateDistanceTime(date: Int) : String{
             val calendar: Calendar = Calendar.getInstance()
             val distanceTime = calendar.timeInMillis/1000 - date
-            when{
-                distanceTime > 604800 -> return "${calendar.time}"
-                distanceTime > 86400 -> return "${distanceTime/86400} ngày"
-                distanceTime > 3600 -> return "${distanceTime/3600} giờ"
-                distanceTime > 60 -> return "${distanceTime/60} phút"
+            return when{
+                distanceTime > 604800 -> "${calendar.time}"
+                distanceTime > 86400 -> "${distanceTime/86400} ngày"
+                distanceTime > 3600 -> "${distanceTime/3600} giờ"
+                distanceTime > 60 -> "${distanceTime/60} phút"
                 else -> {
-                    return "Vừa đăng"
+                    "Vừa đăng"
                 }
             }
         }
@@ -92,7 +95,12 @@ class Helpers {
             // Get the external storage directory path
             val dirpath = Environment.getExternalStorageDirectory().absolutePath
 
-            val path = dirpath + seperator + AppName + seperator + nameC
+            // Save to cache when Android O above
+            val path = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                cacheDir + seperator + AppName + seperator + nameC
+            } else {
+                dirpath + seperator + AppName + seperator + nameC
+            }
 
             // Create a folder to save the image
             val directory = File(path)
@@ -177,7 +185,7 @@ class Helpers {
         fun checkandLoadImageGlide(url: String?, view : ImageView,context : Context){
             if (!url.isNullOrBlank())
             {
-                if(Helpers.internet){
+                if(internet){
                     Glide.with(context)
                         .load(url)
                         .apply(

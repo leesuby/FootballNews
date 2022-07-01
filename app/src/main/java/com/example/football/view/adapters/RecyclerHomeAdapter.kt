@@ -23,6 +23,9 @@ import java.io.File
 
 class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
+    private val MATCH = 0
+    private val NEWS = 1
+    private val COMPETITION = 2
 
     private lateinit var mListener: onNewsClickListener
 
@@ -43,9 +46,9 @@ class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (position == 0) 1
+        return if (position == 0) MATCH
         else {
-            if (position==4) 3 else 2
+            if (position==4) COMPETITION else NEWS
         }
     }
 
@@ -94,11 +97,11 @@ class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     ): RecyclerView.ViewHolder {
         var v : View
         return when (viewType) {
-            1 -> {
+            MATCH -> {
                 v = LayoutInflater.from(parent.context).inflate(R.layout.custom_matchs, parent, false)
                 ViewHolderMatch(v)
             }
-            2 -> {
+            NEWS -> {
                 v = LayoutInflater.from(parent.context).inflate(R.layout.custom_news, parent, false)
                 ViewHolderNews(v, mListener)
             }
@@ -106,13 +109,14 @@ class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 v = LayoutInflater.from(parent.context).inflate(R.layout.custom_competition, parent, false)
                 ViewHolderCompetition(v)
             }
+
         }
 
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder.itemViewType) {
-            1 -> {
+            MATCH -> {
                 holder as ViewHolderMatch
 
                 val layoutManager = LinearLayoutManager(holder.itemView.context,LinearLayoutManager.HORIZONTAL,false)
@@ -123,7 +127,7 @@ class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 holder.itemMatchRecyclerView.adapter=adapter
 
             }
-            2 -> {
+            NEWS -> {
                 holder as ViewHolderNews
                 val news: Content = listNews.get(position)
 
@@ -144,7 +148,7 @@ class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                     }
                 }
             }
-            3 ->{
+            COMPETITION ->{
                 holder as ViewHolderCompetition
                 val layoutManager = LinearLayoutManager(holder.itemView.context,LinearLayoutManager.HORIZONTAL,false)
                 val adapter = RecyclerCompetitionHomeAdapter()

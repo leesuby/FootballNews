@@ -3,12 +3,12 @@
     <item>
         <shape android:shape="rectangle">
             <stroke
-                android:width="4dp"
-                android:color="#BEBEBE" />
+                android:width="8dp"
+                android:color="#e5e4e5" />
             <solid android:color="@color/white" />
         </shape>
     </item>
-    <item android:bottom="4dp" android:top="4dp">
+    <item android:bottom="8dp" android:top="8dp">
         <shape android:shape="rectangle">
             <stroke android:width="50dp" android:color="@color/white" />
         </shape>

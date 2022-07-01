@@ -8,19 +8,33 @@
     <fragment
         android:id="@+id/homeNewsFragment"
         android:name="com.example.football.view.HomeNewsFragment"
-        android:label="HomeNewsFragment" />
+        android:label="HomeNewsFragment" >
+        <action
+            android:id="@+id/action_homeNewsFragment_to_detailNewFragment"
+            app:destination="@id/detailNewFragment" />
+    </fragment>
     <fragment
         android:id="@+id/standingNewsFragment"
-        android:name="com.example.football.view.standingNewsFragment"
-        android:label="fragment_standing_news"
-        tools:layout="@layout/fragment_standing_news" />
-    <fragment
-        android:id="@+id/scheduleNewsFragment"
-        android:name="com.example.football.view.ScheduleNewsFragment"
-        android:label="fragment_schedule_news" />
+        android:name="com.example.football.view.StandingNewsFragment"
+        android:label="standingNewsFragment" />
     <fragment
         android:id="@+id/clubNewsFragment"
         android:name="com.example.football.view.ClubNewsFragment"
         android:label="fragment_club_news"
         tools:layout="@layout/fragment_club_news" />
+    <fragment
+        android:id="@+id/detailNewFragment"
+        android:name="com.example.football.view.DetailNewFragment"
+        android:label="DetailNewFragment" >
+        <action
+            android:id="@+id/action_detailNewFragment_self"
+            app:destination="@id/detailNewFragment" />
+        <action
+            android:id="@+id/action_detailNewFragment_to_homeNewsFragment"
+            app:destination="@id/homeNewsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/scheduleNewsFragment"
+        android:name="com.example.football.view.ScheduleNewsFragment"
+        android:label="ScheduleNewsFragment" />
 </navigation>

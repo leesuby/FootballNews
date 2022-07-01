@@ -52,9 +52,8 @@ class ManagePermissions(val activity: MainActivity) {
         builder.setMessage("Cho phép lưu trữ dữ liệu để có thể đọc tin tức ở chế độ Offline(Không có Internet)?")
         builder.setPositiveButton("OK") { _, _ -> requestPermission() }
         builder.setNeutralButton("Cancel"){ _, _ ->
-            val fragment = HomeNewsFragment()
-            fragment.getIDContent = activity
-            activity.showFragment(fragment, false) }
+            activity.loadHomePage(false)
+        }
 
         val dialog = builder.create()
         dialog.show()

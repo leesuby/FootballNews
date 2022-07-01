@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import android.os.Environment
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.FrameLayout
@@ -22,6 +23,10 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
 import com.example.football.R
 import com.example.football.utils.Helpers
 import com.example.football.utils.ManagePermissions
@@ -29,6 +34,7 @@ import com.example.football.view.broadcast.CheckConnectionReceiver
 import com.example.football.view.service.OfflineService
 import com.example.football.viewmodel.NewsViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -42,26 +48,17 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
     private lateinit var navBar : BottomNavigationView
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var toggle: ActionBarDrawerToggle
+    private lateinit var navControl : NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        drawerLayout = findViewById(R.id.layout_drawer)
-        navBar = findViewById(R.id.bottomNavigationView)
+        //get cache path to save local data
+        Helpers.cacheDir = this.cacheDir.toString()
 
-        //set up for tool bar
-        setupToolbar()
-
-        //set up for toggle
-        setupDrawerToggle()
-
-//        actionAppBar.setNavigationIcon(R.drawable.ic_baseline_arrow_back)
-//        actionAppBar.setNavigationOnClickListener(View.OnClickListener {
-//            //What to do on back clicked
-//        })
-
-//        navBar.setupWithNavController(findNavController(R.id.fragment_main))
+        //initial view
+        initView()
 
         //splash screen for waiting download data
         startSplashScreen()
@@ -74,10 +71,7 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
             managePermissions.showAlert()
         }
         else{
-            Helpers.isOfflineMode = true
-
-            loadListonOfflineMode()
-
+            loadHomePage(true)
         }
 
 
@@ -90,8 +84,33 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
 
     }
 
-    private fun setupToolbar(){
+    private fun initView(){
+        drawerLayout = findViewById(R.id.layout_drawer)
+        navBar = findViewById(R.id.bottomNavigationView)
+
+        navBar.setOnItemSelectedListener {
+            when(it.itemId){
+                R.id.nav_home -> showFragment(HomeNewsFragment(),false)
+                R.id.nav_schedule -> showFragment(ScheduleNewsFragment(),false)
+                R.id.nav_club -> showFragment(ClubNewsFragment(),false)
+                R.id.nav_standing -> showFragment(StandingNewsFragment(),false)
+            }
+            true
+        }
+
         actionAppBar = findViewById(R.id.toolbar)
+
+        //set up for tool bar
+        setupToolbar()
+
+        //set up for toggle
+        setupDrawerToggle()
+
+        //set up for bottom navigator bar
+        setupNavBar()
+
+    }
+    private fun setupToolbar(){
         actionAppBar.title=""
 
         setSupportActionBar(actionAppBar)
@@ -122,6 +141,26 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
 
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
+    }
+
+    private fun setupNavBar(){
+        navBar.setOnItemSelectedListener {
+            Log.e("itemid",it.itemId.toString())
+            when(it.itemId){
+                R.id.nav_home -> {val fragmentHome = HomeNewsFragment()
+                                    fragmentHome.getIDContent = this@MainActivity
+                                    showFragment(fragmentHome, false)}
+                R.id.nav_schedule -> showFragment(ScheduleNewsFragment(),false)
+                R.id.nav_club -> showFragment(ClubNewsFragment(),false)
+                R.id.nav_standing -> showFragment(StandingNewsFragment(),false)
+            }
+            true
+        }
+    }
+
+    private fun setupNavControl(){
+        navBar.setupWithNavController(navControl)
+
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -158,8 +197,8 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
     }
 
     //use to load list if user enable write and read SD
-    private fun loadListonOfflineMode(){
-        Helpers.isOfflineMode = true
+    fun loadHomePage(offlineMode : Boolean){
+        Helpers.isOfflineMode = offlineMode
 
         //start service
         if(Helpers.internet){
@@ -196,6 +235,15 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
         }
 
         else{
+            val mConstrainLayout = findViewById<FrameLayout>(R.id.fragment_main)
+            val lp = mConstrainLayout.layoutParams as ConstraintLayout.LayoutParams
+            lp.matchConstraintPercentHeight = 0.81f
+            mConstrainLayout.layoutParams = lp
+
+
+            actionAppBar.visibility= View.VISIBLE
+            navBar.visibility= View.VISIBLE
+
             //start fragment
             val fragmentHome = HomeNewsFragment()
             fragmentHome.getIDContent = this@MainActivity
@@ -205,7 +253,7 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
 
     }
 
-    fun showFragment (fragment: Fragment,addtoBackStack : Boolean = true){
+    private fun showFragment (fragment: Fragment, addtoBackStack : Boolean = true): Boolean {
         val fram = supportFragmentManager.beginTransaction()
         fram.replace(R.id.fragment_main,fragment)
 
@@ -214,6 +262,7 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
         else
             fram.addToBackStack(fragment.toString()).commit()
 
+        return true
     }
 
     override fun showDetail(idContent: Int) {
@@ -270,11 +319,10 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
                 val READ_EXTERNAL_STORAGE = grantResults[0] == PackageManager.PERMISSION_GRANTED
                 val WRITE_EXTERNAL_STORAGE = grantResults[1] == PackageManager.PERMISSION_GRANTED
                 if (READ_EXTERNAL_STORAGE && WRITE_EXTERNAL_STORAGE) {
-                    loadListonOfflineMode()
+                    loadHomePage(true)
                     }
                 } else {
-                    Toast.makeText(this, "Allow permission for storage access!", Toast.LENGTH_SHORT)
-                        .show()
+                    loadHomePage(false)
                 }
             }
         }
@@ -286,11 +334,10 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
         if (requestCode == 2296) {
             if (SDK_INT >= Build.VERSION_CODES.R) {
                 if (Environment.isExternalStorageManager()) {
-                    loadListonOfflineMode()
+                    loadHomePage(true)
                     }
                 } else {
-                    Toast.makeText(this, "Allow permission for storage access!", Toast.LENGTH_SHORT)
-                        .show()
+                    loadHomePage(false)
                 }
             }
         }
