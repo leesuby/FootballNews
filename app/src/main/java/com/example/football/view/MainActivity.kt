@@ -118,7 +118,6 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
         supportActionBar?.setHomeButtonEnabled(true)
-
     }
 
     private fun setupDrawerToggle() {
@@ -274,6 +273,13 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
 
         showFragment(fragment)
 
+        val mConstrainLayout = findViewById<FrameLayout>(R.id.fragment_main)
+        val lp = mConstrainLayout.layoutParams as ConstraintLayout.LayoutParams
+        lp.matchConstraintPercentHeight = 0.95f
+        mConstrainLayout.layoutParams = lp
+
+        navBar.visibility= View.GONE
+
         showBackButton(true)
 
     }
@@ -300,7 +306,17 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
         if (supportFragmentManager.backStackEntryCount > 0) {
             supportFragmentManager.popBackStack()
             if(supportFragmentManager.backStackEntryCount==1)
+            {
                 showBackButton(false)
+
+                val mConstrainLayout = findViewById<FrameLayout>(R.id.fragment_main)
+                val lp = mConstrainLayout.layoutParams as ConstraintLayout.LayoutParams
+                lp.matchConstraintPercentHeight = 0.81f
+                mConstrainLayout.layoutParams = lp
+
+                navBar.visibility= View.VISIBLE
+
+            }
         } else {
             super.onBackPressed()
         }

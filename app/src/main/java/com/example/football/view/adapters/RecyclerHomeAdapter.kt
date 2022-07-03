@@ -7,6 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.MaterialTheme
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -19,6 +26,7 @@ import com.example.football.data.model.Competition
 import com.example.football.data.model.SoccerCompetition
 import com.example.football.data.model.SoccerMatch
 import com.example.football.utils.Helpers
+import com.example.football.view.compose.LoadingAnimation
 import java.io.File
 
 class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -26,12 +34,14 @@ class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val MATCH = 0
     private val NEWS = 1
     private val COMPETITION = 2
+    private val LOADING = 3
 
     private lateinit var mListener: onNewsClickListener
 
     var listNews = mutableListOf<Content>()
     var listMatch = mutableListOf<SoccerMatch>()
     var listCompetition = mutableListOf<SoccerCompetition>()
+    var increment_listNews = 0
 
     interface onNewsClickListener {
         fun onItemClick(idContent: Int)
@@ -42,13 +52,15 @@ class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     override fun getItemCount(): Int {
-        return listNews.size
+        return listNews.size + 3//loading animate + match + competition
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (position == 0) MATCH
-        else {
-            if (position==4) COMPETITION else NEWS
+        return when(position){
+            0 -> MATCH
+            4 -> COMPETITION
+            itemCount - 1-> LOADING
+            else -> NEWS
         }
     }
 
@@ -91,6 +103,15 @@ class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
     }
 
+    inner class ViewHolderLoadingAnimate(itemView: View) :
+        RecyclerView.ViewHolder(itemView){
+            var loadingAnimate : ComposeView
+
+            init {
+                loadingAnimate = itemView.findViewById(R.id.animate_loading)
+            }
+        }
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -105,9 +126,13 @@ class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 v = LayoutInflater.from(parent.context).inflate(R.layout.custom_news, parent, false)
                 ViewHolderNews(v, mListener)
             }
-            else -> {
+            COMPETITION -> {
                 v = LayoutInflater.from(parent.context).inflate(R.layout.custom_competition, parent, false)
                 ViewHolderCompetition(v)
+            }
+            else -> {
+                v = LayoutInflater.from(parent.context).inflate(R.layout.compose_animate_loading, parent, false)
+                ViewHolderLoadingAnimate(v)
             }
 
         }
@@ -126,10 +151,17 @@ class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 holder.itemMatchRecyclerView.layoutManager=layoutManager
                 holder.itemMatchRecyclerView.adapter=adapter
 
+
             }
             NEWS -> {
                 holder as ViewHolderNews
-                val news: Content = listNews.get(position)
+
+                Log.e("increment",increment_listNews.toString())
+                if(listNews.size<=increment_listNews)
+                  return
+                val news: Content = listNews[increment_listNews]
+
+                increment_listNews++
 
                 holder.itemTime.text =
                     Helpers.CalculateDistanceTime(
@@ -156,6 +188,23 @@ class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
                 holder.itemCompetitionRecyclerView.layoutManager=layoutManager
                 holder.itemCompetitionRecyclerView.adapter=adapter
+            }
+            LOADING -> {
+                holder as ViewHolderLoadingAnimate
+
+                holder.loadingAnimate.setContent {
+
+                    MaterialTheme{
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ){
+                            LoadingAnimation()
+                        }
+
+                    }
+                }
             }
 
         }

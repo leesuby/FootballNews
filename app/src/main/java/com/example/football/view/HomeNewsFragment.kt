@@ -6,13 +6,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.MaterialTheme
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.football.view.adapters.RecyclerHomeAdapter
 import com.example.football.R
+import com.example.football.view.compose.LoadingAnimation
 import com.example.football.view.decor.HomeDecorate
 import com.example.football.viewmodel.NewsViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -50,7 +57,7 @@ class HomeNewsFragment : Fragment() , CoroutineScope {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         views = inflater.inflate(R.layout.fragment_home_news,container,false)
         return views
     }
@@ -89,6 +96,7 @@ class HomeNewsFragment : Fragment() , CoroutineScope {
                 Toast.makeText(this.context, "No result found", Toast.LENGTH_SHORT).show()
             } else {
                 adapterNewlist.listNews = it.data.contents.toMutableList()
+                adapterNewlist.increment_listNews = 0
                 adapterNewlist.notifyDataSetChanged()
             }
         }
@@ -98,6 +106,7 @@ class HomeNewsFragment : Fragment() , CoroutineScope {
                 Toast.makeText(this.context, "No result found", Toast.LENGTH_SHORT).show()
             } else {
                 adapterNewlist.listMatch = it.data.soccer_match.toMutableList()
+                adapterNewlist.increment_listNews = 0
                 adapterNewlist.notifyDataSetChanged()
             }
         }
@@ -107,10 +116,10 @@ class HomeNewsFragment : Fragment() , CoroutineScope {
                 Toast.makeText(this.context, "No result found", Toast.LENGTH_SHORT).show()
             } else {
                 adapterNewlist.listCompetition = it.data.soccer_competitions.toMutableList()
+                adapterNewlist.increment_listNews = 0
                 adapterNewlist.notifyDataSetChanged()
             }
         }
-
 
     }
 
