@@ -96,7 +96,6 @@ class HomeNewsFragment : Fragment() , CoroutineScope {
                 Toast.makeText(this.context, "No result found", Toast.LENGTH_SHORT).show()
             } else {
                 adapterNewlist.listNews = it.data.contents.toMutableList()
-                adapterNewlist.increment_listNews = 0
                 adapterNewlist.notifyDataSetChanged()
             }
         }
@@ -106,7 +105,6 @@ class HomeNewsFragment : Fragment() , CoroutineScope {
                 Toast.makeText(this.context, "No result found", Toast.LENGTH_SHORT).show()
             } else {
                 adapterNewlist.listMatch = it.data.soccer_match.toMutableList()
-                adapterNewlist.increment_listNews = 0
                 adapterNewlist.notifyDataSetChanged()
             }
         }
@@ -116,7 +114,6 @@ class HomeNewsFragment : Fragment() , CoroutineScope {
                 Toast.makeText(this.context, "No result found", Toast.LENGTH_SHORT).show()
             } else {
                 adapterNewlist.listCompetition = it.data.soccer_competitions.toMutableList()
-                adapterNewlist.increment_listNews = 0
                 adapterNewlist.notifyDataSetChanged()
             }
         }

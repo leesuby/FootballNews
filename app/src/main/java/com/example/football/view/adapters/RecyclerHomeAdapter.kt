@@ -52,7 +52,7 @@ class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     override fun getItemCount(): Int {
-        return listNews.size + 3//loading animate + match + competition
+        return listNews.size + 3 //loading animate + match + competition
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -78,7 +78,13 @@ class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             itemTime = itemView.findViewById(R.id.tv_time)
 
             itemView.setOnClickListener {
-                listener.onItemClick(listNews.get(adapterPosition).content_id)
+                var positionListNews: Int = 0
+                when(adapterPosition){
+                    in 1..3 -> positionListNews = adapterPosition - 1
+                    in 5..itemCount -> positionListNews = adapterPosition -2
+                }
+
+                listener.onItemClick(listNews.get(positionListNews).content_id)
             }
         }
 
@@ -157,9 +163,16 @@ class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 holder as ViewHolderNews
 
                 Log.e("increment",increment_listNews.toString())
-                if(listNews.size<=increment_listNews)
+                if(listNews.size==0)
                   return
-                val news: Content = listNews[increment_listNews]
+
+                var positionListNews: Int = 0
+                when(position){
+                    in 1..3 -> positionListNews = position - 1
+                    in 5..itemCount -> positionListNews = position -2
+                }
+
+                val news: Content = listNews[positionListNews]
 
                 increment_listNews++
 
