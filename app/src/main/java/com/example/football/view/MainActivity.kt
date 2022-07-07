@@ -1,14 +1,14 @@
 package com.example.football.view
 
 
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import android.os.Environment
+import android.os.IBinder
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
@@ -50,6 +50,25 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
     private lateinit var toggle: ActionBarDrawerToggle
     private lateinit var navControl : NavController
 
+    private lateinit var mService: OfflineService
+    private var mBound: Boolean = false
+
+    /** Defines callbacks for service binding, passed to bindService()  */
+    private val connection = object : ServiceConnection {
+
+        override fun onServiceConnected(className: ComponentName, service: IBinder) {
+            // We've bound to OfflineService, cast the IBinder and get OfflineService instance
+            val binder = service as OfflineService.OfflineBinder
+            mService = binder.getService()
+            mBound = true
+        }
+
+        override fun onServiceDisconnected(arg0: ComponentName) {
+            mBound = false
+        }
+    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -81,6 +100,7 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver(checkConnectionReceiver)
+        unbindService(connection)
 
     }
 
@@ -199,10 +219,12 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
     fun loadHomePage(offlineMode : Boolean){
         Helpers.isOfflineMode = offlineMode
 
-        //start service
         if(Helpers.internet){
-            val intent = Intent(this, OfflineService::class.java)
-            startService(intent)
+
+            //bind service
+            Intent(this, OfflineService::class.java).also { intent ->
+                bindService(intent, connection, Context.BIND_AUTO_CREATE)
+            }
 
             //Thread check data is saved and load list news
             GlobalScope.launch(Dispatchers.Default){

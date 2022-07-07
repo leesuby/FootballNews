@@ -3,6 +3,8 @@
 package com.example.football.view.service
 
 import android.content.Intent
+import android.os.Binder
+import android.os.IBinder
 import android.util.Log
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.MutableLiveData
@@ -18,8 +20,18 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class OfflineService : LifecycleService(){
-    private var newsViewModel  = OfflineViewModel()
 
+    private val binder = OfflineBinder()
+
+    /**
+     * Class used for the client Binder.  Because we know this service always
+     * runs in the same process as its clients, we don't need to deal with IPC.
+     */
+    inner class OfflineBinder : Binder(){
+        fun getService(): OfflineService = this@OfflineService
+    }
+
+    private var newsViewModel  = OfflineViewModel()
 
     override fun onCreate() {
         super.onCreate()
@@ -30,8 +42,9 @@ class OfflineService : LifecycleService(){
 
     }
 
+    override fun onBind(intent: Intent): IBinder {
+        super.onBind(intent)
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         newsViewModel.getListNewsObservable().observe(this, Observer<HomeBaoMoiData>{
             if (it == null){
 
@@ -45,11 +58,7 @@ class OfflineService : LifecycleService(){
 
             }
         })
-        return super.onStartCommand(intent, flags, startId)
+        return binder
     }
 
-    override fun onDestroy() {
-        stopSelf()
-        super.onDestroy()
-    }
 }
