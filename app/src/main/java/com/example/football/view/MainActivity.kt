@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
     private lateinit var toggle: ActionBarDrawerToggle
     private lateinit var navControl : NavController
 
-    private lateinit var mService: OfflineService
+    lateinit var mService: OfflineService
     private var mBound: Boolean = false
 
     /** Defines callbacks for service binding, passed to bindService()  */

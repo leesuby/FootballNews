@@ -5,13 +5,11 @@ package com.example.football.view.service
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
-import android.util.Log
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.example.football.data.local.NewsLocal
 import com.example.football.data.model.HomeBaoMoiData
-import com.example.football.utils.Helpers
 
 import com.example.football.viewmodel.NewsViewModel
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -59,7 +57,7 @@ class OfflineService : LifecycleService(){
         return binder
     }
 
-    fun saveData(list : MutableLiveData<HomeBaoMoiData>){
+    fun saveData(list: MutableLiveData<HomeBaoMoiData>){
         GlobalScope.launch(Dispatchers.IO) {
             NewsLocal.saveData(list)
         }

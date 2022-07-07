@@ -33,7 +33,6 @@ class NewsLocal {
         private suspend fun saveListNews(homeData: MutableLiveData<HomeBaoMoiData>){
             for (content in homeData.value!!.data!!.contents)
             {
-                Log.e("error",content.toString())
                 var homeContent = HomeContent(
                     content.content_id,
                     content.title,

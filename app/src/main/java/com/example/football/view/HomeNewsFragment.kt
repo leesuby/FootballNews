@@ -1,55 +1,71 @@
 package com.example.football.view
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.ComposeView
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.football.view.adapters.RecyclerHomeAdapter
 import com.example.football.R
+import com.example.football.data.model.HomeBaoMoiData
 import com.example.football.utils.Helpers
-import com.example.football.view.compose.LoadingAnimation
 import com.example.football.view.decor.HomeDecorate
+import com.example.football.view.service.OfflineService
 import com.example.football.viewmodel.NewsViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
-class HomeNewsFragment : Fragment() , CoroutineScope {
-    private var layoutManager : RecyclerView.LayoutManager? = null
-    private lateinit var adapterNewlist : RecyclerHomeAdapter
-    private lateinit var newsList : RecyclerView
-    private val newsViewModel : NewsViewModel by activityViewModels()
-    private lateinit var views :View
+class HomeNewsFragment : Fragment(), CoroutineScope {
+    private var layoutManager: RecyclerView.LayoutManager? = null
+    private lateinit var adapterNewlist: RecyclerHomeAdapter
+    private lateinit var newsList: RecyclerView
+    private val newsViewModel: NewsViewModel by activityViewModels()
+    private lateinit var views: View
     private var flagLoading = false
-    private var pageLoad : Int = 0
+    private var pageLoad: Int = 0
 
-    interface GetIDContent{
+    private lateinit var mService: OfflineService
+
+
+
+    interface GetIDContent {
 
         fun showDetail(idContent: Int)
     }
 
-    lateinit var  getIDContent: GetIDContent
+    lateinit var getIDContent: GetIDContent
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        //check Activity is created to get service
+        activity?.lifecycle?.addObserver(ActivityLifeCycleObserver{
+            if(Helpers.internet){
+                val mainActivity = activity as MainActivity
+                mService = mainActivity.mService}
+        })
+    }
+
+    override fun onDetach() {
+
+        super.onDetach()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         //for recreate fragment
-        pageLoad=1
+        pageLoad = 1
 
         adapterNewlist = RecyclerHomeAdapter()
         //get data for home
@@ -59,6 +75,8 @@ class HomeNewsFragment : Fragment() , CoroutineScope {
             newsViewModel.getListCompetition()
         }
 
+
+
     }
 
     override fun onCreateView(
@@ -66,7 +84,7 @@ class HomeNewsFragment : Fragment() , CoroutineScope {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        views = inflater.inflate(R.layout.fragment_home_news,container,false)
+        views = inflater.inflate(R.layout.fragment_home_news, container, false)
         return views
     }
 
@@ -83,49 +101,58 @@ class HomeNewsFragment : Fragment() , CoroutineScope {
 
 
     @SuppressLint("NotifyDataSetChanged")
-    fun initView(){
+    fun initView() {
         layoutManager = LinearLayoutManager(this.context)
         newsList = views.findViewById(R.id.RV_news)
         newsList.layoutManager = layoutManager
 
-
-
         adapterNewlist = RecyclerHomeAdapter()
 
-        adapterNewlist.setOnItemClickListener(object : RecyclerHomeAdapter.onNewsClickListener{
+        adapterNewlist.setOnItemClickListener(object : RecyclerHomeAdapter.onNewsClickListener {
             override fun onItemClick(idContent: Int) {
                 getIDContent.showDetail(idContent)
             }
         })
         newsList.adapter = adapterNewlist
-        newsList.addOnScrollListener(object : RecyclerView.OnScrollListener(){
+        newsList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                if (!recyclerView.canScrollVertically(1) && newState==RecyclerView.SCROLL_STATE_IDLE) {
-                    if(!flagLoading){
-                        flagLoading=true
-                        newsViewModel.getListNews(this@HomeNewsFragment.context,pageLoad,loadOnline = true)
-
-                    }
-
+                if (!recyclerView.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    if (Helpers.internet) {
+                        if (!flagLoading) {
+                            flagLoading = true
+                            newsViewModel.getListNews(
+                                this@HomeNewsFragment.context,
+                                pageLoad,
+                                loadOnline = true
+                            )
+                        }
+                    } else Toast.makeText(activity, "Không có kết nối mạng", Toast.LENGTH_LONG)
+                        .show()
                 }
             }
         })
 
-        this.context?.let { HomeDecorate(it,R.drawable.line_divider) }
+        this.context?.let { HomeDecorate(it, R.drawable.line_divider) }
             ?.let { newsList.addItemDecoration(it) }
 
         newsViewModel.getListNewsObservable().observe(viewLifecycleOwner) {
             if (it == null) {
                 Toast.makeText(this.context, "No result found", Toast.LENGTH_SHORT).show()
             } else {
-                if(flagLoading){
+                if (flagLoading) {
+                    //load data to UI
                     adapterNewlist.listNews.addAll(it.data.contents.toMutableList())
                     pageLoad++
-                    flagLoading=false
-                }
-                else {
-                    if(Helpers.contentSave.isNotEmpty())
-                        adapterNewlist.listNews=Helpers.contentSave
+                    flagLoading = false
+
+                    //save data for offline
+                    val tmp = MutableLiveData<HomeBaoMoiData>()
+                    tmp.value = it
+                    mService.saveData(tmp)
+
+                } else {
+                    if (Helpers.contentSave.isNotEmpty())
+                        adapterNewlist.listNews = Helpers.contentSave
                     else
                         adapterNewlist.listNews = it.data.contents.toMutableList()
                 }
@@ -143,7 +170,7 @@ class HomeNewsFragment : Fragment() , CoroutineScope {
             }
         }
 
-        newsViewModel.getListCompetitionObservable().observe(viewLifecycleOwner){
+        newsViewModel.getListCompetitionObservable().observe(viewLifecycleOwner) {
             if (it == null) {
                 Toast.makeText(this.context, "No result found", Toast.LENGTH_SHORT).show()
             } else {
@@ -155,18 +182,28 @@ class HomeNewsFragment : Fragment() , CoroutineScope {
     }
 
     //save data which have been loading
-    override fun onStop() {
-        super.onStop()
+    override fun onPause() {
+        super.onPause()
 
         adapterNewlist.listNews.forEach {
-            if(!Helpers.contentSave.contains(it))
+            if (!Helpers.contentSave.contains(it))
                 Helpers.contentSave.add(it)
         }
     }
 
 
-
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main
+
+
+    //class to check if activity created
+    inner class ActivityLifeCycleObserver(private val update: () -> Unit) : DefaultLifecycleObserver {
+        override fun onCreate(owner: LifecycleOwner) {
+            super.onCreate(owner)
+            owner.lifecycle.removeObserver(this)
+            update()
+        }
+    }
+
 }
 
