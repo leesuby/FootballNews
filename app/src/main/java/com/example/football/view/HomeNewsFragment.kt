@@ -2,6 +2,7 @@ package com.example.football.view
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,6 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.football.view.adapters.RecyclerHomeAdapter
 import com.example.football.R
+import com.example.football.utils.Helpers
 import com.example.football.view.compose.LoadingAnimation
 import com.example.football.view.decor.HomeDecorate
 import com.example.football.viewmodel.NewsViewModel
@@ -33,6 +35,8 @@ class HomeNewsFragment : Fragment() , CoroutineScope {
     private lateinit var newsList : RecyclerView
     private val newsViewModel : NewsViewModel by activityViewModels()
     private lateinit var views :View
+    private var flagLoading = false
+    private var pageLoad : Int = 0
 
     interface GetIDContent{
 
@@ -44,13 +48,17 @@ class HomeNewsFragment : Fragment() , CoroutineScope {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        //for recreate fragment
+        pageLoad=1
+
         adapterNewlist = RecyclerHomeAdapter()
         //get data for home
         CoroutineScope(coroutineContext).launch {
-            newsViewModel.getListNews(context)
+            newsViewModel.getListNews(context, loadOnline = false)
             newsViewModel.getListMatch()
             newsViewModel.getListCompetition()
         }
+
     }
 
     override fun onCreateView(
@@ -80,13 +88,28 @@ class HomeNewsFragment : Fragment() , CoroutineScope {
         newsList = views.findViewById(R.id.RV_news)
         newsList.layoutManager = layoutManager
 
+
+
         adapterNewlist = RecyclerHomeAdapter()
+
         adapterNewlist.setOnItemClickListener(object : RecyclerHomeAdapter.onNewsClickListener{
             override fun onItemClick(idContent: Int) {
                 getIDContent.showDetail(idContent)
             }
         })
         newsList.adapter = adapterNewlist
+        newsList.addOnScrollListener(object : RecyclerView.OnScrollListener(){
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                if (!recyclerView.canScrollVertically(1) && newState==RecyclerView.SCROLL_STATE_IDLE) {
+                    if(!flagLoading){
+                        flagLoading=true
+                        newsViewModel.getListNews(this@HomeNewsFragment.context,pageLoad,loadOnline = true)
+
+                    }
+
+                }
+            }
+        })
 
         this.context?.let { HomeDecorate(it,R.drawable.line_divider) }
             ?.let { newsList.addItemDecoration(it) }
@@ -95,7 +118,18 @@ class HomeNewsFragment : Fragment() , CoroutineScope {
             if (it == null) {
                 Toast.makeText(this.context, "No result found", Toast.LENGTH_SHORT).show()
             } else {
-                adapterNewlist.listNews = it.data.contents.toMutableList()
+                if(flagLoading){
+                    adapterNewlist.listNews.addAll(it.data.contents.toMutableList())
+                    pageLoad++
+                    flagLoading=false
+                }
+                else {
+                    if(Helpers.contentSave.isNotEmpty())
+                        adapterNewlist.listNews=Helpers.contentSave
+                    else
+                        adapterNewlist.listNews = it.data.contents.toMutableList()
+                }
+
                 adapterNewlist.notifyDataSetChanged()
             }
         }
@@ -119,6 +153,18 @@ class HomeNewsFragment : Fragment() , CoroutineScope {
         }
 
     }
+
+    //save data which have been loading
+    override fun onStop() {
+        super.onStop()
+
+        adapterNewlist.listNews.forEach {
+            if(!Helpers.contentSave.contains(it))
+                Helpers.contentSave.add(it)
+        }
+    }
+
+
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main

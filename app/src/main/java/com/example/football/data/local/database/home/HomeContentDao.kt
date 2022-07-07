@@ -16,6 +16,15 @@ interface HomeContentDao {
     @Query("SELECT * FROM ContentHome ORDER BY content_id DESC")
     fun readAllContent() : LiveData<HomeContent>
 
-    @Query("SELECT * FROM ContentHome ORDER BY date DESC")
+    @Query("SELECT * " +
+            "FROM ContentHome " +
+            "ORDER BY date DESC " +
+            "LIMIT 20 " +
+            "OFFSET :page * 20")
+    suspend fun readAllContentSynchronousByPage(page : Int) : List<HomeContent>
+
+    @Query("SELECT * " +
+            "FROM ContentHome " +
+            "ORDER BY date DESC")
     suspend fun readAllContentSynchronous() : List<HomeContent>
 }

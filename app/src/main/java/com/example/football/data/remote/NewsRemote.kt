@@ -21,9 +21,9 @@ class NewsRemote {
     companion object{
 
         //request API get list new data
-        fun loadListNews(data : MutableLiveData<HomeBaoMoiData>){
+        fun loadListNews(data : MutableLiveData<HomeBaoMoiData>, page: Int = 0){
             val retroInstance = RetroInstance.getRetroInstance().create(RetroService::class.java)
-            val call = retroInstance.getNewsList(0,20)
+            val call = retroInstance.getNewsList(page*20,20)
             call.enqueue(object : Callback<HomeBaoMoiData> {
                 override fun onFailure(call: Call<HomeBaoMoiData>, t: Throwable) {
                     data.postValue(null)

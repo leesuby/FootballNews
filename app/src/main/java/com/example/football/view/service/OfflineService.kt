@@ -37,7 +37,7 @@ class OfflineService : LifecycleService(){
         super.onCreate()
 
         GlobalScope.launch(Dispatchers.IO) {
-            newsViewModel.getListNews(this@OfflineService,true)
+            newsViewModel.getListNews()
         }
 
     }
@@ -51,14 +51,18 @@ class OfflineService : LifecycleService(){
             }else{
                 val list = MutableLiveData<HomeBaoMoiData>()
                 list.postValue(it)
-                Log.e("error",it.toString())
-                GlobalScope.launch(Dispatchers.IO) {
-                    NewsLocal.saveData(list)
-                }
+                saveData(list)
 
             }
         })
+
         return binder
+    }
+
+    fun saveData(list : MutableLiveData<HomeBaoMoiData>){
+        GlobalScope.launch(Dispatchers.IO) {
+            NewsLocal.saveData(list)
+        }
     }
 
 }

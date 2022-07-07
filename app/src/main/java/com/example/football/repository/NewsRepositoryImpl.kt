@@ -19,19 +19,19 @@ import com.example.football.utils.Helpers
 class NewsRepositoryImpl() : NewsRepository {
     var detailContentDao : DetailContentDao = BaoMoiDatabase.getDatabase().DetailContentDao()
 
-    override fun getListNews(data : MutableLiveData<HomeBaoMoiData>, context: Context?, loadToSave : Boolean) {
+    override fun getListNews(data : MutableLiveData<HomeBaoMoiData>, context: Context?, loadOnline : Boolean,page: Int) {
         if (Helpers.internet){ //online mode
 
-            //load data from database for faster experience
-            if(Helpers.isOfflineMode && !loadToSave)
-                NewsLocal.loadListNews(data)
+            //load data from database for faster experience for initialize after splash screen
+            if(Helpers.isOfflineMode && !loadOnline)
+                NewsLocal.loadListNewsByPage(data,0)
             else
-                NewsRemote.loadListNews(data)
+                NewsRemote.loadListNews(data,page = page)
         }
 
         else{
             //offline mode
-            NewsLocal.loadListNews(data)
+            NewsLocal.loadListNewsAll(data)
             Toast.makeText(context,"No Internet",Toast.LENGTH_SHORT).show()
         }
 

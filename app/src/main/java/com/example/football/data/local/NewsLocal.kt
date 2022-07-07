@@ -109,7 +109,14 @@ class NewsLocal {
         }
 
         //load list news from local
-        fun loadListNews( data: MutableLiveData<HomeBaoMoiData>){
+        fun loadListNewsByPage( data: MutableLiveData<HomeBaoMoiData>, page: Int){
+            GlobalScope.launch(Dispatchers.IO) {
+                data.postValue(HomeBaoMoiData(Data(null,Helpers.convert(homeContentDao.readAllContentSynchronousByPage(page))),0,""))
+            }
+
+        }
+
+        fun loadListNewsAll( data: MutableLiveData<HomeBaoMoiData>){
             GlobalScope.launch(Dispatchers.IO) {
                 data.postValue(HomeBaoMoiData(Data(null,Helpers.convert(homeContentDao.readAllContentSynchronous())),0,""))
             }

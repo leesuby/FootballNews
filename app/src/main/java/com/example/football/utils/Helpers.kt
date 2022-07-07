@@ -37,6 +37,7 @@ class Helpers {
         val AppName = "BongDaMoi"
         val seperator = "/"
         var cacheDir : String = ""
+        var contentSave : MutableList<Content> = mutableListOf()
 
         //calculate time to show time between now and posted time of that news
         fun CalculateDistanceTime(date: Int) : String{

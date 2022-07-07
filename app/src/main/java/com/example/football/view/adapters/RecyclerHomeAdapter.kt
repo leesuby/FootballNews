@@ -41,7 +41,6 @@ class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var listNews = mutableListOf<Content>()
     var listMatch = mutableListOf<SoccerMatch>()
     var listCompetition = mutableListOf<SoccerCompetition>()
-    var increment_listNews = 0
 
     interface onNewsClickListener {
         fun onItemClick(idContent: Int)
@@ -162,7 +161,6 @@ class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             NEWS -> {
                 holder as ViewHolderNews
 
-                Log.e("increment",increment_listNews.toString())
                 if(listNews.size==0)
                   return
 
@@ -174,7 +172,6 @@ class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
                 val news: Content = listNews[positionListNews]
 
-                increment_listNews++
 
                 holder.itemTime.text =
                     Helpers.CalculateDistanceTime(
