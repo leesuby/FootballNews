@@ -38,7 +38,6 @@ class HomeNewsFragment : Fragment(), CoroutineScope {
     private lateinit var mService: OfflineService
 
 
-
     interface GetIDContent {
 
         fun showDetail(idContent: Int)
@@ -49,10 +48,11 @@ class HomeNewsFragment : Fragment(), CoroutineScope {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         //check Activity is created to get service
-        activity?.lifecycle?.addObserver(ActivityLifeCycleObserver{
-            if(Helpers.internet){
+        activity?.lifecycle?.addObserver(ActivityLifeCycleObserver {
+            if (Helpers.internet) {
                 val mainActivity = activity as MainActivity
-                mService = mainActivity.mService}
+                mService = mainActivity.mService
+            }
         })
     }
 
@@ -74,7 +74,6 @@ class HomeNewsFragment : Fragment(), CoroutineScope {
             newsViewModel.getListMatch()
             newsViewModel.getListCompetition()
         }
-
 
 
     }
@@ -140,15 +139,15 @@ class HomeNewsFragment : Fragment(), CoroutineScope {
                 Toast.makeText(this.context, "No result found", Toast.LENGTH_SHORT).show()
             } else {
                 if (flagLoading) {
-                    //load data to UI
-                    adapterNewlist.listNews.addAll(it.data.contents.toMutableList())
-                    pageLoad++
-                    flagLoading = false
-
                     //save data for offline
                     val tmp = MutableLiveData<HomeBaoMoiData>()
                     tmp.value = it
                     mService.saveData(tmp)
+
+                    //load data to UI
+                    adapterNewlist.listNews.addAll(it.data.contents.toMutableList())
+                    pageLoad++
+                    flagLoading = false
 
                 } else {
                     if (Helpers.contentSave.isNotEmpty())
@@ -193,11 +192,12 @@ class HomeNewsFragment : Fragment(), CoroutineScope {
 
 
     override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main
+        get() = Dispatchers.IO
 
 
     //class to check if activity created
-    inner class ActivityLifeCycleObserver(private val update: () -> Unit) : DefaultLifecycleObserver {
+    inner class ActivityLifeCycleObserver(private val update: () -> Unit) :
+        DefaultLifecycleObserver {
         override fun onCreate(owner: LifecycleOwner) {
             super.onCreate(owner)
             owner.lifecycle.removeObserver(this)

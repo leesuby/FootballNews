@@ -24,6 +24,7 @@ import com.example.football.data.model.detail.Content
 import com.example.football.data.model.detail.Data
 import com.example.football.data.model.detail.Related
 import com.example.football.utils.Helpers
+import com.example.football.utils.Helpers.Companion.layoutParams
 import com.example.football.utils.Helpers.Companion.margin
 import com.example.football.view.adapters.RecyclerRelatedNewsAdapter
 import com.example.football.viewmodel.DetailsViewModel
@@ -31,6 +32,7 @@ import com.example.football.viewmodel.NewsViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import java.io.File
 
 
@@ -162,13 +164,22 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
                 "video" -> {
                     val videoView = VideoView(context)
 
+
+                    val urlHTTPS = body.content.replaceRange(4,4,"s")
+                    Log.e("body",urlHTTPS)
                     // Uri object to refer the
                     // resource from the videoUrl
-                    val uri: Uri = Uri.parse(body.content)
+                    val uri: Uri = Uri.parse(urlHTTPS)
 
                     // sets the resource from the
                     // videoUrl to the videoView
                     videoView.setVideoURI(uri)
+
+//                    var  param: FrameLayout.LayoutParams =
+//                        FrameLayout.LayoutParams(400,400);
+//                    param.setMargins(0,0,0,0)
+//
+//                    videoView.layoutParams = param
 
                     // creating object of
                     // media controller class
@@ -184,8 +195,13 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
                     // sets the media controller to the videoView
                     videoView.setMediaController(mediaController)
 
+//                    videoView.start()
+
                     layout.addView(videoView)
-                    Log.e("body",body.content)
+
+
+
+
                 }
                 else -> {}
             }

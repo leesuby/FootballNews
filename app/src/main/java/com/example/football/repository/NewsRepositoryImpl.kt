@@ -26,7 +26,7 @@ class NewsRepositoryImpl() : NewsRepository {
             if(Helpers.isOfflineMode && !loadOnline)
                 NewsLocal.loadListNewsByPage(data,0)
             else
-                NewsRemote.loadListNews(data,page = page)
+                NewsRemote.loadListNews(data,page = page,loadOnline)
         }
 
         else{

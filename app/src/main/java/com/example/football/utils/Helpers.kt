@@ -3,13 +3,18 @@ package com.example.football.utils
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.ImageDecoder
+import android.net.Uri
 import android.os.Build
 import android.os.Environment
+import android.provider.MediaStore
 import android.util.Log
+import android.util.Patterns
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.core.net.toUri
 import androidx.room.TypeConverter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -20,34 +25,31 @@ import com.example.football.data.local.database.detail.BodyDetailContent
 import com.example.football.data.local.database.detail.DetailContent
 import com.example.football.data.local.database.home.HomeContent
 import com.example.football.data.model.Content
-import com.example.football.view.MainActivity
-import com.example.football.view.broadcast.CheckConnectionReceiver
 import java.io.*
 import java.net.HttpURLConnection
 import java.net.MalformedURLException
 import java.net.URL
-import java.nio.file.Files
 import java.util.*
 
 class Helpers {
     companion object {
-        var internet : Boolean = true
-        var isOfflineMode : Boolean = false
-        var isListNewsSaved : Boolean = false
+        var internet: Boolean = true
+        var isOfflineMode: Boolean = false
+        var isListNewsSaved: Boolean = false
         val AppName = "BongDaMoi"
         val seperator = "/"
-        var cacheDir : String = ""
-        var contentSave : MutableList<Content> = mutableListOf()
+        var cacheDir: String = ""
+        var contentSave: MutableList<Content> = mutableListOf()
 
         //calculate time to show time between now and posted time of that news
-        fun CalculateDistanceTime(date: Int) : String{
+        fun CalculateDistanceTime(date: Int): String {
             val calendar: Calendar = Calendar.getInstance()
-            val distanceTime = calendar.timeInMillis/1000 - date
-            return when{
+            val distanceTime = calendar.timeInMillis / 1000 - date
+            return when {
                 distanceTime > 604800 -> "${calendar.time}"
-                distanceTime > 86400 -> "${distanceTime/86400} ngày"
-                distanceTime > 3600 -> "${distanceTime/3600} giờ"
-                distanceTime > 60 -> "${distanceTime/60} phút"
+                distanceTime > 86400 -> "${distanceTime / 86400} ngày"
+                distanceTime > 3600 -> "${distanceTime / 3600} giờ"
+                distanceTime > 60 -> "${distanceTime / 60} phút"
                 else -> {
                     "Vừa đăng"
                 }
@@ -55,7 +57,12 @@ class Helpers {
         }
 
         //set Margin for View
-        fun View.margin(left: Float? = null, top: Float? = null, right: Float? = null, bottom: Float? = null) {
+        fun View.margin(
+            left: Float? = null,
+            top: Float? = null,
+            right: Float? = null,
+            bottom: Float? = null
+        ) {
             layoutParams<ViewGroup.MarginLayoutParams> {
                 left?.run { leftMargin = dpToPx(this) }
                 top?.run { topMargin = dpToPx(this) }
@@ -63,15 +70,19 @@ class Helpers {
                 bottom?.run { bottomMargin = dpToPx(this) }
             }
         }
+
         inline fun <reified T : ViewGroup.LayoutParams> View.layoutParams(block: T.() -> Unit) {
             if (layoutParams is T) block(layoutParams as T)
         }
+
         fun View.dpToPx(dp: Float): Int = context.dpToPx(dp)
-        fun Context.dpToPx(dp: Float): Int = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.displayMetrics).toInt()
+        fun Context.dpToPx(dp: Float): Int =
+            TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.displayMetrics)
+                .toInt()
 
         // Function to establish connection and load image
         fun mLoad(string: String?): Bitmap? {
-            if(string.isNullOrBlank())
+            if (string.isNullOrBlank())
                 return null
 
             val url: URL = mStringToURL(string)!!
@@ -88,7 +99,7 @@ class Helpers {
             return null
         }
 
-        fun saveImageToExternalStorage(url: String?,nameC: String,nameI : String):String?{
+        fun saveImageToExternalStorage(url: String?, nameC: String, nameI: String): String? {
 
             //get Bitmap from URL
             var bitmap: Bitmap? = mLoad(url) ?: return null
@@ -108,7 +119,7 @@ class Helpers {
             directory.mkdirs()
 
             // Create a file for save image
-            val file = File(path,"/${nameI}.png")
+            val file = File(path, "/${nameI}.png")
 
             try {
                 // Get the file output stream
@@ -124,7 +135,7 @@ class Helpers {
                 stream.close()
 
 
-            } catch (e: IOException){ // Catch the exception
+            } catch (e: IOException) { // Catch the exception
                 e.printStackTrace()
 
             }
@@ -143,16 +154,39 @@ class Helpers {
             return null
         }
 
+
         // convert list homecontent to Content
-        fun convert(homeContent: List<HomeContent>) : MutableList<Content>{
-            var listContent : MutableList<Content> = mutableListOf()
-            for (content in homeContent){
-                var c = Content(content_id = content.content_id,
+        fun convert(homeContent: List<HomeContent>): MutableList<Content> {
+            var listContent: MutableList<Content> = mutableListOf()
+            for (content in homeContent) {
+                var c = Content(
+                    content_id = content.content_id,
                     title = content.title,
                     date = content.date,
                     avatar_url = content.avatar,
-                    publisher_logo = content.publisher_logo)
-                    listContent.add(c)
+                    publisher_logo = content.publisher_logo
+                )
+                if (!content.avatar.isNullOrBlank()) {
+                    Log.e("contentavatar", content.avatar.toString())
+
+
+                    c.bitmapAvatar = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                        ImageDecoder.decodeBitmap(
+                            ImageDecoder.createSource(
+                                MainApplication.applicationContext().contentResolver,
+                                File(content.avatar).toUri()
+                            )
+                        )
+                    } else {
+                        MediaStore.Images.Media.getBitmap(
+                            MainApplication.applicationContext().contentResolver,
+                            File(content.avatar).toUri()
+                        )
+                    }
+
+                    Log.e("bitmap", c.bitmapAvatar.toString())
+                }
+                listContent.add(c)
             }
             return listContent
         }
@@ -183,10 +217,9 @@ class Helpers {
             )
         }
 
-        fun checkandLoadImageGlide(url: String?, view : ImageView,context : Context){
-            if (!url.isNullOrBlank())
-            {
-                if(internet){
+        fun checkandLoadImageGlide(url: String?, view: ImageView, context: Context) {
+            if (!url.isNullOrBlank()) {
+                if (internet) {
                     Glide.with(context)
                         .load(url)
                         .apply(
@@ -197,8 +230,7 @@ class Helpers {
                                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                         )
                         .into(view)
-                }
-                else{
+                } else {
                     Glide.with(context)
                         .load(url)
                         .apply(RequestOptions.bitmapTransform(RoundedCorners(15)))
@@ -211,22 +243,22 @@ class Helpers {
 
     //convert Bitmap to ByteArray
     @TypeConverter
-    fun fromBitmap(bitmap: Bitmap?): ByteArray{
+    fun fromBitmap(bitmap: Bitmap?): ByteArray {
         val outputStream = ByteArrayOutputStream()
 
         if (bitmap == null)
             return outputStream.toByteArray()
 
-        bitmap.compress(Bitmap.CompressFormat.PNG,100,outputStream)
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
         return outputStream.toByteArray()
     }
 
     //convert ByteArray to Bitmap
     @TypeConverter
-    fun toBitmap(byteArray: ByteArray?) : Bitmap?{
-        if(byteArray== null)
+    fun toBitmap(byteArray: ByteArray?): Bitmap? {
+        if (byteArray == null)
             return null
-        return BitmapFactory.decodeByteArray(byteArray,0,byteArray.size)
+        return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
     }
 }
 

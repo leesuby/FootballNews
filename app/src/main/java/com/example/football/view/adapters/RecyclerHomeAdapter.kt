@@ -1,7 +1,12 @@
 package com.example.football.view.adapters
 
+import android.graphics.Bitmap
 import android.graphics.Color
+import android.graphics.ImageDecoder
+import android.os.Build
+import android.provider.MediaStore
 import android.util.Log
+import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +19,8 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.net.toUri
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -27,6 +34,7 @@ import com.example.football.data.model.SoccerCompetition
 import com.example.football.data.model.SoccerMatch
 import com.example.football.utils.Helpers
 import com.example.football.view.compose.LoadingAnimation
+import com.example.football.view.customview.NewsCustomView
 import java.io.File
 
 class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -55,32 +63,35 @@ class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     override fun getItemViewType(position: Int): Int {
-        return when(position){
+        return when (position) {
             0 -> MATCH
             4 -> COMPETITION
-            itemCount - 1-> LOADING
+            itemCount - 1 -> LOADING
             else -> NEWS
         }
     }
 
     inner class ViewHolderNews(itemView: View, listener: onNewsClickListener) :
         RecyclerView.ViewHolder(itemView) {
-        var itemImageNews: ImageView
-        var itemTitle: TextView
-        var itemLogo: ImageView
-        var itemTime: TextView
+        var customNews: NewsCustomView
+//        var itemImageNews: ImageView
+//        var itemTitle: TextView
+//        var itemLogo: ImageView
+//        var itemTime: TextView
 
         init {
-            itemImageNews = itemView.findViewById(R.id.img_news)
-            itemTitle = itemView.findViewById(R.id.txv_title)
-            itemLogo = itemView.findViewById(R.id.img_logo)
-            itemTime = itemView.findViewById(R.id.tv_time)
+//
+//            itemImageNews = itemView.findViewById(R.id.img_news)
+//            itemTitle = itemView.findViewById(R.id.txv_title)
+//            itemLogo = itemView.findViewById(R.id.img_logo)
+//            itemTime = itemView.findViewById(R.id.tv_time)
 
+            customNews = itemView.findViewById(R.id.custom_news)
             itemView.setOnClickListener {
                 var positionListNews: Int = 0
-                when(adapterPosition){
+                when (adapterPosition) {
                     in 1..3 -> positionListNews = adapterPosition - 1
-                    in 5..itemCount -> positionListNews = adapterPosition -2
+                    in 5..itemCount -> positionListNews = adapterPosition - 2
                 }
 
                 listener.onItemClick(listNews.get(positionListNews).content_id)
@@ -93,14 +104,14 @@ class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         RecyclerView.ViewHolder(itemView) {
         var itemMatchRecyclerView: RecyclerView
 
-        init{
-           itemMatchRecyclerView = itemView.findViewById(R.id.RV_homeMatch)
+        init {
+            itemMatchRecyclerView = itemView.findViewById(R.id.RV_homeMatch)
         }
 
     }
 
     inner class ViewHolderCompetition(itemView: View) :
-        RecyclerView.ViewHolder(itemView){
+        RecyclerView.ViewHolder(itemView) {
         var itemCompetitionRecyclerView: RecyclerView
 
         init {
@@ -109,34 +120,38 @@ class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     inner class ViewHolderLoadingAnimate(itemView: View) :
-        RecyclerView.ViewHolder(itemView){
-            var loadingAnimate : ComposeView
+        RecyclerView.ViewHolder(itemView) {
+        var loadingAnimate: ComposeView
 
-            init {
-                loadingAnimate = itemView.findViewById(R.id.animate_loading)
-            }
+        init {
+            loadingAnimate = itemView.findViewById(R.id.animate_loading)
         }
+    }
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): RecyclerView.ViewHolder {
-        var v : View
+        var v: View
         return when (viewType) {
             MATCH -> {
-                v = LayoutInflater.from(parent.context).inflate(R.layout.custom_matchs, parent, false)
+                v = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.custom_matchs, parent, false)
                 ViewHolderMatch(v)
             }
             NEWS -> {
-                v = LayoutInflater.from(parent.context).inflate(R.layout.custom_news, parent, false)
+                v = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.custom_news, parent, false)
                 ViewHolderNews(v, mListener)
             }
             COMPETITION -> {
-                v = LayoutInflater.from(parent.context).inflate(R.layout.custom_competition, parent, false)
+                v = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.custom_competition, parent, false)
                 ViewHolderCompetition(v)
             }
             else -> {
-                v = LayoutInflater.from(parent.context).inflate(R.layout.compose_animate_loading, parent, false)
+                v = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.compose_animate_loading, parent, false)
                 ViewHolderLoadingAnimate(v)
             }
 
@@ -149,67 +164,89 @@ class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             MATCH -> {
                 holder as ViewHolderMatch
 
-                val layoutManager = LinearLayoutManager(holder.itemView.context,LinearLayoutManager.HORIZONTAL,false)
+                val layoutManager = LinearLayoutManager(
+                    holder.itemView.context,
+                    LinearLayoutManager.HORIZONTAL,
+                    false
+                )
                 val adapter = RecyclerMatchHomeAdapter()
                 adapter.listMatch = listMatch
 
-                holder.itemMatchRecyclerView.layoutManager=layoutManager
-                holder.itemMatchRecyclerView.adapter=adapter
+                holder.itemMatchRecyclerView.layoutManager = layoutManager
+                holder.itemMatchRecyclerView.adapter = adapter
 
 
             }
             NEWS -> {
                 holder as ViewHolderNews
 
-                if(listNews.size==0)
-                  return
+                if (listNews.size == 0)
+                    return
 
                 var positionListNews: Int = 0
-                when(position){
+                when (position) {
                     in 1..3 -> positionListNews = position - 1
-                    in 5..itemCount -> positionListNews = position -2
+                    in 5..itemCount -> positionListNews = position - 2
                 }
 
                 val news: Content = listNews[positionListNews]
 
+//                if (Patterns.WEB_URL.matcher(news.avatar_url).matches())
+//                    news.bitmapAvatar = Helpers.mLoad(news.avatar_url)
 
-                holder.itemTime.text =
-                    Helpers.CalculateDistanceTime(
-                        news.date
-                    )
-                holder.itemTitle.text = news.title ?: "Không có dữ liệu"
-
-                Helpers.checkandLoadImageGlide(news.avatar_url,holder.itemImageNews,holder.itemView.context)
-
-                if (!news.publisher_logo.isNullOrBlank()) {
-                    if (Helpers.internet) {
-                        Glide.with(holder.itemView).load(news.publisher_logo).into(holder.itemLogo)
-                    } else {
-                        Glide.with(holder.itemView).load(File(news.publisher_logo))
-                            .into(holder.itemLogo)
-                    }
+                if (news.bitmapAvatar != null) {
+                    holder.customNews.setAvatarBitmap(news.bitmapAvatar)
+                    holder.customNews.readyToDraw = true
                 }
+
+
+
+
+//                holder.itemTime.text =
+//                    Helpers.CalculateDistanceTime(
+//                        news.date
+//                    )
+//                holder.itemTitle.text = news.title ?: "Không có dữ liệu"
+//
+//                Helpers.checkandLoadImageGlide(
+//                    news.avatar_url,
+//                    holder.itemImageNews,
+//                    holder.itemView.context
+//                )
+//
+//                if (!news.publisher_logo.isNullOrBlank()) {
+//                    if (Helpers.internet) {
+//                        Glide.with(holder.itemView).load(news.publisher_logo).into(holder.itemLogo)
+//                    } else {
+//                        Glide.with(holder.itemView).load(File(news.publisher_logo))
+//                            .into(holder.itemLogo)
+//                    }
+//                }
             }
-            COMPETITION ->{
+            COMPETITION -> {
                 holder as ViewHolderCompetition
-                val layoutManager = LinearLayoutManager(holder.itemView.context,LinearLayoutManager.HORIZONTAL,false)
+                val layoutManager = LinearLayoutManager(
+                    holder.itemView.context,
+                    LinearLayoutManager.HORIZONTAL,
+                    false
+                )
                 val adapter = RecyclerCompetitionHomeAdapter()
                 adapter.listCompetition = listCompetition
 
-                holder.itemCompetitionRecyclerView.layoutManager=layoutManager
-                holder.itemCompetitionRecyclerView.adapter=adapter
+                holder.itemCompetitionRecyclerView.layoutManager = layoutManager
+                holder.itemCompetitionRecyclerView.adapter = adapter
             }
             LOADING -> {
                 holder as ViewHolderLoadingAnimate
 
                 holder.loadingAnimate.setContent {
 
-                    MaterialTheme{
+                    MaterialTheme {
                         Column(
                             modifier = Modifier.fillMaxSize(),
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally
-                        ){
+                        ) {
                             LoadingAnimation()
                         }
 

@@ -21,7 +21,7 @@ class NewsRemote {
     companion object{
 
         //request API get list new data
-        fun loadListNews(data : MutableLiveData<HomeBaoMoiData>, page: Int = 0){
+        fun loadListNews(data : MutableLiveData<HomeBaoMoiData>, page: Int = 0,loadOnline: Boolean= false){
             val retroInstance = RetroInstance.getRetroInstance().create(RetroService::class.java)
             val call = retroInstance.getNewsList(page*20,20)
             call.enqueue(object : Callback<HomeBaoMoiData> {
@@ -30,7 +30,20 @@ class NewsRemote {
                 }
 
                 override fun onResponse(call: Call<HomeBaoMoiData>, response: Response<HomeBaoMoiData>) {
-                    data.postValue(response.body())
+                    if(loadOnline)
+                    {
+                        GlobalScope.launch(Dispatchers.IO) {
+                            for(content in response.body()?.data!!.contents){
+                                content.bitmapAvatar = Helpers.mLoad(content.avatar_url)
+                            }
+                            Log.e("respone",response.body().toString())
+                            data.postValue(response.body())
+                        }
+
+                    }
+                    else
+                        data.postValue(response.body())
+
                 }
             })
         }

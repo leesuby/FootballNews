@@ -8,6 +8,7 @@
         <entry key="app/src/main/res/drawable-v24/border_boxhometopbotcorner.xml" value="0.237" />
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/border_boxhome.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/border_boxhometopcorner.xml" value="0.126" />
         <entry key="app/src/main/res/drawable/border_matchhome.xml" value="0.155" />
         <entry key="app/src/main/res/drawable/ic_baseline_club.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_baseline_home.xml" value="0.1" />
@@ -24,7 +25,7 @@
         <entry key="app/src/main/res/layout/custom_homecompetition.xml" value="0.42936553955078127" />
         <entry key="app/src/main/res/layout/custom_homematch.xml" value="0.47288818359375007" />
         <entry key="app/src/main/res/layout/custom_matchs.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/custom_news.xml" value="0.36764705882352944" />
+        <entry key="app/src/main/res/layout/custom_news.xml" value="0.1" />
         <entry key="app/src/main/res/layout/customview_news.xml" value="0.14933675130208332" />
         <entry key="app/src/main/res/layout/fragment_club_news.xml" value="0.14052583862194015" />
         <entry key="app/src/main/res/layout/fragment_detail.xml" value="0.10410334346504559" />
