@@ -6,7 +6,9 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
+import android.text.TextPaint
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 
 
@@ -48,14 +50,19 @@ class NewsCustomView(context: Context?, attrs: AttributeSet?) : View(context, at
 
         if(readyToDraw) {
 
-            val paint : Paint = Paint()
-            paint.color=Color.GRAY
-            paint.textSize = 30F
+            val txtPaint : TextPaint = TextPaint()
+            txtPaint.color=Color.GRAY
+            txtPaint.textSize = 40F
             canvas.drawColor(Color.WHITE)
-            canvas.drawBitmap(avatar!!, null, Rect(0, 0, 200, 200), null)
-            canvas.drawText("alooooooooooooooooooooooooooo",100F,100F,paint)
+            Log.e("width",width.toString())
+            Log.e("height",height.toString())
+            canvas.drawBitmap(avatar!!, null, Rect(width/20, 0, width/3, height), null)
+            canvas.drawText(title,2/5F* width,1/5F*height,txtPaint)
 
 
+            canvas.drawBitmap(avatar!!, null, Rect((2*width)/5, (4*height)/5, width/2- width/2/16 , height), null)
+
+            canvas.drawText(time,width/2F,height - height/12F,txtPaint)
 
             super.onDraw(canvas)
 

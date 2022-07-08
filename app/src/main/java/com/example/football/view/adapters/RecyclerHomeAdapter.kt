@@ -194,10 +194,14 @@ class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 //                if (Patterns.WEB_URL.matcher(news.avatar_url).matches())
 //                    news.bitmapAvatar = Helpers.mLoad(news.avatar_url)
 
+                holder.customNews.setTitle(news.title ?: "Không có dữ liệu")
+                holder.customNews.setTime(Helpers.CalculateDistanceTime(news.date))
+
                 if (news.bitmapAvatar != null) {
                     holder.customNews.setAvatarBitmap(news.bitmapAvatar)
-                    holder.customNews.readyToDraw = true
                 }
+
+                holder.customNews.readyToDraw = true
 
 
 
