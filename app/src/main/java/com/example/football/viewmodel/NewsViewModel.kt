@@ -28,6 +28,16 @@ class NewsViewModel : ViewModel() {
 
     var repo : NewsRepositoryImpl = NewsRepositoryImpl()
 
+    private var pageLoaded = 1
+
+    fun getPage(): Int{
+        return pageLoaded
+    }
+
+    fun increasePage(){
+        pageLoaded++
+    }
+
     fun getListNewsObservable() : LiveData<HomeBaoMoiData>{
         return recyclerListNews
     }

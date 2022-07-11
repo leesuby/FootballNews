@@ -50,6 +50,15 @@ class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var listMatch = mutableListOf<SoccerMatch>()
     var listCompetition = mutableListOf<SoccerCompetition>()
 
+    private var isLoading = false
+
+    fun setLoading(boolean: Boolean){
+        isLoading=boolean
+    }
+
+    fun checkLoading(): Boolean{
+        return isLoading
+    }
     interface onNewsClickListener {
         fun onItemClick(idContent: Int)
     }
@@ -191,14 +200,15 @@ class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
                 val news: Content = listNews[positionListNews]
 
-//                if (Patterns.WEB_URL.matcher(news.avatar_url).matches())
-//                    news.bitmapAvatar = Helpers.mLoad(news.avatar_url)
-
-                holder.customNews.setTitle(news.title ?: "Không có dữ liệu")
+                holder.customNews.setTitle(news.title)
                 holder.customNews.setTime(Helpers.CalculateDistanceTime(news.date))
 
                 if (news.bitmapAvatar != null) {
-                    holder.customNews.setAvatarBitmap(news.bitmapAvatar)
+                    holder.customNews.setAvatarBitmap(news.bitmapAvatar!!)
+                }
+
+                if(news.bitmapLogo !=null){
+                    holder.customNews.setLogoBitmap(news.bitmapLogo!!)
                 }
 
                 holder.customNews.readyToDraw = true

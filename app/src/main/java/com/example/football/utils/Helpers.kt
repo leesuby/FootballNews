@@ -38,6 +38,7 @@ class Helpers {
         var isListNewsSaved: Boolean = false
         val AppName = "BongDaMoi"
         val seperator = "/"
+        var serviceIsBound = false
         var cacheDir: String = ""
         var contentSave: MutableList<Content> = mutableListOf()
 
@@ -183,8 +184,26 @@ class Helpers {
                             File(content.avatar).toUri()
                         )
                     }
+                }
 
-                    Log.e("bitmap", c.bitmapAvatar.toString())
+                if (!content.publisher_logo.isNullOrBlank()) {
+                    Log.e("contentavatar", content.publisher_logo.toString())
+
+
+                    c.bitmapLogo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                        ImageDecoder.decodeBitmap(
+                            ImageDecoder.createSource(
+                                MainApplication.applicationContext().contentResolver,
+                                File(content.publisher_logo).toUri()
+                            )
+                        )
+                    } else {
+                        MediaStore.Images.Media.getBitmap(
+                            MainApplication.applicationContext().contentResolver,
+                            File(content.publisher_logo).toUri()
+                        )
+                    }
+
                 }
                 listContent.add(c)
             }

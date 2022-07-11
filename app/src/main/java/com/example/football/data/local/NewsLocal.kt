@@ -60,7 +60,7 @@ class NewsLocal {
         suspend fun saveDetailContentNews(getDataFromRetro: MutableLiveData<DetailBaoMoiData>){
 
             //TODO: Solve Null case
-            if (getDataFromRetro.value==null)
+            if (getDataFromRetro.value==null || getDataFromRetro.value!!.data==null)
                 return
 
             var content = getDataFromRetro.value!!.data.content

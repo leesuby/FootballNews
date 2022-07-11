@@ -32,8 +32,6 @@ class HomeNewsFragment : Fragment(), CoroutineScope {
     private lateinit var newsList: RecyclerView
     private val newsViewModel: NewsViewModel by activityViewModels()
     private lateinit var views: View
-    private var flagLoading = false
-    private var pageLoad: Int = 0
 
     private lateinit var mService: OfflineService
 
@@ -64,8 +62,6 @@ class HomeNewsFragment : Fragment(), CoroutineScope {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        //for recreate fragment
-        pageLoad = 1
 
         adapterNewlist = RecyclerHomeAdapter()
         //get data for home
@@ -117,11 +113,11 @@ class HomeNewsFragment : Fragment(), CoroutineScope {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 if (!recyclerView.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
                     if (Helpers.internet) {
-                        if (!flagLoading) {
-                            flagLoading = true
+                        if (!adapterNewlist.checkLoading()) {
+                            adapterNewlist.setLoading(true)
                             newsViewModel.getListNews(
                                 this@HomeNewsFragment.context,
-                                pageLoad,
+                                newsViewModel.getPage(),
                                 loadOnline = true
                             )
                         }
@@ -138,16 +134,16 @@ class HomeNewsFragment : Fragment(), CoroutineScope {
             if (it == null) {
                 Toast.makeText(this.context, "No result found", Toast.LENGTH_SHORT).show()
             } else {
-                if (flagLoading) {
+                if (adapterNewlist.checkLoading()) {
+                    //load data to UI
+                    adapterNewlist.listNews.addAll(it.data.contents.toMutableList())
+                    newsViewModel.increasePage()
+                    adapterNewlist.setLoading(false)
+
                     //save data for offline
                     val tmp = MutableLiveData<HomeBaoMoiData>()
                     tmp.value = it
                     mService.saveData(tmp)
-
-                    //load data to UI
-                    adapterNewlist.listNews.addAll(it.data.contents.toMutableList())
-                    pageLoad++
-                    flagLoading = false
 
                 } else {
                     if (Helpers.contentSave.isNotEmpty())

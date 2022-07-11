@@ -60,11 +60,13 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
             // We've bound to OfflineService, cast the IBinder and get OfflineService instance
             val binder = service as OfflineService.OfflineBinder
             mService = binder.getService()
-            mBound = true
+            mBound  = true
+            Helpers.serviceIsBound= true
         }
 
         override fun onServiceDisconnected(arg0: ComponentName) {
             mBound = false
+            Helpers.serviceIsBound= false
         }
     }
 

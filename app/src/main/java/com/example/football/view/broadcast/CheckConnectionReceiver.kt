@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
 
 class CheckConnectionReceiver : BroadcastReceiver() {
     companion object{
+        private var timeCall: Int = 0
         fun isNetworkAvailable(context: Context?): Boolean {
             if (context == null) return false
             val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -46,7 +47,12 @@ class CheckConnectionReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         // This method is called when the BroadcastReceiver is receiving an Intent broadcast.
             try{
-                Helpers.internet = isNetworkAvailable(context)
+                if(!Helpers.serviceIsBound && timeCall!=0)
+                    Helpers.internet=false
+                else{
+                    Helpers.internet = isNetworkAvailable(context)
+                    timeCall++
+                }
             }
             catch (e: NullPointerException){
                 e.printStackTrace()
