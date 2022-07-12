@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.View
 import androidx.collection.lruCache
 import androidx.core.graphics.withTranslation
+import com.example.football.R
 
 
 class NewsCustomView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
@@ -32,6 +33,9 @@ class NewsCustomView(context: Context?, attrs: AttributeSet?) : View(context, at
     private var time : String = ""
     private var timePaint: TextPaint = TextPaint()
 
+    //For exception image
+    private lateinit var bitmapNull : Bitmap
+
 
     var readyToDraw  = false
 
@@ -47,11 +51,15 @@ class NewsCustomView(context: Context?, attrs: AttributeSet?) : View(context, at
         //init paint for Time
         timePaint.color= Color.LTGRAY
         timePaint.textSize= 34F
+
+        //image for null pointer
+        bitmapNull=BitmapFactory.decodeResource(this.resources, R.mipmap.img_no_image)
+
     }
 
     fun setAvatarBitmap(bitmap: Bitmap){
         avatar = bitmap
-        avatarRounded = roundedBitmap(bitmap,15F)
+        avatarRounded = roundedBitmap(bitmap,18F)
     }
 
 
@@ -67,8 +75,6 @@ class NewsCustomView(context: Context?, attrs: AttributeSet?) : View(context, at
     fun setTime(text: String){
         time = text
     }
-
-
 
 
     @SuppressLint("DrawAllocation")
@@ -101,6 +107,9 @@ class NewsCustomView(context: Context?, attrs: AttributeSet?) : View(context, at
 
         if(logo!= null)
             canvas.drawBitmap(logo!!, null, rectLogo, null)
+        else{
+            canvas.drawBitmap(bitmapNull, null, rectLogo, null)
+        }
     }
 
     private fun drawAvatar(canvas: Canvas,width: Int,height : Int) {
@@ -108,6 +117,9 @@ class NewsCustomView(context: Context?, attrs: AttributeSet?) : View(context, at
 
         if(avatar!=null) {
             canvas.drawBitmap(avatarRounded,null,rectAvatar,null)
+        }
+        else{
+            canvas.drawBitmap(bitmapNull,null,rectAvatar,null)
         }
 
     }

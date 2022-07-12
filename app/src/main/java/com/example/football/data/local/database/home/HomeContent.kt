@@ -12,5 +12,7 @@ data class HomeContent(
     val title: String,
     val date: Int,
     val publisher_logo: String?,
-    val avatar: String?
+    val avatar: String?,
+    val publisher_logo_URL: String?,
+    val avatar_URL: String?
 )

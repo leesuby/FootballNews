@@ -38,7 +38,10 @@ class NewsLocal {
                     content.title,
                     content.date,
                     Helpers.saveImageToExternalStorage(content.publisher_logo,content.content_id.toString(),"logo"),
-                    Helpers.saveImageToExternalStorage(content.avatar_url,content.content_id.toString(),"avatar"))
+                    Helpers.saveImageToExternalStorage(content.avatar_url,content.content_id.toString(),"avatar"),
+                    publisher_logo_URL = content.publisher_logo,
+                    avatar_URL = content.avatar_url
+                )
 
                 homeContentDao.addContent(homeContent)
             }
@@ -91,7 +94,9 @@ class NewsLocal {
                     title = relatedNews.title,
                     date = relatedNews.date,
                     avatar = Helpers.saveImageToExternalStorage(relatedNews.avatar_url,relatedNews.content_id.toString(),"avatar"),
-                    publisher_logo = Helpers.saveImageToExternalStorage(relatedNews.publisher_logo,relatedNews.content_id.toString(),"logo")
+                    publisher_logo = Helpers.saveImageToExternalStorage(relatedNews.publisher_logo,relatedNews.content_id.toString(),"logo"),
+                    publisher_logo_URL = content.publisher_logo,
+                    avatar_URL = content.avatar_url
                 )
 
                 relatedContentDao.addRelatedContent(relatedContent)

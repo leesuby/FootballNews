@@ -15,6 +15,8 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.football.data.model.Content
 import com.example.football.R
 import com.example.football.utils.Helpers
+import com.example.football.utils.Helpers.Companion.margin
+import com.example.football.view.customview.NewsCustomView
 import java.io.File
 
 class RecyclerRelatedNewsAdapter: RecyclerView.Adapter<RecyclerRelatedNewsAdapter.ViewHolder>() {
@@ -59,6 +61,20 @@ class RecyclerRelatedNewsAdapter: RecyclerView.Adapter<RecyclerRelatedNewsAdapte
 //            }
 //        }
 
+        holder.customNews.setTitle(news.title)
+        holder.customNews.setTime(Helpers.CalculateDistanceTime(news.date))
+
+        if (news.bitmapAvatar != null ) {
+            holder.customNews.setAvatarBitmap(news.bitmapAvatar!!)
+        }
+
+        if(news.bitmapLogo !=null ){
+            holder.customNews.setLogoBitmap(news.bitmapLogo!!)
+        }
+
+        holder.customNews.readyToDraw = true
+        holder.customNews.margin(bottom = 10F)
+
 
 
 
@@ -74,6 +90,7 @@ class RecyclerRelatedNewsAdapter: RecyclerView.Adapter<RecyclerRelatedNewsAdapte
 //        var itemTitle : TextView
 //        var itemLogo : ImageView
 //        var itemTime : TextView
+            var customNews: NewsCustomView
 
         init {
 //            itemImageNews = itemView.findViewById(R.id.img_news)
@@ -81,6 +98,7 @@ class RecyclerRelatedNewsAdapter: RecyclerView.Adapter<RecyclerRelatedNewsAdapte
 //            itemLogo = itemView.findViewById(R.id.img_logo)
 //            itemTime = itemView.findViewById(R.id.tv_time)
 
+            customNews = itemView.findViewById(R.id.custom_news)
             itemView.setOnClickListener{
                 listener.onItemClick(listNews.get(adapterPosition).content_id)
             }

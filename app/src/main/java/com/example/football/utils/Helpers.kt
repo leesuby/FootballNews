@@ -165,31 +165,46 @@ class Helpers {
                     title = content.title,
                     date = content.date,
                     avatar_url = content.avatar,
-                    publisher_logo = content.publisher_logo
+                    publisher_logo = content.publisher_logo,
                 )
                 if (!content.avatar.isNullOrBlank()) {
-                    Log.e("contentavatar", content.avatar.toString())
+                    try{
+                        c.bitmapAvatar =  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
 
-
-                    c.bitmapAvatar = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                        ImageDecoder.decodeBitmap(
-                            ImageDecoder.createSource(
+                            ImageDecoder.decodeBitmap(
+                                ImageDecoder.createSource(
+                                    MainApplication.applicationContext().contentResolver,
+                                    File(content.avatar).toUri()
+                                )
+                            )
+                        } else {
+                            MediaStore.Images.Media.getBitmap(
                                 MainApplication.applicationContext().contentResolver,
                                 File(content.avatar).toUri()
                             )
-                        )
-                    } else {
-                        MediaStore.Images.Media.getBitmap(
-                            MainApplication.applicationContext().contentResolver,
-                            File(content.avatar).toUri()
-                        )
+                        }
                     }
+                    catch (e: Throwable){
+                        Log.e("nullAvatar",content.avatar.toString())
+                        if(internet){
+                            if(content.avatar_URL.isNullOrBlank()){
+                                c.bitmapAvatar=null
+                            }
+                            else{
+                                c.bitmapAvatar= mLoad(content.avatar_URL)
+                            }
+                        }
+                        else
+                            c.bitmapAvatar=null
+
+
                 }
+            }
 
                 if (!content.publisher_logo.isNullOrBlank()) {
                     Log.e("contentavatar", content.publisher_logo.toString())
 
-
+                    try{
                     c.bitmapLogo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                         ImageDecoder.decodeBitmap(
                             ImageDecoder.createSource(
@@ -203,8 +218,23 @@ class Helpers {
                             File(content.publisher_logo).toUri()
                         )
                     }
-
                 }
+                    catch (e: Throwable){
+                        Log.e("nullLogo",content.avatar.toString())
+                        if(internet){
+                            if(content.publisher_logo_URL.isNullOrBlank()){
+                                c.bitmapLogo=null
+                            }
+                            else{
+                                c.bitmapLogo= mLoad(content.publisher_logo_URL)
+                            }
+                        }
+                        else
+                        c.bitmapLogo = null
+
+                    }
+                }
+
                 listContent.add(c)
             }
             return listContent

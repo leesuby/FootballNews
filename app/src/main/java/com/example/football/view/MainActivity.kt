@@ -299,7 +299,7 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
 
         val mConstrainLayout = findViewById<FrameLayout>(R.id.fragment_main)
         val lp = mConstrainLayout.layoutParams as ConstraintLayout.LayoutParams
-        lp.matchConstraintPercentHeight = 0.95f
+        lp.matchConstraintPercentHeight = 0.90f
         mConstrainLayout.layoutParams = lp
 
         navBar.visibility= View.GONE

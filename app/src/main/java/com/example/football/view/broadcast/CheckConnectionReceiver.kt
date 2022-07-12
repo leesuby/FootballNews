@@ -47,12 +47,9 @@ class CheckConnectionReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         // This method is called when the BroadcastReceiver is receiving an Intent broadcast.
             try{
-                if(!Helpers.serviceIsBound && timeCall!=0)
-                    Helpers.internet=false
-                else{
+
                     Helpers.internet = isNetworkAvailable(context)
-                    timeCall++
-                }
+
             }
             catch (e: NullPointerException){
                 e.printStackTrace()

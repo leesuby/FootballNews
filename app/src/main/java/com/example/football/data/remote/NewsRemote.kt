@@ -59,7 +59,18 @@ class NewsRemote {
                     data.postValue(null)
                 }
                 override fun onResponse(call: Call<DetailBaoMoiData>, response: Response<DetailBaoMoiData>) {
-                    data.postValue(response.body())
+                    GlobalScope.launch(Dispatchers.IO) {
+                        for(related in response.body()?.data?.related?.contents!!){
+                            if(related.avatar_url!=null)
+                                related.bitmapAvatar = Helpers.mLoad(related.avatar_url)
+                            if(related.publisher_logo!=null)
+                                related.bitmapLogo = Helpers.mLoad(related.publisher_logo)
+                        }
+
+                        data.postValue(response.body())
+                    }
+
+
 
                     if(Helpers.isOfflineMode){
                     if(isSave){

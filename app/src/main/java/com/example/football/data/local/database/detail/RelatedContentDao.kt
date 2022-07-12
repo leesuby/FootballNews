@@ -18,7 +18,7 @@ interface RelatedContentDao {
             " WHERE contentrelated.content_id = :id  ")
     fun readAll(id: Int) : LiveData<HomeContent>
 
-    @Query("SELECT content_id , title , date , publisher_logo, avatar  " +
+    @Query("SELECT content_id , title , date , publisher_logo, avatar,publisher_logo_URL,avatar_URL  " +
             " FROM contentrelated" +
             " WHERE contentrelated.related_id = :id  ")
     suspend fun readAllSynchronous(id: Int) : List<HomeContent>
