@@ -8,7 +8,6 @@ import android.text.*
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
-import androidx.annotation.RequiresApi
 import androidx.collection.lruCache
 import androidx.core.graphics.withTranslation
 
@@ -18,6 +17,7 @@ class NewsCustomView(context: Context?, attrs: AttributeSet?) : View(context, at
     //For drawing avatar
     private var avatar : Bitmap?  = null
     private var rectAvatar : Rect = Rect()
+    private lateinit var avatarRounded: Bitmap
 
     //For drawing logo
     private var logo : Bitmap? = null
@@ -35,14 +35,9 @@ class NewsCustomView(context: Context?, attrs: AttributeSet?) : View(context, at
 
     var readyToDraw  = false
 
-    private val DEFAULT_BOARDER_STROKE = 5f
-    private var removeBorder = false
-
-
-    private var borderColor = 0
-    private var borderWidth = 0
 
     init {
+        setLayerType(LAYER_TYPE_HARDWARE,null)
         //init paint for Title
         titlePaint.color=Color.GRAY
         titlePaint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD);
@@ -56,7 +51,9 @@ class NewsCustomView(context: Context?, attrs: AttributeSet?) : View(context, at
 
     fun setAvatarBitmap(bitmap: Bitmap){
         avatar = bitmap
+        avatarRounded = roundedBitmap(bitmap,15F)
     }
+
 
     fun setTitle(text: String){
         title = text
@@ -109,8 +106,9 @@ class NewsCustomView(context: Context?, attrs: AttributeSet?) : View(context, at
     private fun drawAvatar(canvas: Canvas,width: Int,height : Int) {
         rectAvatar.set(width/20, 0, width/3, height)
 
-        if(avatar!=null)
-            canvas.drawBitmap(avatar!!, null, rectAvatar, null)
+        if(avatar!=null) {
+            canvas.drawBitmap(avatarRounded,null,rectAvatar,null)
+        }
 
     }
 
@@ -191,107 +189,208 @@ class NewsCustomView(context: Context?, attrs: AttributeSet?) : View(context, at
     }
 
 
-
-    private fun cropBitmap(sourceBmp: Bitmap): Bitmap {
-        val outputBmp: Bitmap = if (sourceBmp.width > sourceBmp.height) {
-            Bitmap.createBitmap(sourceBmp, 0, 0, sourceBmp.height, sourceBmp.height)
-        } else if (sourceBmp.width < sourceBmp.height) {
-            Bitmap.createBitmap(sourceBmp, 0, 0, sourceBmp.width, sourceBmp.width)
-        } else {
-            sourceBmp
-        }
-        return outputBmp
-    }
-
-    private fun getRoundedCroppedBitmap(bitmap: Bitmap, radius: Int): Bitmap {
-        val finalBitmap: Bitmap = if (bitmap.width != radius || bitmap.height != radius) {
-            // Set the filter to false, because we don't need very smooth one! It's cheaper!
-            Bitmap.createScaledBitmap(bitmap, radius, radius, false)
-        } else {
-            bitmap
-        }
-        val output =
-            Bitmap.createBitmap(finalBitmap.width, finalBitmap.height, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(output)
-        val paint = Paint()
-        val rect = Rect(0, 0, finalBitmap.width, finalBitmap.height)
-        paint.isAntiAlias = true
-        paint.isFilterBitmap = true
-        paint.isDither = true
-        canvas.drawARGB(0, 0, 0, 0)
-
-        // It doesn't matter which color!
-        paint.color = Color.WHITE
-        canvas.drawRoundRect(
-            RectF(
-                0F, 0F, finalBitmap.width.toFloat(),
-                finalBitmap.height.toFloat()
-            ), 15F, 15F, paint
+    private fun roundedBitmap(bitmap:Bitmap,cornerRadius: Float) : Bitmap{
+        // Initialize a new instance of Bitmap
+        // Initialize a new instance of Bitmap
+        val dstBitmap = Bitmap.createBitmap(
+            bitmap.getWidth(),  // Width
+            bitmap.getHeight(),  // Height
+            Bitmap.Config.ARGB_8888 // Config
         )
 
+        /*
+            Canvas
+                The Canvas class holds the "draw" calls. To draw something, you need 4 basic
+                components: A Bitmap to hold the pixels, a Canvas to host the draw calls (writing
+                into the bitmap), a drawing primitive (e.g. Rect, Path, text, Bitmap), and a paint
+                (to describe the colors and styles for the drawing).
+        */
+        // Initialize a new Canvas to draw rounded bitmap
 
-        // The second drawing should only be visible of if overlapping with the first
-        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
-        canvas.drawBitmap(finalBitmap, rect, rect, paint)
+        /*
+            Canvas
+                The Canvas class holds the "draw" calls. To draw something, you need 4 basic
+                components: A Bitmap to hold the pixels, a Canvas to host the draw calls (writing
+                into the bitmap), a drawing primitive (e.g. Rect, Path, text, Bitmap), and a paint
+                (to describe the colors and styles for the drawing).
+        */
+        // Initialize a new Canvas to draw rounded bitmap
+        val canvas = Canvas(dstBitmap)
 
-        // Draw the border, if exist
-        if (!removeBorder) {
-            canvas.drawRoundRect(
-                RectF(
-                    0F, 0F, finalBitmap.width.toFloat(),
-                    finalBitmap.height.toFloat()
-                ), 15F, 15F, getBorderPaint()!!
-            )
-        }
-        return output
+        // Initialize a new Paint instance
+
+        // Initialize a new Paint instance
+        val paint = Paint()
+        paint.isAntiAlias = true
+
+        /*
+            Rect
+                Rect holds four integer coordinates for a rectangle. The rectangle is represented by
+                the coordinates of its 4 edges (left, top, right bottom). These fields can be accessed
+                directly. Use width() and height() to retrieve the rectangle's width and height.
+                Note: most methods do not check to see that the coordinates are sorted correctly
+                (i.e. left <= right and top <= bottom).
+        */
+        /*
+            Rect(int left, int top, int right, int bottom)
+                Create a new rectangle with the specified coordinates.
+        */
+        // Initialize a new Rect instance
+
+        /*
+            Rect
+                Rect holds four integer coordinates for a rectangle. The rectangle is represented by
+                the coordinates of its 4 edges (left, top, right bottom). These fields can be accessed
+                directly. Use width() and height() to retrieve the rectangle's width and height.
+                Note: most methods do not check to see that the coordinates are sorted correctly
+                (i.e. left <= right and top <= bottom).
+        */
+        /*
+            Rect(int left, int top, int right, int bottom)
+                Create a new rectangle with the specified coordinates.
+        */
+        // Initialize a new Rect instance
+        val rect = Rect(0, 0, bitmap.getWidth(), bitmap.getHeight())
+
+        /*
+            RectF
+                RectF holds four float coordinates for a rectangle. The rectangle is represented by
+                the coordinates of its 4 edges (left, top, right bottom). These fields can be
+                accessed directly. Use width() and height() to retrieve the rectangle's width and
+                height. Note: most methods do not check to see that the coordinates are sorted
+                correctly (i.e. left <= right and top <= bottom).
+        */
+        // Initialize a new RectF instance
+
+        /*
+            RectF
+                RectF holds four float coordinates for a rectangle. The rectangle is represented by
+                the coordinates of its 4 edges (left, top, right bottom). These fields can be
+                accessed directly. Use width() and height() to retrieve the rectangle's width and
+                height. Note: most methods do not check to see that the coordinates are sorted
+                correctly (i.e. left <= right and top <= bottom).
+        */
+        // Initialize a new RectF instance
+        val rectF = RectF(rect)
+
+        /*
+            public void drawRoundRect (RectF rect, float rx, float ry, Paint paint)
+                Draw the specified round-rect using the specified paint. The roundrect will be
+                filled or framed based on the Style in the paint.
+
+            Parameters
+                rect : The rectangular bounds of the roundRect to be drawn
+                rx : The x-radius of the oval used to round the corners
+                ry : The y-radius of the oval used to round the corners
+                paint : The paint used to draw the roundRect
+        */
+        // Draw a rounded rectangle object on canvas
+
+        /*
+            public void drawRoundRect (RectF rect, float rx, float ry, Paint paint)
+                Draw the specified round-rect using the specified paint. The roundrect will be
+                filled or framed based on the Style in the paint.
+
+            Parameters
+                rect : The rectangular bounds of the roundRect to be drawn
+                rx : The x-radius of the oval used to round the corners
+                ry : The y-radius of the oval used to round the corners
+                paint : The paint used to draw the roundRect
+        */
+        // Draw a rounded rectangle object on canvas
+        canvas.drawRoundRect(rectF, cornerRadius, cornerRadius, paint)
+
+        /*
+            public Xfermode setXfermode (Xfermode xfermode)
+                Set or clear the xfermode object.
+                Pass null to clear any previous xfermode. As a convenience, the parameter passed
+                is also returned.
+
+            Parameters
+                xfermode : May be null. The xfermode to be installed in the paint
+            Returns
+                xfermode
+        */
+        /*
+            public PorterDuffXfermode (PorterDuff.Mode mode)
+                Create an xfermode that uses the specified porter-duff mode.
+
+            Parameters
+                mode : The porter-duff mode that is applied
+
+        */
+
+        /*
+            public Xfermode setXfermode (Xfermode xfermode)
+                Set or clear the xfermode object.
+                Pass null to clear any previous xfermode. As a convenience, the parameter passed
+                is also returned.
+
+            Parameters
+                xfermode : May be null. The xfermode to be installed in the paint
+            Returns
+                xfermode
+        */
+        /*
+            public PorterDuffXfermode (PorterDuff.Mode mode)
+                Create an xfermode that uses the specified porter-duff mode.
+
+            Parameters
+                mode : The porter-duff mode that is applied
+
+        */paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
+
+        /*
+            public void drawBitmap (Bitmap bitmap, float left, float top, Paint paint)
+                Draw the specified bitmap, with its top/left corner at (x,y), using the specified
+                paint, transformed by the current matrix.
+
+                Note: if the paint contains a maskfilter that generates a mask which extends beyond
+                the bitmap's original width/height (e.g. BlurMaskFilter), then the bitmap will be
+                drawn as if it were in a Shader with CLAMP mode. Thus the color outside of the
+                original width/height will be the edge color replicated.
+
+                If the bitmap and canvas have different densities, this function will take care of
+                automatically scaling the bitmap to draw at the same density as the canvas.
+
+            Parameters
+                bitmap : The bitmap to be drawn
+                left : The position of the left side of the bitmap being drawn
+                top : The position of the top side of the bitmap being drawn
+                paint : The paint used to draw the bitmap (may be null)
+        */
+        // Make a rounded image by copying at the exact center position of source image
+
+        /*
+            public void drawBitmap (Bitmap bitmap, float left, float top, Paint paint)
+                Draw the specified bitmap, with its top/left corner at (x,y), using the specified
+                paint, transformed by the current matrix.
+
+                Note: if the paint contains a maskfilter that generates a mask which extends beyond
+                the bitmap's original width/height (e.g. BlurMaskFilter), then the bitmap will be
+                drawn as if it were in a Shader with CLAMP mode. Thus the color outside of the
+                original width/height will be the edge color replicated.
+
+                If the bitmap and canvas have different densities, this function will take care of
+                automatically scaling the bitmap to draw at the same density as the canvas.
+
+            Parameters
+                bitmap : The bitmap to be drawn
+                left : The position of the left side of the bitmap being drawn
+                top : The position of the top side of the bitmap being drawn
+                paint : The paint used to draw the bitmap (may be null)
+        */
+        // Make a rounded image by copying at the exact center position of source image
+        var copyBitmap =bitmap.copy(Bitmap.Config.ARGB_8888,false)
+        canvas.drawBitmap(copyBitmap, 0F, 0F, paint)
+
+        // Free the native object associated with this bitmap.
+        copyBitmap.recycle()
+
+
+        // Return the circular bitmap
+        return dstBitmap
+
     }
-
-    private fun getBorderPaint(): Paint? {
-        val borderPaint = Paint()
-        if (borderColor !== 0) {
-            borderPaint.color = borderColor
-        } else {
-            borderPaint.color = Color.WHITE
-        }
-        if (borderWidth !== 0) {
-            borderPaint.strokeWidth = borderWidth.toFloat()
-        } else {
-            borderPaint.strokeWidth = DEFAULT_BOARDER_STROKE
-        }
-        borderPaint.style = Paint.Style.STROKE
-        borderPaint.isAntiAlias = true
-        return borderPaint
-    }
-
-
-
-
-    /**
-     * A method to se the color of the border of the image view
-     *
-     * @param colorResource The resource id of the favourite color
-     */
-    fun setBorderColor(colorResource: Int) {
-        this.borderColor = colorResource
-    }
-
-    /**
-     * A method to set the thickness of the border of the image view
-     *
-     * @param width The width of the border stroke in pixels
-     */
-    fun setBorderWidth(width: Int) {
-        this.borderWidth = width
-    }
-
-    /**
-     * A method to set whether show the image view with border or not
-     *
-     * @param removeBorder true to remove the border of the iamge view, otherwise it will have a border
-     */
-    private fun removeBorder(removeBorder: Boolean) {
-        this.removeBorder = removeBorder
-    }
-
 
 }
