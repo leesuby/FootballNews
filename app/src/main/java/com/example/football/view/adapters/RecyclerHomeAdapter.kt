@@ -52,13 +52,14 @@ class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var isLoading = false
 
-    fun setLoading(boolean: Boolean){
-        isLoading=boolean
+    fun setLoading(boolean: Boolean) {
+        isLoading = boolean
     }
 
-    fun checkLoading(): Boolean{
+    fun checkLoading(): Boolean {
         return isLoading
     }
+
     interface onNewsClickListener {
         fun onItemClick(idContent: Int)
     }
@@ -112,9 +113,11 @@ class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     inner class ViewHolderMatch(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
         var itemMatchRecyclerView: RecyclerView
+        var itemNoInternet: TextView
 
         init {
             itemMatchRecyclerView = itemView.findViewById(R.id.RV_homeMatch)
+            itemNoInternet = itemView.findViewById(R.id.tv_nointernet_competition)
         }
 
     }
@@ -122,9 +125,11 @@ class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     inner class ViewHolderCompetition(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
         var itemCompetitionRecyclerView: RecyclerView
+        var itemNoInternet: TextView
 
         init {
             itemCompetitionRecyclerView = itemView.findViewById(R.id.RV_homeCompetition)
+            itemNoInternet = itemView.findViewById(R.id.tv_nointernet_competition)
         }
     }
 
@@ -184,6 +189,11 @@ class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 holder.itemMatchRecyclerView.layoutManager = layoutManager
                 holder.itemMatchRecyclerView.adapter = adapter
 
+                holder.itemNoInternet.visibility =
+                    if (Helpers.internet)
+                        View.GONE
+                    else
+                        View.VISIBLE
 
             }
             NEWS -> {
@@ -207,13 +217,11 @@ class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                     holder.customNews.setAvatarBitmap(news.bitmapAvatar!!)
                 }
 
-                if(news.bitmapLogo !=null){
+                if (news.bitmapLogo != null) {
                     holder.customNews.setLogoBitmap(news.bitmapLogo!!)
                 }
 
                 holder.customNews.readyToDraw = true
-
-
 
 
 //                holder.itemTime.text =
@@ -249,27 +257,36 @@ class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
                 holder.itemCompetitionRecyclerView.layoutManager = layoutManager
                 holder.itemCompetitionRecyclerView.adapter = adapter
+
+
+                holder.itemNoInternet.visibility =
+                    if (Helpers.internet)
+                        View.GONE
+                    else
+                        View.VISIBLE
+
             }
-            LOADING -> {
-                holder as ViewHolderLoadingAnimate
 
-                holder.loadingAnimate.setContent {
+        LOADING -> {
+            holder as ViewHolderLoadingAnimate
 
-                    MaterialTheme {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            LoadingAnimation()
-                        }
+            holder.loadingAnimate.setContent {
 
+                MaterialTheme {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        LoadingAnimation()
                     }
+
                 }
             }
-
         }
+
     }
+}
 
 
 }

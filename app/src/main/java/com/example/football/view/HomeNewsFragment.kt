@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
@@ -97,6 +98,8 @@ class HomeNewsFragment : Fragment(), CoroutineScope {
 
     @SuppressLint("NotifyDataSetChanged")
     fun initView() {
+
+
         layoutManager = LinearLayoutManager(this.context)
         newsList = views.findViewById(R.id.RV_news)
         newsList.layoutManager = layoutManager

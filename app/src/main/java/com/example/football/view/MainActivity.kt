@@ -30,6 +30,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.football.R
 import com.example.football.utils.Helpers
 import com.example.football.utils.ManagePermissions
+import com.example.football.view.broadcast.CheckConnectionListener
 import com.example.football.view.broadcast.CheckConnectionReceiver
 import com.example.football.view.service.OfflineService
 import com.example.football.viewmodel.NewsViewModel
@@ -40,10 +41,10 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 
-class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
+class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , CheckConnectionListener{
     private val viewModel: NewsViewModel by viewModels()
     private val managePermissions : ManagePermissions = ManagePermissions(this)
-    private val checkConnectionReceiver : CheckConnectionReceiver = CheckConnectionReceiver()
+    private val checkConnectionReceiver : CheckConnectionReceiver = CheckConnectionReceiver(this)
     private lateinit var actionAppBar : Toolbar
     private lateinit var navBar : BottomNavigationView
     private lateinit var drawerLayout: DrawerLayout
@@ -102,7 +103,10 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver(checkConnectionReceiver)
+        if(mBound)
         unbindService(connection)
+
+        Helpers.contentSave= mutableListOf()
 
     }
 
@@ -223,10 +227,7 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
 
         if(Helpers.internet){
 
-            //bind service
-            Intent(this, OfflineService::class.java).also { intent ->
-                bindService(intent, connection, Context.BIND_AUTO_CREATE)
-            }
+
 
             //Thread check data is saved and load list news
             GlobalScope.launch(Dispatchers.Default){
@@ -381,5 +382,27 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent {
                 }
             }
         }
+
+    override fun transMode(internet: Boolean,timeCall: Int) {
+        Helpers.internet=internet
+        Log.e("timecall1",timeCall.toString())
+
+        if(timeCall==0 && internet){
+            //bind service
+            Intent(this, OfflineService::class.java).also { intent ->
+                bindService(intent, connection, Context.BIND_AUTO_CREATE)
+            }
+        }
+
+        if(timeCall!=0 && !mBound && Helpers.internet){
+            Log.e("timecall",timeCall.toString())
+            finish();
+            startActivity(intent);
+
+            // this basically provides animation
+            overridePendingTransition(0, 0);
+        }
+
     }
+}
 

@@ -16,6 +16,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/tv_nointernet_competition"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/no_internet"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/RV_homeCompetition"
+        app:layout_constraintEnd_toEndOf="@+id/RV_homeCompetition"
+        app:layout_constraintStart_toStartOf="@+id/RV_homeCompetition"
+        app:layout_constraintTop_toTopOf="@+id/RV_homeCompetition"
+        android:visibility="gone"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/RV_homeCompetition"
         android:layout_width="match_parent"
