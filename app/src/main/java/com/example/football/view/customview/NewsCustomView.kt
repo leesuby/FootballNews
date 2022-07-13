@@ -88,10 +88,6 @@ class NewsCustomView(context: Context?, attrs: AttributeSet?) : View(context, at
             val width = width
             val height = height
 
-
-            Log.e("width",width.toString())
-            Log.e("height",height.toString())
-
             drawAvatar(canvas,width,height)
 
             drawLogo(canvas,width,height)

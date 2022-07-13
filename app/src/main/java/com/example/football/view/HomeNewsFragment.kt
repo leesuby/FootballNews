@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.football.view.adapters.RecyclerHomeAdapter
 import com.example.football.R
+import com.example.football.data.model.Content
 import com.example.football.data.model.HomeBaoMoiData
 import com.example.football.utils.Helpers
 import com.example.football.view.decor.HomeDecorate
@@ -123,7 +125,7 @@ class HomeNewsFragment : Fragment(), CoroutineScope, SwipeRefreshLayout.OnRefres
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 if (!recyclerView.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
                     if (Helpers.internet) {
-                        if (!adapterNewlist.checkLoading() || !swipeLayout.isRefreshing) {
+                        if (!adapterNewlist.checkLoading() && !swipeLayout.isRefreshing) {
                             adapterNewlist.setLoading(true)
                             newsViewModel.getListNews(
                                 this@HomeNewsFragment.context,
@@ -145,8 +147,15 @@ class HomeNewsFragment : Fragment(), CoroutineScope, SwipeRefreshLayout.OnRefres
                 Toast.makeText(this.context, "No result found", Toast.LENGTH_SHORT).show()
             } else {
                 if (adapterNewlist.checkLoading()) {
+                    var tmpList = mutableListOf<Content>()
+                    tmpList.addAll(adapterNewlist.listNews)
+                    tmpList.addAll(it.data.contents.toMutableList())
+
                     //load data to UI
-                    adapterNewlist.listNews.addAll(it.data.contents.toMutableList())
+                    adapterNewlist.setNewsList(tmpList)
+
+                    Log.e("content_load","reach here")
+
                     newsViewModel.increasePage()
                     adapterNewlist.setLoading(false)
 
@@ -156,18 +165,21 @@ class HomeNewsFragment : Fragment(), CoroutineScope, SwipeRefreshLayout.OnRefres
                     mService.saveData(tmp)
 
                 } else {
-                    if (Helpers.contentSave.isNotEmpty())
-                        adapterNewlist.listNews = Helpers.contentSave
+                    if (Helpers.contentSave.isNotEmpty()){
+                        Log.e("content_Save","reach here")
+                        adapterNewlist.setNewsList(Helpers.contentSave)
+                    }
                     else
                     {
                         if(swipeLayout.isRefreshing){
                             swipeLayout.isRefreshing=false
                         }
-                        adapterNewlist.listNews = it.data.contents.toMutableList()
+                        adapterNewlist.listNews=it.data.contents.toMutableList()
+                        adapterNewlist.notifyDataSetChanged()
                     }
                 }
 
-                adapterNewlist.notifyDataSetChanged()
+
             }
         }
 

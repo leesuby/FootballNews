@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.net.toUri
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -51,6 +52,13 @@ class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var listCompetition = mutableListOf<SoccerCompetition>()
 
     private var isLoading = false
+
+    fun setNewsList(newNewsList: MutableList<Content>){
+        val diffUtil = NewsHomeDiffUtil(listNews,newNewsList)
+        val diffResult = DiffUtil.calculateDiff(diffUtil)
+        listNews = newNewsList
+        diffResult.dispatchUpdatesTo(this)
+    }
 
     fun setLoading(boolean: Boolean) {
         isLoading = boolean
