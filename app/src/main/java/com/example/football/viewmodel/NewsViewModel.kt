@@ -38,6 +38,10 @@ class NewsViewModel : ViewModel() {
         pageLoaded++
     }
 
+    fun resetPage(){
+        pageLoaded=0
+    }
+
     fun getListNewsObservable() : LiveData<HomeBaoMoiData>{
         return recyclerListNews
     }

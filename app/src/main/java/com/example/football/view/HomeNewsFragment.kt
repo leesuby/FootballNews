@@ -15,6 +15,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.football.view.adapters.RecyclerHomeAdapter
 import com.example.football.R
 import com.example.football.data.model.HomeBaoMoiData
@@ -22,15 +23,14 @@ import com.example.football.utils.Helpers
 import com.example.football.view.decor.HomeDecorate
 import com.example.football.view.service.OfflineService
 import com.example.football.viewmodel.NewsViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
-class HomeNewsFragment : Fragment(), CoroutineScope {
+class HomeNewsFragment : Fragment(), CoroutineScope, SwipeRefreshLayout.OnRefreshListener {
     private var layoutManager: RecyclerView.LayoutManager? = null
     private lateinit var adapterNewlist: RecyclerHomeAdapter
     private lateinit var newsList: RecyclerView
+    private lateinit var swipeLayout: SwipeRefreshLayout
     private val newsViewModel: NewsViewModel by activityViewModels()
     private lateinit var views: View
 
@@ -69,7 +69,7 @@ class HomeNewsFragment : Fragment(), CoroutineScope {
         CoroutineScope(coroutineContext).launch {
             launch { newsViewModel.getListNews(context, loadOnline = false) }
             launch { newsViewModel.getListMatch() }
-            launch { newsViewModel.getListCompetition()}
+            launch { newsViewModel.getListCompetition() }
         }
 
 
@@ -90,6 +90,12 @@ class HomeNewsFragment : Fragment(), CoroutineScope {
         initView()
     }
 
+    override fun onResume() {
+        super.onResume()
+        if(swipeLayout.isRefreshing){
+            swipeLayout.isRefreshing=false
+        }
+    }
     override fun onDestroy() {
         //set
         super.onDestroy()
@@ -98,7 +104,8 @@ class HomeNewsFragment : Fragment(), CoroutineScope {
 
     @SuppressLint("NotifyDataSetChanged")
     fun initView() {
-
+        swipeLayout = views.findViewById(R.id.swipe_homeLayout)
+        swipeLayout.setOnRefreshListener(this)
 
         layoutManager = LinearLayoutManager(this.context)
         newsList = views.findViewById(R.id.RV_news)
@@ -116,7 +123,7 @@ class HomeNewsFragment : Fragment(), CoroutineScope {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 if (!recyclerView.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
                     if (Helpers.internet) {
-                        if (!adapterNewlist.checkLoading()) {
+                        if (!adapterNewlist.checkLoading() || !swipeLayout.isRefreshing) {
                             adapterNewlist.setLoading(true)
                             newsViewModel.getListNews(
                                 this@HomeNewsFragment.context,
@@ -152,7 +159,12 @@ class HomeNewsFragment : Fragment(), CoroutineScope {
                     if (Helpers.contentSave.isNotEmpty())
                         adapterNewlist.listNews = Helpers.contentSave
                     else
+                    {
+                        if(swipeLayout.isRefreshing){
+                            swipeLayout.isRefreshing=false
+                        }
                         adapterNewlist.listNews = it.data.contents.toMutableList()
+                    }
                 }
 
                 adapterNewlist.notifyDataSetChanged()
@@ -204,5 +216,25 @@ class HomeNewsFragment : Fragment(), CoroutineScope {
         }
     }
 
+    override fun onRefresh() {
+
+        CoroutineScope(coroutineContext).launch {
+            newsViewModel.resetPage()
+            Helpers.contentSave = mutableListOf()
+
+            newsViewModel.getListNews(
+                context,
+                newsViewModel.getPage(),
+                loadOnline = true)
+            newsViewModel.getListMatch()
+
+            newsViewModel.getListCompetition()
+
+            newsViewModel.increasePage()
+
+        }
+    }
 }
+
+
 
