@@ -19,6 +19,10 @@
 
     </style>
 
+    <style name="ButtonColor" parent="@android:style/Widget.Button">
+        <item name="android:textColor">@drawable/bg_white_corner_20</item>
+    </style>
+
     <style name="ToolbarTheme" parent="@style/ThemeOverlay.AppCompat.ActionBar">
         <!-- Customize color of navigation drawer icon and back arrow -->
         <item name="colorControlNormal">@color/white</item>

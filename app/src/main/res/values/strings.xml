@@ -10,4 +10,7 @@
     <string name="menu_standing">Bảng xếp hạng</string>
     <string name="menu_schedule">Lịch thi đấu</string>
     <string name="menu_club">Câu lạc bộ</string>
+    <string name="notification_dialog">Thông Báo</string>
+    <string name="swap_online">Tiến hành chuyển sang chế độ Online</string>
+    <string name="accept">Xác nhận</string>
 </resources>

@@ -1,8 +1,11 @@
 package com.example.football.view
 
 
+import android.app.Dialog
 import android.content.*
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Build.VERSION.SDK_INT
@@ -10,8 +13,8 @@ import android.os.Bundle
 import android.os.Environment
 import android.os.IBinder
 import android.util.Log
-import android.view.MenuItem
-import android.view.View
+import android.view.*
+import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -227,11 +230,15 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , Check
 
         if(Helpers.internet){
 
-
-
             //Thread check data is saved and load list news
             GlobalScope.launch(Dispatchers.Default){
                 while(!Helpers.isListNewsSaved){
+                    if(!Helpers.internet){
+                        val fragmentHome = HomeNewsFragment()
+                        fragmentHome.getIDContent = this@MainActivity
+                        showFragment(fragmentHome, false)
+                        break
+                    }
                     if(Helpers.isListNewsSaved)
                         break
 
@@ -396,12 +403,45 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , Check
 
         if(timeCall!=0 && !mBound && Helpers.internet){
             Log.e("timecall",timeCall.toString())
+            showNotifyDialog(Gravity.CENTER)
+        }
+
+    }
+
+    private fun showNotifyDialog(gravity: Int) {
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(false)
+        dialog.setContentView(R.layout.custom_dialog)
+
+        val window = dialog.window ?: return
+
+        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT,WindowManager.LayoutParams.WRAP_CONTENT)
+        window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        val windowAttribute = window.attributes
+        windowAttribute.gravity=gravity
+
+        window.attributes=windowAttribute
+
+        if(Gravity.BOTTOM == gravity){
+            dialog.setCancelable(true)
+        }
+        else
+            dialog.setCancelable(false)
+
+
+        val yesBtn = dialog.findViewById(R.id.btn_accept_dialog) as Button
+        yesBtn.setOnClickListener {
+            dialog.dismiss()
+
             finish();
             startActivity(intent);
 
             // this basically provides animation
             overridePendingTransition(0, 0);
         }
+        dialog.show()
 
     }
 }

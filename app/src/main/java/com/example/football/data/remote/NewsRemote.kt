@@ -68,16 +68,19 @@ class NewsRemote {
                         }
 
                         data.postValue(response.body())
+
+                        if(Helpers.isOfflineMode){
+                            if(isSave){
+                                GlobalScope.launch(Dispatchers.IO){
+                                    NewsLocal.saveDetailContentNews(data)
+                                }
+                            }}
+
                     }
 
 
 
-                    if(Helpers.isOfflineMode){
-                    if(isSave){
-                        GlobalScope.launch(Dispatchers.IO){
-                            NewsLocal.saveDetailContentNews(data)
-                        }
-                    }}
+
                 }
             })
         }

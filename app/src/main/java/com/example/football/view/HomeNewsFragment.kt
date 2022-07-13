@@ -67,9 +67,9 @@ class HomeNewsFragment : Fragment(), CoroutineScope {
         adapterNewlist = RecyclerHomeAdapter()
         //get data for home
         CoroutineScope(coroutineContext).launch {
-            newsViewModel.getListNews(context, loadOnline = false)
-            newsViewModel.getListMatch()
-            newsViewModel.getListCompetition()
+            launch { newsViewModel.getListNews(context, loadOnline = false) }
+            launch { newsViewModel.getListMatch() }
+            launch { newsViewModel.getListCompetition()}
         }
 
 
