@@ -16,6 +16,7 @@ import android.util.Log
 import android.view.*
 import android.widget.Button
 import android.widget.FrameLayout
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -52,6 +53,7 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , Check
     private lateinit var navBar : BottomNavigationView
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var toggle: ActionBarDrawerToggle
+    private lateinit var searchButton: ImageButton
     private lateinit var navControl : NavController
 
     lateinit var mService: OfflineService
@@ -115,8 +117,9 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , Check
 
     private fun initView(){
         drawerLayout = findViewById(R.id.layout_drawer)
-        navBar = findViewById(R.id.bottomNavigationView)
+        actionAppBar = findViewById(R.id.toolbar)
 
+        navBar = findViewById(R.id.bottomNavigationView)
         navBar.setOnItemSelectedListener {
             when(it.itemId){
                 R.id.nav_home -> showFragment(HomeNewsFragment(),false)
@@ -127,7 +130,21 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , Check
             true
         }
 
-        actionAppBar = findViewById(R.id.toolbar)
+        searchButton = findViewById(R.id.search_button)
+        searchButton.setOnClickListener(View.OnClickListener {
+            showFragment(SearchFragment())
+
+            val mConstrainLayout = findViewById<FrameLayout>(R.id.fragment_main)
+            val lp = mConstrainLayout.layoutParams as ConstraintLayout.LayoutParams
+            lp.matchConstraintPercentHeight = 0.90f
+            mConstrainLayout.layoutParams = lp
+
+            navBar.visibility= View.GONE
+            searchButton.visibility= View.GONE
+
+            showBackButton(true)
+        })
+
 
         //set up for tool bar
         setupToolbar()
@@ -307,10 +324,11 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , Check
 
         val mConstrainLayout = findViewById<FrameLayout>(R.id.fragment_main)
         val lp = mConstrainLayout.layoutParams as ConstraintLayout.LayoutParams
-        lp.matchConstraintPercentHeight = 0.90f
+        lp.matchConstraintPercentHeight = 0.84f
         mConstrainLayout.layoutParams = lp
 
         navBar.visibility= View.GONE
+        searchButton.visibility= View.GONE
 
         showBackButton(true)
 
@@ -347,6 +365,8 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , Check
                 mConstrainLayout.layoutParams = lp
 
                 navBar.visibility= View.VISIBLE
+                if(searchButton.visibility== View.GONE)
+                    searchButton.visibility= View.VISIBLE
 
             }
         } else {

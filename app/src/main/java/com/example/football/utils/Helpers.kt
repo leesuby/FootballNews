@@ -202,7 +202,6 @@ class Helpers {
             }
 
                 if (!content.publisher_logo.isNullOrBlank()) {
-                    Log.e("contentavatar", content.publisher_logo.toString())
 
                     try{
                     c.bitmapLogo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {

@@ -246,7 +246,6 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
             }
         }
 
-        newsViewModel
         adapterNewlist.listNews=related.contents.toMutableList()
         layout.addView(newsList)
 

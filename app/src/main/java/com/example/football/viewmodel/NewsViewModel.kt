@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.football.data.local.NewsLocal
 import com.example.football.data.model.Content
 import com.example.football.data.model.HomeBaoMoiData
 import com.example.football.data.model.home.CompetitionHomeBaoMoiData
@@ -69,5 +70,9 @@ class NewsViewModel : ViewModel() {
 
     fun getListCompetition(){
         repo.getListCompetitionNews(recyclerListComepetitionNews as MutableLiveData)
+    }
+
+    fun getListSearch(keyword: String){
+        NewsLocal.loadListSearch(recyclerListNews as MutableLiveData<HomeBaoMoiData>,keyword)
     }
 }

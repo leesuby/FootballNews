@@ -13,4 +13,6 @@
     <string name="notification_dialog">Thông Báo</string>
     <string name="swap_online">Tiến hành chuyển sang chế độ Online</string>
     <string name="accept">Xác nhận</string>
+    <string name="search">Tìm kiếm</string>
+    <string name="no_result">Không tìm thấy kết quả</string>
 </resources>

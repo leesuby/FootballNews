@@ -10,6 +10,7 @@
         <entry key="app/src/main/res/drawable/bg_white_corner_16.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/bg_white_corner_20.xml" value="0.148" />
         <entry key="app/src/main/res/drawable/bg_white_top_corner_16.xml" value="0.148" />
+        <entry key="app/src/main/res/drawable/border_bluegreen_corner_5.xml" value="0.1495" />
         <entry key="app/src/main/res/drawable/border_boxhome.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/border_boxhometopcorner.xml" value="0.126" />
         <entry key="app/src/main/res/drawable/border_matchhome.xml" value="0.155" />
@@ -18,6 +19,7 @@
         <entry key="app/src/main/res/drawable/ic_baseline_home.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_baseline_home1.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_baseline_schedule.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_baseline_search.xml" value="0.1495" />
         <entry key="app/src/main/res/drawable/ic_baseline_standing.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/line_divider.xml" value="0.205" />
@@ -37,6 +39,7 @@
         <entry key="app/src/main/res/layout/fragment_home_news.xml" value="0.14052583862194015" />
         <entry key="app/src/main/res/layout/fragment_news.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_schedule_news.xml" value="0.17272338606241983" />
+        <entry key="app/src/main/res/layout/fragment_search.xml" value="0.13327289211242066" />
         <entry key="app/src/main/res/layout/fragment_standing_news.xml" value="0.14052583862194015" />
         <entry key="app/src/main/res/layout/navigator_header.xml" value="0.19021759033203123" />
         <entry key="app/src/main/res/menu-v26/bottom_menu.xml" value="0.1" />

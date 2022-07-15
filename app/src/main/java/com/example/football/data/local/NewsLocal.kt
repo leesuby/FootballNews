@@ -127,6 +127,12 @@ class NewsLocal {
 
         }
 
+        fun loadListSearch(data: MutableLiveData<HomeBaoMoiData>,keyword: String){
+            GlobalScope.launch(Dispatchers.IO) {
+                data.postValue(HomeBaoMoiData(Data(null,Helpers.convert(homeContentDao.searchByKeyWord(keyword))),0,""))
+            }
+        }
+
         fun loadDetailContent(data: MutableLiveData<DetailBaoMoiData>,id : Int){
             GlobalScope.launch(Dispatchers.IO) {
                 if(detailContentDao.readAllSynchronous(id).isEmpty()){
