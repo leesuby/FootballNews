@@ -248,6 +248,7 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
 
         adapterNewlist.listNews=related.contents.toMutableList()
         layout.addView(newsList)
+        newsList?.margin(left = -15F)
 
     }
 

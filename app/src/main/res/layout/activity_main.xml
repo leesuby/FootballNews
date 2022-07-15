@@ -68,4 +68,11 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <com.google.android.material.navigation.NavigationView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:headerLayout="@layout/navigator_header"
+        android:fitsSystemWindows="true"/>
+
 </androidx.drawerlayout.widget.DrawerLayout>
