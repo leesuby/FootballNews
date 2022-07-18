@@ -1,7 +1,9 @@
 package com.example.football.data.model.home
 
 import com.example.football.data.model.SoccerCompetition
+import com.google.gson.annotations.SerializedName
 
 data class CompetitionData(
-    val soccer_competitions: List<SoccerCompetition>
+    @SerializedName("soccer_competitions")
+    val soccerCompetitions: List<SoccerCompetition>
 )

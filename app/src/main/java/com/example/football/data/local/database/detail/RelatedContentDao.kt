@@ -14,12 +14,12 @@ interface RelatedContentDao {
 
     @Query("SELECT contenthome.* " +
             "FROM contentrelated" +
-            " JOIN contenthome ON contentrelated.related_id = contenthome.content_id" +
-            " WHERE contentrelated.content_id = :id  ")
+            " JOIN contenthome ON contentrelated.relatedId = contenthome.contentId" +
+            " WHERE contentrelated.contentId = :id  ")
     fun readAll(id: Int) : LiveData<HomeContent>
 
-    @Query("SELECT content_id , title , date , publisher_logo, avatar,publisher_logo_URL,avatar_URL  " +
+    @Query("SELECT contentId , title , date , publisherLogo, avatar, publisherLogoURL, avatarURL  " +
             " FROM contentrelated" +
-            " WHERE contentrelated.related_id = :id  ")
+            " WHERE contentrelated.relatedId = :id  ")
     suspend fun readAllSynchronous(id: Int) : List<HomeContent>
 }

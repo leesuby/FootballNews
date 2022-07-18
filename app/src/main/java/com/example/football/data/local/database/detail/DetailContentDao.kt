@@ -16,9 +16,9 @@ interface DetailContentDao {
     @Query("SELECT * FROM ContentDetail")
     fun readAll() : LiveData<DetailContent>
 
-    @Query("SELECT * FROM ContentDetail WHERE content_id = :id ")
+    @Query("SELECT * FROM ContentDetail WHERE contentId = :id ")
     suspend fun readAllSynchronous(id: Int) : List<DetailContent>
 
-    @Query("SELECT EXISTS(SELECT * FROM contentdetail WHERE content_id = :id)")
+    @Query("SELECT EXISTS(SELECT * FROM contentdetail WHERE contentId = :id)")
     fun isRowIsExist(id : Int) : Boolean
 }

@@ -11,9 +11,9 @@ interface BodyDetailContentDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addBodyDetailContent(bodyDetailContent: BodyDetailContent)
 
-    @Query("SELECT * FROM DetailBody WHERE content_id = :id ")
+    @Query("SELECT * FROM DetailBody WHERE contentId = :id ")
     fun readAll(id: Int) : LiveData<BodyDetailContent>
 
-    @Query("SELECT * FROM DetailBody WHERE content_id = :id ")
+    @Query("SELECT * FROM DetailBody WHERE contentId = :id ")
     suspend fun readAllSynchronous(id: Int) : List<BodyDetailContent>
 }

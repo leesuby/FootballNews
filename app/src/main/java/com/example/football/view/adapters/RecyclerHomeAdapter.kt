@@ -112,7 +112,7 @@ class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                     in 5..itemCount -> positionListNews = adapterPosition - 2
                 }
 
-                listener.onItemClick(listNews.get(positionListNews).content_id)
+                listener.onItemClick(listNews.get(positionListNews).contentId)
             }
         }
 

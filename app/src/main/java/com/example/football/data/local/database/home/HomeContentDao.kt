@@ -13,7 +13,7 @@ interface HomeContentDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addContent(homeContent: HomeContent)
 
-    @Query("SELECT * FROM ContentHome ORDER BY content_id DESC")
+    @Query("SELECT * FROM ContentHome ORDER BY contentId DESC")
     fun readAllContent(): LiveData<HomeContent>
 
     @Query(

@@ -69,36 +69,36 @@ class RecyclerMatchHomeAdapter : RecyclerView.Adapter<RecyclerMatchHomeAdapter.M
         if(position!=0)
             holder.itemView.margin(left = 10f)
 
-        when(match.match_status){
+        when(match.matchStatus){
 
             MATCH_GOING -> {holder.itemMatchLine.setBackgroundColor(Color.RED)
-                holder.itemTime.text= convertTime.format(match.start_time.toLong()) + " " + convertDate.format(match.start_time.toLong())
-                holder.itemTeam1Score.text = match.home_scored.toString()
-                holder.itemTeam2Score.text = match.away_scored.toString()
+                holder.itemTime.text= convertTime.format(match.startTime.toLong()) + " " + convertDate.format(match.startTime.toLong())
+                holder.itemTeam1Score.text = match.homeScored.toString()
+                holder.itemTeam2Score.text = match.awayScored.toString()
             }
 
             MATCH_COMING -> {holder.itemMatchLine.setBackgroundColor(Color.GREEN)
-                holder.itemTime.text= convertTime.format(match.start_time.toLong()) + " " + convertDate.format(match.start_time.toLong())
+                holder.itemTime.text= convertTime.format(match.startTime.toLong()) + " " + convertDate.format(match.startTime.toLong())
             }
 
             MATCH_DONE ->{ holder.itemMatchLine.setBackgroundColor(Color.GRAY)
                 holder.itemTime.text = "Kết thúc"
-                holder.itemTeam1Score.text = match.home_scored.toString()
-                holder.itemTeam2Score.text = match.away_scored.toString()
+                holder.itemTeam1Score.text = match.homeScored.toString()
+                holder.itemTeam2Score.text = match.awayScored.toString()
 
             }
 
             else -> {holder.itemMatchLine.setBackgroundColor(Color.LTGRAY)
-                holder.itemTime.text= convertTime.format(match.start_time.toLong()) + " " + convertDate.format(match.start_time.toLong())
+                holder.itemTime.text= convertTime.format(match.startTime.toLong()) + " " + convertDate.format(match.startTime.toLong())
             }
         }
 
-        holder.itemCompetitionName.text = match.competition.competition_name
-        holder.itemTeam1Name.text = match.home_team.team_name
-        holder.itemTeam2Name.text = match.away_team.team_name
+        holder.itemCompetitionName.text = match.competition.competitionName
+        holder.itemTeam1Name.text = match.homeTeam.teamName
+        holder.itemTeam2Name.text = match.awayTeam.teamName
 
-        Helpers.checkandLoadImageGlide(match.home_team.team_logo,holder.itemTeam1Logo,holder.itemView.context)
-        Helpers.checkandLoadImageGlide(match.away_team.team_logo,holder.itemTeam2Logo,holder.itemView.context)
+        Helpers.checkandLoadImageGlide(match.homeTeam.teamLogo,holder.itemTeam1Logo,holder.itemView.context)
+        Helpers.checkandLoadImageGlide(match.awayTeam.teamLogo,holder.itemTeam2Logo,holder.itemView.context)
 
 
 

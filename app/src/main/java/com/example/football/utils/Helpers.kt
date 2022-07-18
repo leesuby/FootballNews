@@ -161,11 +161,11 @@ class Helpers {
             var listContent: MutableList<Content> = mutableListOf()
             for (content in homeContent) {
                 var c = Content(
-                    content_id = content.content_id,
+                    contentId = content.contentId,
                     title = content.title,
                     date = content.date,
-                    avatar_url = content.avatar,
-                    publisher_logo = content.publisher_logo,
+                    avatarUrl = content.avatar,
+                    publisherLogo = content.publisherLogo,
                 )
                 if (!content.avatar.isNullOrBlank()) {
                     try{
@@ -187,11 +187,11 @@ class Helpers {
                     catch (e: Throwable){
                         Log.e("nullAvatar",content.avatar.toString())
                         if(internet){
-                            if(content.avatar_URL.isNullOrBlank()){
+                            if(content.avatarURL.isNullOrBlank()){
                                 c.bitmapAvatar=null
                             }
                             else{
-                                c.bitmapAvatar= mLoad(content.avatar_URL)
+                                c.bitmapAvatar= mLoad(content.avatarURL)
                             }
                         }
                         else
@@ -201,31 +201,31 @@ class Helpers {
                 }
             }
 
-                if (!content.publisher_logo.isNullOrBlank()) {
+                if (!content.publisherLogo.isNullOrBlank()) {
 
                     try{
                     c.bitmapLogo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                         ImageDecoder.decodeBitmap(
                             ImageDecoder.createSource(
                                 MainApplication.applicationContext().contentResolver,
-                                File(content.publisher_logo).toUri()
+                                File(content.publisherLogo).toUri()
                             )
                         )
                     } else {
                         MediaStore.Images.Media.getBitmap(
                             MainApplication.applicationContext().contentResolver,
-                            File(content.publisher_logo).toUri()
+                            File(content.publisherLogo).toUri()
                         )
                     }
                 }
                     catch (e: Throwable){
                         Log.e("nullLogo",content.avatar.toString())
                         if(internet){
-                            if(content.publisher_logo_URL.isNullOrBlank()){
+                            if(content.publisherLogoURL.isNullOrBlank()){
                                 c.bitmapLogo=null
                             }
                             else{
-                                c.bitmapLogo= mLoad(content.publisher_logo_URL)
+                                c.bitmapLogo= mLoad(content.publisherLogoURL)
                             }
                         }
                         else
@@ -261,7 +261,7 @@ class Helpers {
                 date = detailContent.date,
                 title = detailContent.title,
                 description = detailContent.description,
-                content_id = detailContent.content_id
+                contentId = detailContent.contentId
             )
         }
 

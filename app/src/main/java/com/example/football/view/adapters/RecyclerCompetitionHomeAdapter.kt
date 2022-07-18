@@ -39,8 +39,8 @@ class RecyclerCompetitionHomeAdapter : RecyclerView.Adapter<RecyclerCompetitionH
     override fun onBindViewHolder(holder: CompetitionHomeViewHolder, position: Int) {
         var competition = listCompetition[position]
 
-        Helpers.checkandLoadImageGlide(competition.competition_logo,holder.itemLogoCompetition,holder.itemView.context)
-        holder.itemNameCompetition.text = competition.competition_name
+        Helpers.checkandLoadImageGlide(competition.competitionLogo,holder.itemLogoCompetition,holder.itemView.context)
+        holder.itemNameCompetition.text = competition.competitionName
     }
 
 

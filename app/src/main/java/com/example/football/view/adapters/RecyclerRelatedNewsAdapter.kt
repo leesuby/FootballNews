@@ -101,7 +101,7 @@ class RecyclerRelatedNewsAdapter: RecyclerView.Adapter<RecyclerRelatedNewsAdapte
 
             customNews = itemView.findViewById(R.id.custom_news)
             itemView.setOnClickListener{
-                listener.onItemClick(listNews.get(adapterPosition).content_id)
+                listener.onItemClick(listNews.get(adapterPosition).contentId)
             }
         }
 

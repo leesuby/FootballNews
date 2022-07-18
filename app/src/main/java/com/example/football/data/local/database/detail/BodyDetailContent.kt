@@ -5,14 +5,14 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
-@Entity(primaryKeys = ["content_id","body_id"]
+@Entity(primaryKeys = ["contentId","bodyId"]
     , tableName = "DetailBody"
 )
 data class BodyDetailContent(
-    val content_id: Int,
+    val contentId: Int,
     val content: String,
     val originUrl: String?,
     val subtype: String? ="",
     val type: String,
-    val body_id: Int
+    val bodyId: Int
 )

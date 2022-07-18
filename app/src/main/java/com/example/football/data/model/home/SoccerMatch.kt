@@ -1,19 +1,51 @@
 package com.example.football.data.model
 
+import com.google.gson.annotations.SerializedName
+
 data class SoccerMatch(
-    val away_scored: Int,
-    val away_scored_note: String,
-    val away_team: AwayTeam,
+
+    @SerializedName("away_scored")
+    val awayScored: Int,
+
+    @SerializedName("away_scored_note")
+    val awayScoredNote: String,
+
+    @SerializedName("away_team")
+    val awayTeam: AwayTeam,
+
+    @SerializedName("competition")
     val competition: Competition,
-    val group_id: Int,
-    val group_name: String,
-    val home_scored: Int,
-    val home_scored_note: String,
-    val home_team: HomeTeam,
-    val match_id: Int,
-    val match_status: Int,
+
+    @SerializedName("group_id")
+    val groupId: Int,
+
+    @SerializedName("group_name")
+    val groupName: String,
+
+    @SerializedName("home_scored")
+    val homeScored: Int,
+
+    @SerializedName("home_scored_note")
+    val homeScoredNote: String,
+
+    @SerializedName("home_team")
+    val homeTeam: HomeTeam,
+
+    @SerializedName("match_id")
+    val matchId: Int,
+
+    @SerializedName("match_status")
+    val matchStatus: Int,
+
+    @SerializedName("round")
     val round: String,
-    val start_time: String,
+
+    @SerializedName("start_time")
+    val startTime: String,
+
+    @SerializedName("time")
     val time: String,
+
+    @SerializedName("zone")
     val zone: String
 )

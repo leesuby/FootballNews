@@ -1,8 +1,17 @@
 package com.example.football.data.model
 
+import com.google.gson.annotations.SerializedName
+
 data class AwayTeam(
-    val team_id: Int,
-    val team_logo: String,
-    val team_name: String,
+    @SerializedName("team_id")
+    val teamId: Int,
+
+    @SerializedName("team_logo")
+    val teamLogo: String,
+
+    @SerializedName("team_name")
+    val teamName: String,
+
+    @SerializedName("zone")
     val zone: String
 )

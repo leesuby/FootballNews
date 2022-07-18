@@ -39,11 +39,14 @@ abstract class BaoMoiDatabase : RoomDatabase(){
                 val instance = Room.databaseBuilder(
                     MainApplication.applicationContext(),
                     BaoMoiDatabase::class.java,
-                    "baomoi_database"
+                    "baomoi_database_local"
                 ).build()
                 INSTANCE = instance
+
                 return instance
             }
+            if (tempInstant != null )
+                return tempInstant
         }
 
     }

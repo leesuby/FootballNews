@@ -17,9 +17,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import kotlin.concurrent.thread
 
-class NewsRemote {
-    companion object{
-
+object NewsRemote {
         //request API get list new data
         @OptIn(DelicateCoroutinesApi::class)
         fun loadListNews(data : MutableLiveData<HomeBaoMoiData>, page: Int = 0, loadOnline: Boolean= false){
@@ -35,8 +33,8 @@ class NewsRemote {
                     {
                         GlobalScope.launch(Dispatchers.IO) {
                             for(content in response.body()?.data!!.contents){
-                                content.bitmapAvatar = Helpers.mLoad(content.avatar_url)
-                                content.bitmapLogo= Helpers.mLoad(content.publisher_logo)
+                                content.bitmapAvatar = Helpers.mLoad(content.avatarUrl)
+                                content.bitmapLogo= Helpers.mLoad(content.publisherLogo)
                             }
                             Log.e("respone",response.body().toString())
                             data.postValue(response.body())
@@ -61,10 +59,10 @@ class NewsRemote {
                 override fun onResponse(call: Call<DetailBaoMoiData>, response: Response<DetailBaoMoiData>) {
                     GlobalScope.launch(Dispatchers.IO) {
                         for(related in response.body()?.data?.related?.contents!!){
-                            if(related.avatar_url!=null)
-                                related.bitmapAvatar = Helpers.mLoad(related.avatar_url)
-                            if(related.publisher_logo!=null)
-                                related.bitmapLogo = Helpers.mLoad(related.publisher_logo)
+                            if(related.avatarUrl!=null)
+                                related.bitmapAvatar = Helpers.mLoad(related.avatarUrl)
+                            if(related.publisherLogo!=null)
+                                related.bitmapLogo = Helpers.mLoad(related.publisherLogo)
                         }
 
                         data.postValue(response.body())
@@ -112,5 +110,4 @@ class NewsRemote {
                 }
             })
         }
-    }
 }

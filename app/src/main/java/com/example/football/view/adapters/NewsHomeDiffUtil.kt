@@ -17,10 +17,10 @@ class NewsHomeDiffUtil(private val oldNewsList: MutableList<Content>,
     }
 
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return oldNewsList[oldItemPosition].content_id == newNewsList[newItemPosition].content_id
+        return oldNewsList[oldItemPosition].contentId == newNewsList[newItemPosition].contentId
     }
 
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return oldNewsList[oldItemPosition].content_id == newNewsList[newItemPosition].content_id
+        return oldNewsList[oldItemPosition].contentId == newNewsList[newItemPosition].contentId
     }
 }
