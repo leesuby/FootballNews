@@ -17,6 +17,7 @@ import android.view.*
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageButton
+import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
@@ -245,7 +246,9 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , Check
 
             //Thread check data is saved and load list news
             GlobalScope.launch(Dispatchers.Default){
+                val timeLast = System.currentTimeMillis()
                 while(!Global.isListNewsSaved){
+                    val timeNow = System.currentTimeMillis()
                     if(!Global.internet){
                         val fragmentHome = HomeNewsFragment()
                         fragmentHome.getIDContent = this@MainActivity
@@ -255,6 +258,13 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , Check
                     if(Global.isListNewsSaved)
                         break
 
+                    Log.e("time",(timeNow - timeLast).toString())
+                    if(timeNow - timeLast > 10000){
+                        launch(Dispatchers.Main) {
+                            showNotifyDialog(Gravity.CENTER,true)
+                        }
+                        break
+                    }
                 }
 
                 //Run UI on Main Thread(UI Thread)
@@ -416,7 +426,7 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , Check
     }
 
     //dialog for change mode online/offline
-    private fun showNotifyDialog(gravity: Int) {
+    private fun showNotifyDialog(gravity: Int,isError : Boolean = false) {
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setCancelable(false)
@@ -438,12 +448,18 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , Check
         else
             dialog.setCancelable(false)
 
+        val textNoti = dialog.findViewById(R.id.tv_swaponline_noti) as TextView
+
+        if(isError){
+            textNoti.setText("Hãy kiểm tra lại đường truyền mạng và truy cập lại")
+        }
 
         val yesBtn = dialog.findViewById(R.id.btn_accept_dialog) as Button
         yesBtn.setOnClickListener {
             dialog.dismiss()
 
             finish()
+            if(!isError)
             startActivity(intent)
 
             // this basically provides animation

@@ -148,7 +148,7 @@ class HomeNewsFragment : Fragment(), CoroutineScope, SwipeRefreshLayout.OnRefres
         //News ViewModel
         newsViewModel.getListNewsObservable().observe(viewLifecycleOwner) {
             if (it == null) {
-                Toast.makeText(this.context, "No result found", Toast.LENGTH_SHORT).show()
+
             } else {
                 if (adapterNewlist.checkLoading()) {
                     var tmpList = mutableListOf<Content>()
@@ -190,7 +190,7 @@ class HomeNewsFragment : Fragment(), CoroutineScope, SwipeRefreshLayout.OnRefres
         //Match ViewModel
         newsViewModel.getListMatchObservable().observe(viewLifecycleOwner) {
             if (it == null) {
-                Toast.makeText(this.context, "No result found", Toast.LENGTH_SHORT).show()
+
             } else {
                 adapterNewlist.listMatch = it.data.soccerMatch.toMutableList()
                 adapterNewlist.notifyDataSetChanged()
@@ -200,7 +200,7 @@ class HomeNewsFragment : Fragment(), CoroutineScope, SwipeRefreshLayout.OnRefres
         //Competition ViewModel
         newsViewModel.getListCompetitionObservable().observe(viewLifecycleOwner) {
             if (it == null) {
-                Toast.makeText(this.context, "No result found", Toast.LENGTH_SHORT).show()
+
             } else {
                 adapterNewlist.listCompetition = it.data.soccerCompetitions.toMutableList()
                 adapterNewlist.notifyDataSetChanged()

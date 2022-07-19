@@ -236,7 +236,7 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
 
         newsViewModel?.getListNewsObservable()?.observe(viewLifecycleOwner) {
             if (it == null) {
-                Toast.makeText(this.context, "No result found", Toast.LENGTH_SHORT).show()
+
             } else {
                 adapterNewlist.listNews = related.contents.toMutableList()
                 adapterNewlist.notifyDataSetChanged()

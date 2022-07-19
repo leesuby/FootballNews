@@ -20,6 +20,7 @@ import com.example.football.data.model.SoccerCompetition
 import com.example.football.data.model.SoccerMatch
 import com.example.football.utils.Global
 import com.example.football.utils.Helpers
+import com.example.football.utils.View.margin
 import com.example.football.view.compose.LoadingAnimation
 import com.example.football.view.customview.NewsCustomView
 
@@ -220,6 +221,8 @@ class HomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 }
 
                 holder.customNews.readyToDraw = true
+
+                holder.customNews.margin(top = 5F, bottom = 5F)
 
             }
 

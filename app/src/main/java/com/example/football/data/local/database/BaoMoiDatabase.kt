@@ -48,6 +48,7 @@ abstract class BaoMoiDatabase : RoomDatabase(){
 
                 return instance
             }
+
             if (tempInstant != null )
                 return tempInstant
         }
