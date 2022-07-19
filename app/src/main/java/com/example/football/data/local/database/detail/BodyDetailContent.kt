@@ -1,9 +1,7 @@
 package com.example.football.data.local.database.detail
 
-import android.graphics.Bitmap
 import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.PrimaryKey
+
 
 @Entity(primaryKeys = ["contentId","bodyId"]
     , tableName = "DetailBody"

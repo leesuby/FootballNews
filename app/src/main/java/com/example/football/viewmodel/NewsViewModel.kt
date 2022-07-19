@@ -1,12 +1,10 @@
 package com.example.football.viewmodel
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.football.data.local.NewsLocal
-import com.example.football.data.model.Content
 import com.example.football.data.model.HomeBaoMoiData
 import com.example.football.data.model.home.CompetitionHomeBaoMoiData
 import com.example.football.data.model.home.MatchHomeBaoMoiData
@@ -48,12 +46,7 @@ class NewsViewModel : ViewModel() {
     }
 
     fun getListNews(context: Context?,page: Int = 0,loadOnline: Boolean){
-        repo.getListNews(recyclerListNews as MutableLiveData, context, page = page, loadOnline = loadOnline)
-    }
-
-    fun addListNews(tmp : List<Content>){
-        recyclerListNews as MutableLiveData
-        recyclerListNews.value!!.data.contents = recyclerListNews.value!!.data.contents + tmp
+        repo.getListNews(recyclerListNews as MutableLiveData, context, page = page, loadToSave = loadOnline)
     }
 
     fun getListMatchObservable() : LiveData<MatchHomeBaoMoiData>{

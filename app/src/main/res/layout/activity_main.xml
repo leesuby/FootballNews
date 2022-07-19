@@ -33,14 +33,12 @@
                 android:src="@drawable/ic_baseline_search"
                 android:background="@color/transparent"
                 android:layout_gravity="end"
-                android:layout_marginRight="15dp"
-                />
+                android:layout_marginEnd="15dp" />
 
         </androidx.appcompat.widget.Toolbar>
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/fragment_main"
-            android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"

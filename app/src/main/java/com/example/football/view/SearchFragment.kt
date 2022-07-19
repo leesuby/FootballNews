@@ -12,13 +12,12 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.football.R
-import com.example.football.view.adapters.RecyclerRelatedNewsAdapter
+import com.example.football.view.adapters.RelatedNewsAdapter
 import com.example.football.viewmodel.NewsViewModel
 
 
@@ -28,7 +27,7 @@ class SearchFragment : Fragment(), HomeNewsFragment.GetIDContent{
 
     private lateinit var searchField : EditText
     private lateinit var recyclerListNews: RecyclerView
-    private lateinit var adapterNewlist: RecyclerRelatedNewsAdapter
+    private lateinit var adapterNewlist: RelatedNewsAdapter
     private lateinit var textView_no_result : TextView
     private lateinit var layoutManager: RecyclerView.LayoutManager
 
@@ -43,7 +42,7 @@ class SearchFragment : Fragment(), HomeNewsFragment.GetIDContent{
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         views = inflater.inflate(R.layout.fragment_search,container,false)
         return views
     }
@@ -51,24 +50,61 @@ class SearchFragment : Fragment(), HomeNewsFragment.GetIDContent{
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
+        bindViewModel()
     }
 
     private fun initView() {
-        textView_no_result = views.findViewById(R.id.tv_no_result)
-        recyclerListNews = views.findViewById(R.id.RV_search)
 
+        textView_no_result = views.findViewById(R.id.tv_no_result)
+
+        //recycler view
+        recyclerListNews = views.findViewById(R.id.RV_search)
         layoutManager = LinearLayoutManager(this.context)
         recyclerListNews.layoutManager = layoutManager
 
-        adapterNewlist = RecyclerRelatedNewsAdapter()
-        adapterNewlist.setOnItemClickListener(object : RecyclerRelatedNewsAdapter.onNewsClickListener{
+        //adapter for recycler view
+        adapterNewlist = RelatedNewsAdapter()
+        adapterNewlist.setOnItemClickListener(object : RelatedNewsAdapter.onNewsClickListener{
             override fun onItemClick(idContent: Int) {
                 showDetail(idContent)
             }
         })
-
         recyclerListNews.adapter = adapterNewlist
 
+        //search field
+        searchField=views.findViewById(R.id.edtxt_searchfield)
+        searchField.addTextChangedListener(object :TextWatcher{
+
+            var timer: CountDownTimer? = null
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                newsViewModel.getListSearch(s.toString())
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+
+                //timer to auto close keyboard
+                timer?.cancel()
+                timer = object : CountDownTimer(2500, 1500) {
+                    override fun onTick(millisUntilFinished: Long) {}
+                    override fun onFinish() {
+                        closeKeyBoard()
+                    }
+                }.start()
+
+            }
+
+        })
+
+    }
+
+    fun bindViewModel(){
+
+        //bind ViewModel
         newsViewModel.getListNewsObservable().observe(viewLifecycleOwner) {
             if (it == null) {
                 textView_no_result.visibility= View.VISIBLE
@@ -84,36 +120,6 @@ class SearchFragment : Fragment(), HomeNewsFragment.GetIDContent{
                 }
             }
         }
-
-        searchField=views.findViewById(R.id.edtxt_searchfield)
-        searchField.addTextChangedListener(object :TextWatcher{
-
-            var timer: CountDownTimer? = null
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                newsViewModel.getListSearch(s.toString())
-                Log.e("keyword",s.toString())
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-
-                timer?.cancel()
-                timer = object : CountDownTimer(2500, 1500) {
-                    override fun onTick(millisUntilFinished: Long) {}
-                    override fun onFinish() {
-                        closeKeyBoard()
-                    }
-                }.start()
-
-
-            }
-
-        })
-
     }
 
     override fun showDetail(idContent: Int) {

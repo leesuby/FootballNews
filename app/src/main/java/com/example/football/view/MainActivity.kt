@@ -17,7 +17,6 @@ import android.view.*
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageButton
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
@@ -27,13 +26,10 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
-import androidx.navigation.NavController
-import androidx.navigation.findNavController
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.setupWithNavController
 import com.example.football.R
-import com.example.football.utils.Helpers
+import com.example.football.utils.Global
 import com.example.football.utils.ManagePermissions
+import com.example.football.utils.Network
 import com.example.football.view.broadcast.CheckConnectionListener
 import com.example.football.view.broadcast.CheckConnectionReceiver
 import com.example.football.view.service.OfflineService
@@ -54,12 +50,12 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , Check
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var toggle: ActionBarDrawerToggle
     private lateinit var searchButton: ImageButton
-    private lateinit var navControl : NavController
 
     lateinit var mService: OfflineService
     private var mBound: Boolean = false
 
-    /** Defines callbacks for service binding, passed to bindService()  */
+
+    //Call back to bind bound service
     private val connection = object : ServiceConnection {
 
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
@@ -67,12 +63,12 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , Check
             val binder = service as OfflineService.OfflineBinder
             mService = binder.getService()
             mBound  = true
-            Helpers.serviceIsBound= true
+            Global.serviceIsBound= true
         }
 
         override fun onServiceDisconnected(arg0: ComponentName) {
             mBound = false
-            Helpers.serviceIsBound= false
+            Global.serviceIsBound= false
         }
     }
 
@@ -82,7 +78,7 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , Check
         setContentView(R.layout.activity_main)
 
         //get cache path to save local data
-        Helpers.cacheDir = this.cacheDir.toString()
+        Global.cacheDir = this.cacheDir.toString()
 
         //initial view
         initView()
@@ -107,11 +103,14 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , Check
 
     override fun onDestroy() {
         super.onDestroy()
-        unregisterReceiver(checkConnectionReceiver)
-        if(mBound)
-        unbindService(connection)
 
-        Helpers.contentSave= mutableListOf()
+        unregisterReceiver(checkConnectionReceiver)
+
+        if(mBound)
+            unbindService(connection)
+
+        //release save data
+        Global.contentSave= mutableListOf()
 
     }
 
@@ -119,6 +118,7 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , Check
         drawerLayout = findViewById(R.id.layout_drawer)
         actionAppBar = findViewById(R.id.toolbar)
 
+        //Navigation bar
         navBar = findViewById(R.id.bottomNavigationView)
         navBar.setOnItemSelectedListener {
             when(it.itemId){
@@ -130,8 +130,9 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , Check
             true
         }
 
+        //Search button
         searchButton = findViewById(R.id.search_button)
-        searchButton.setOnClickListener(View.OnClickListener {
+        searchButton.setOnClickListener {
             showFragment(SearchFragment())
 
             val mConstrainLayout = findViewById<FrameLayout>(R.id.fragment_main)
@@ -139,11 +140,11 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , Check
             lp.matchConstraintPercentHeight = 0.90f
             mConstrainLayout.layoutParams = lp
 
-            navBar.visibility= View.GONE
-            searchButton.visibility= View.GONE
+            navBar.visibility = View.GONE
+            searchButton.visibility = View.GONE
 
             showBackButton(true)
-        })
+        }
 
 
         //set up for tool bar
@@ -156,6 +157,7 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , Check
         setupNavBar()
 
     }
+
     private fun setupToolbar(){
         actionAppBar.title=""
 
@@ -203,37 +205,8 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , Check
         }
     }
 
-    private fun setupNavControl(){
-        navBar.setupWithNavController(navControl)
-
-    }
-
-    override fun onSupportNavigateUp(): Boolean {
-        onBackPressed()
-        return true
-    }
-
-    private fun startSplashScreen() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            window.setDecorFitsSystemWindows(false)
-        } else {
-            window.decorView.systemUiVisibility =
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-        }
-
-        window.statusBarColor = ContextCompat.getColor(this, android.R.color.transparent)
-
-        val mConstrainLayout = findViewById<FrameLayout>(R.id.fragment_main)
-        val lp = mConstrainLayout.layoutParams as ConstraintLayout.LayoutParams
-        lp.matchConstraintPercentHeight = 0.95f
-        mConstrainLayout.layoutParams = lp
-
-        val fragmentSplash = SplashFragment()
-        showFragment(fragmentSplash, false)
-    }
-
     private fun registerNetworkReceiver(){
-        Helpers.internet=CheckConnectionReceiver.isNetworkAvailable(this)
+        Global.internet=Network.isNetworkAvailable(this)
 
         val intentFilter = IntentFilter()
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION)
@@ -241,33 +214,52 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , Check
 
     }
 
-    //use to load list if user enable write and read SD
-    fun loadHomePage(offlineMode : Boolean){
-        Helpers.isOfflineMode = offlineMode
 
-        if(Helpers.internet){
+
+    //start splash screen
+    private fun startSplashScreen() {
+        //make status bar transparent
+        if (SDK_INT >= Build.VERSION_CODES.R) {
+            window.setDecorFitsSystemWindows(false)
+        } else {
+            window.decorView.systemUiVisibility =
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        }
+        window.statusBarColor = ContextCompat.getColor(this, android.R.color.transparent)
+
+        setLayout(0.95f)
+
+        val fragmentSplash = SplashFragment()
+        showFragment(fragmentSplash, false)
+    }
+
+
+
+
+    //use to load list if user enable write and read SD
+    @OptIn(DelicateCoroutinesApi::class)
+    fun loadHomePage(offlineMode : Boolean){
+        Global.isOfflineMode = offlineMode
+
+        if(Global.internet){
 
             //Thread check data is saved and load list news
             GlobalScope.launch(Dispatchers.Default){
-                while(!Helpers.isListNewsSaved){
-                    if(!Helpers.internet){
+                while(!Global.isListNewsSaved){
+                    if(!Global.internet){
                         val fragmentHome = HomeNewsFragment()
                         fragmentHome.getIDContent = this@MainActivity
                         showFragment(fragmentHome, false)
                         break
                     }
-                    if(Helpers.isListNewsSaved)
+                    if(Global.isListNewsSaved)
                         break
 
                 }
 
                 //Run UI on Main Thread(UI Thread)
                 launch(Dispatchers.Main) {
-                    val mConstrainLayout = findViewById<FrameLayout>(R.id.fragment_main)
-                    val lp = mConstrainLayout.layoutParams as ConstraintLayout.LayoutParams
-                    lp.matchConstraintPercentHeight = 0.81f
-                    mConstrainLayout.layoutParams = lp
-
+                    setLayout(0.81f)
 
                     actionAppBar.visibility= View.VISIBLE
                     navBar.visibility= View.VISIBLE
@@ -283,11 +275,7 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , Check
         }
 
         else{
-            val mConstrainLayout = findViewById<FrameLayout>(R.id.fragment_main)
-            val lp = mConstrainLayout.layoutParams as ConstraintLayout.LayoutParams
-            lp.matchConstraintPercentHeight = 0.81f
-            mConstrainLayout.layoutParams = lp
-
+            setLayout(0.81f)
 
             actionAppBar.visibility= View.VISIBLE
             navBar.visibility= View.VISIBLE
@@ -299,6 +287,11 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , Check
 
         }
 
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
     }
 
     private fun showFragment (fragment: Fragment, addtoBackStack : Boolean = true): Boolean {
@@ -322,10 +315,7 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , Check
 
         showFragment(fragment)
 
-        val mConstrainLayout = findViewById<FrameLayout>(R.id.fragment_main)
-        val lp = mConstrainLayout.layoutParams as ConstraintLayout.LayoutParams
-        lp.matchConstraintPercentHeight = 0.84f
-        mConstrainLayout.layoutParams = lp
+        setLayout(0.84f)
 
         navBar.visibility= View.GONE
         searchButton.visibility= View.GONE
@@ -342,7 +332,7 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , Check
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.getItemId() == android.R.id.home) {
+        if (item.itemId == android.R.id.home) {
             //Title bar back press triggers onBackPressed()
             onBackPressed()
             return true
@@ -359,10 +349,7 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , Check
             {
                 showBackButton(false)
 
-                val mConstrainLayout = findViewById<FrameLayout>(R.id.fragment_main)
-                val lp = mConstrainLayout.layoutParams as ConstraintLayout.LayoutParams
-                lp.matchConstraintPercentHeight = 0.81f
-                mConstrainLayout.layoutParams = lp
+                setLayout(0.81f)
 
                 navBar.visibility= View.VISIBLE
                 if(searchButton.visibility== View.GONE)
@@ -411,7 +398,7 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , Check
         }
 
     override fun transMode(internet: Boolean,timeCall: Int) {
-        Helpers.internet=internet
+        Global.internet=internet
         Log.e("timecall1",timeCall.toString())
 
         if(timeCall==0 && internet){
@@ -421,13 +408,14 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , Check
             }
         }
 
-        if(timeCall!=0 && !mBound && Helpers.internet){
+        if(timeCall!=0 && !mBound && Global.internet){
             Log.e("timecall",timeCall.toString())
             showNotifyDialog(Gravity.CENTER)
         }
 
     }
 
+    //dialog for change mode online/offline
     private fun showNotifyDialog(gravity: Int) {
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -455,14 +443,21 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , Check
         yesBtn.setOnClickListener {
             dialog.dismiss()
 
-            finish();
-            startActivity(intent);
+            finish()
+            startActivity(intent)
 
             // this basically provides animation
-            overridePendingTransition(0, 0);
+            overridePendingTransition(0, 0)
         }
         dialog.show()
 
+    }
+
+    private fun setLayout(sizeF: Float){
+        val mConstrainLayout = findViewById<FrameLayout>(R.id.fragment_main)
+        val lp = mConstrainLayout.layoutParams as ConstraintLayout.LayoutParams
+        lp.matchConstraintPercentHeight = sizeF
+        mConstrainLayout.layoutParams = lp
     }
 }
 

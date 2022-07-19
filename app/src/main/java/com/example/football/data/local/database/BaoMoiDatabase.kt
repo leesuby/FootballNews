@@ -7,6 +7,7 @@ import androidx.room.TypeConverters
 import com.example.football.data.local.database.detail.*
 import com.example.football.data.local.database.home.HomeContent
 import com.example.football.data.local.database.home.HomeContentDao
+import com.example.football.utils.Converter
 import com.example.football.utils.Helpers
 import com.example.football.utils.MainApplication
 
@@ -17,8 +18,10 @@ import com.example.football.utils.MainApplication
     RelatedContent::class
                      ], version = 1)
 
-@TypeConverters(Helpers::class)
+@TypeConverters(Converter::class)
 
+
+//Local Database
 abstract class BaoMoiDatabase : RoomDatabase(){
 
     abstract fun HomeContentDao() : HomeContentDao

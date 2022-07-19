@@ -9,8 +9,10 @@ import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.Query
 
+//Service from retro to load data
 interface RetroService {
 
+    //Get list news data by page
     @GET("contents/home")
     @Headers("api_key: bm_fresher_2022")
     fun getNewsList(
@@ -18,10 +20,14 @@ interface RetroService {
         @Query("size") size: Int
     ): Call<HomeBaoMoiData>
 
+
+    //Get detail of news
     @GET("contents/detail")
     @Headers("api_key: bm_fresher_2022")
     fun getDetailNew(@Query("content_id") id: Int): Call<DetailBaoMoiData>
 
+
+    //Get list match
     @GET("matches/by-date")
     @Headers("api_key: bm_fresher_2022")
     fun getMatchByDates(
@@ -31,6 +37,8 @@ interface RetroService {
         @Query("size") size: Int
     ): Call<MatchHomeBaoMoiData>
 
+
+    //Get list competition
     @GET("competitions/hot")
     @Headers("api_key: bm_fresher_2022")
     fun getCompetitions() : Call<CompetitionHomeBaoMoiData>

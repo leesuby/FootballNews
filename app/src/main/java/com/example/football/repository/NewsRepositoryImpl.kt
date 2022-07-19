@@ -14,19 +14,19 @@ import com.example.football.data.model.HomeBaoMoiData
 import com.example.football.data.model.detail.DetailBaoMoiData
 import com.example.football.data.model.home.CompetitionHomeBaoMoiData
 import com.example.football.data.model.home.MatchHomeBaoMoiData
+import com.example.football.utils.Global
 import com.example.football.utils.Helpers
 
 class NewsRepositoryImpl() : NewsRepository {
     var detailContentDao : DetailContentDao = BaoMoiDatabase.getDatabase().DetailContentDao()
 
-    override fun getListNews(data : MutableLiveData<HomeBaoMoiData>, context: Context?, loadOnline : Boolean,page: Int) {
-        if (Helpers.internet){ //online mode
-
+    override fun getListNews(data : MutableLiveData<HomeBaoMoiData>, context: Context?, loadToSave : Boolean, page: Int) {
+        if (Global.internet){ //online mode
             //load data from database for faster experience for initialize after splash screen
-            if(Helpers.isOfflineMode && !loadOnline)
+            if(Global.isOfflineMode && !loadToSave)
                 NewsLocal.loadListNewsByPage(data,0)
             else
-                NewsRemote.loadListNews(data,page = page,loadOnline)
+                NewsRemote.loadListNews(data,page = page,loadToSave)
         }
 
         else{
@@ -36,33 +36,11 @@ class NewsRepositoryImpl() : NewsRepository {
 
     }
 
-    override fun getListMatchNews(data : MutableLiveData<MatchHomeBaoMoiData>){
-        if (Helpers.internet){ //online mode
-            NewsRemote.loadListMatchHome(data)
-        }
 
-        else{ //offline mode
-//            NewsLocal.loadListMatchHome(data)
-//            Toast.makeText(context,"No Internet",Toast.LENGTH_SHORT).show()
-        }
-    }
 
-    override fun getListCompetitionNews(data: MutableLiveData<CompetitionHomeBaoMoiData>) {
-        if (Helpers.internet){ //online mode
-            NewsRemote.loadCompetitionHome(data)
-        }
-
-        else{ //offline mode
-//            NewsLocal.loadListMatchHome(data)
-//            Toast.makeText(context,"No Internet",Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    override suspend fun getDetailNews(data : MutableLiveData<DetailBaoMoiData>,id: Int,context: Context?) {
-        if (Helpers.internet){
-            //online mode
-
-            //load data from local
+    override fun getDetailNews(data : MutableLiveData<DetailBaoMoiData>,id: Int,context: Context?) {
+        if (Global.internet){//Online mode
+            //load data from local if there is data on local
             if(detailContentDao.isRowIsExist(id)){
                 NewsLocal.loadDetailContent(data,id)
             }
@@ -70,14 +48,22 @@ class NewsRepositoryImpl() : NewsRepository {
                 //load data by request API
                 NewsRemote.loadContentNews(data,id)
             }
-
         }
         else{
             //offline mode
             NewsLocal.loadDetailContent(data,id)
         }
-
-
     }
 
+    override fun getListMatchNews(data : MutableLiveData<MatchHomeBaoMoiData>){
+        if (Global.internet){ //online mode
+            NewsRemote.loadListMatchHome(data)
+        }
+    }
+
+    override fun getListCompetitionNews(data: MutableLiveData<CompetitionHomeBaoMoiData>) {
+        if (Global.internet){ //online mode
+            NewsRemote.loadCompetitionHome(data)
+        }
+    }
 }

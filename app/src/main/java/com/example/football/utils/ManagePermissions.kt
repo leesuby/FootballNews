@@ -17,7 +17,7 @@ import com.example.football.view.MainActivity
 
 class ManagePermissions(val activity: MainActivity) {
 
-    //request permission for access storage for Offline Mode
+    //Request permission for access storage for Offline Mode
     private fun requestPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             try {

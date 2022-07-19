@@ -19,7 +19,7 @@ class DetailsViewModel : ViewModel() {
         return DetailNew
     }
 
-    suspend fun getDetailNew(id: Int,context: Context?,isRequest: Boolean=false){
+    fun getDetailNew(id: Int,context: Context?){
         repo.getDetailNews(DetailNew as MutableLiveData<DetailBaoMoiData>,id,context)
     }
 

@@ -2,26 +2,20 @@ package com.example.football.view.adapters
 
 import android.annotation.SuppressLint
 import android.graphics.Color
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.bumptech.glide.request.RequestOptions
 import com.example.football.R
 import com.example.football.data.model.SoccerMatch
 import com.example.football.utils.Helpers
-import com.example.football.utils.Helpers.Companion.margin
-import java.io.File
+import com.example.football.utils.View.margin
 import java.text.SimpleDateFormat
 import java.util.*
 
-class RecyclerMatchHomeAdapter : RecyclerView.Adapter<RecyclerMatchHomeAdapter.MatchViewHolder>() {
+class MatchHomeAdapter : RecyclerView.Adapter<MatchHomeAdapter.MatchViewHolder>() {
 
     private val MATCH_DONE = 0
     private val MATCH_GOING = 1
@@ -63,8 +57,8 @@ class RecyclerMatchHomeAdapter : RecyclerView.Adapter<RecyclerMatchHomeAdapter.M
     @SuppressLint("SimpleDateFormat", "SetTextI18n")
     override fun onBindViewHolder(holder: MatchViewHolder, position: Int) {
         val match = listMatch[position]
-        var convertTime = SimpleDateFormat("hh:mm a", Locale.getDefault())
-        var convertDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val convertTime = SimpleDateFormat("hh:mm a", Locale.getDefault())
+        val convertDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 
         if(position!=0)
             holder.itemView.margin(left = 10f)

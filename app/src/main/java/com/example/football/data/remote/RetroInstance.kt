@@ -5,6 +5,8 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+
+//Get retrofit instrance to load data from baseUrl
 object RetroInstance {
 
     val baseUrl = "https://bm-fresher.herokuapp.com/api/"

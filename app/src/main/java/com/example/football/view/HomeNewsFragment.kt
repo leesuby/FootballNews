@@ -2,26 +2,23 @@ package com.example.football.view
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.example.football.view.adapters.RecyclerHomeAdapter
+import com.example.football.view.adapters.HomeAdapter
 import com.example.football.R
 import com.example.football.data.model.Content
 import com.example.football.data.model.HomeBaoMoiData
-import com.example.football.utils.Helpers
+import com.example.football.utils.Global
 import com.example.football.view.decor.HomeDecorate
 import com.example.football.view.service.OfflineService
 import com.example.football.viewmodel.NewsViewModel
@@ -30,7 +27,7 @@ import kotlin.coroutines.CoroutineContext
 
 class HomeNewsFragment : Fragment(), CoroutineScope, SwipeRefreshLayout.OnRefreshListener {
     private var layoutManager: RecyclerView.LayoutManager? = null
-    private lateinit var adapterNewlist: RecyclerHomeAdapter
+    private lateinit var adapterNewlist: HomeAdapter
     private lateinit var newsList: RecyclerView
     private lateinit var swipeLayout: SwipeRefreshLayout
     private val newsViewModel: NewsViewModel by activityViewModels()
@@ -38,6 +35,8 @@ class HomeNewsFragment : Fragment(), CoroutineScope, SwipeRefreshLayout.OnRefres
 
     private lateinit var mService: OfflineService
 
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.IO
 
     interface GetIDContent {
 
@@ -48,25 +47,22 @@ class HomeNewsFragment : Fragment(), CoroutineScope, SwipeRefreshLayout.OnRefres
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
+
         //check Activity is created to get service
         activity?.lifecycle?.addObserver(ActivityLifeCycleObserver {
-            if (Helpers.internet) {
+            if (Global.internet) {
                 val mainActivity = activity as MainActivity
                 mService = mainActivity.mService
             }
         })
     }
 
-    override fun onDetach() {
-
-        super.onDetach()
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        adapterNewlist = HomeAdapter()
 
-        adapterNewlist = RecyclerHomeAdapter()
         //get data for home
         CoroutineScope(coroutineContext).launch {
             launch { newsViewModel.getListNews(context, loadOnline = false) }
@@ -90,41 +86,47 @@ class HomeNewsFragment : Fragment(), CoroutineScope, SwipeRefreshLayout.OnRefres
         //init view
         super.onViewCreated(view, savedInstanceState)
         initView()
+        bindViewModel()
     }
+
 
     override fun onResume() {
         super.onResume()
+        //check fragment is refreshing
         if(swipeLayout.isRefreshing){
             swipeLayout.isRefreshing=false
         }
-    }
-    override fun onDestroy() {
-        //set
-        super.onDestroy()
     }
 
 
     @SuppressLint("NotifyDataSetChanged")
     fun initView() {
+
+        //swipe layout
         swipeLayout = views.findViewById(R.id.swipe_homeLayout)
         swipeLayout.setOnRefreshListener(this)
 
+
+        //recycler view
         layoutManager = LinearLayoutManager(this.context)
         newsList = views.findViewById(R.id.RV_news)
         newsList.layoutManager = layoutManager
 
-        adapterNewlist = RecyclerHomeAdapter()
+        //adapter for recycler view
+        adapterNewlist = HomeAdapter()
 
-        adapterNewlist.setOnItemClickListener(object : RecyclerHomeAdapter.onNewsClickListener {
+        adapterNewlist.setOnItemClickListener(object : HomeAdapter.onNewsClickListener {
             override fun onItemClick(idContent: Int) {
                 getIDContent.showDetail(idContent)
             }
         })
         newsList.adapter = adapterNewlist
+
+        //event listener for recycler view
         newsList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 if (!recyclerView.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    if (Helpers.internet) {
+                    if (Global.internet) {
                         if (!adapterNewlist.checkLoading() && !swipeLayout.isRefreshing) {
                             adapterNewlist.setLoading(true)
                             newsViewModel.getListNews(
@@ -139,9 +141,11 @@ class HomeNewsFragment : Fragment(), CoroutineScope, SwipeRefreshLayout.OnRefres
             }
         })
 
-        this.context?.let { HomeDecorate(it, R.drawable.line_divider) }
-            ?.let { newsList.addItemDecoration(it) }
+    }
 
+    @SuppressLint("NotifyDataSetChanged")
+    fun bindViewModel(){
+        //News ViewModel
         newsViewModel.getListNewsObservable().observe(viewLifecycleOwner) {
             if (it == null) {
                 Toast.makeText(this.context, "No result found", Toast.LENGTH_SHORT).show()
@@ -165,9 +169,9 @@ class HomeNewsFragment : Fragment(), CoroutineScope, SwipeRefreshLayout.OnRefres
                     mService.saveData(tmp)
 
                 } else {
-                    if (Helpers.contentSave.isNotEmpty()){
+                    if (Global.contentSave.isNotEmpty()){
                         Log.e("content_Save","reach here")
-                        adapterNewlist.setNewsList(Helpers.contentSave)
+                        adapterNewlist.setNewsList(Global.contentSave)
                     }
                     else
                     {
@@ -183,6 +187,7 @@ class HomeNewsFragment : Fragment(), CoroutineScope, SwipeRefreshLayout.OnRefres
             }
         }
 
+        //Match ViewModel
         newsViewModel.getListMatchObservable().observe(viewLifecycleOwner) {
             if (it == null) {
                 Toast.makeText(this.context, "No result found", Toast.LENGTH_SHORT).show()
@@ -192,6 +197,7 @@ class HomeNewsFragment : Fragment(), CoroutineScope, SwipeRefreshLayout.OnRefres
             }
         }
 
+        //Competition ViewModel
         newsViewModel.getListCompetitionObservable().observe(viewLifecycleOwner) {
             if (it == null) {
                 Toast.makeText(this.context, "No result found", Toast.LENGTH_SHORT).show()
@@ -203,19 +209,17 @@ class HomeNewsFragment : Fragment(), CoroutineScope, SwipeRefreshLayout.OnRefres
 
     }
 
-    //save data which have been loading
+
     override fun onPause() {
         super.onPause()
 
+        //save data which have been loading
         adapterNewlist.listNews.forEach {
-            if (!Helpers.contentSave.contains(it))
-                Helpers.contentSave.add(it)
+            if (!Global.contentSave.contains(it))
+                Global.contentSave.add(it)
         }
     }
 
-
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.IO
 
 
     //class to check if activity created
@@ -228,20 +232,28 @@ class HomeNewsFragment : Fragment(), CoroutineScope, SwipeRefreshLayout.OnRefres
         }
     }
 
+    //on refresh list
     override fun onRefresh() {
 
         CoroutineScope(coroutineContext).launch {
+            //reset page to 0
             newsViewModel.resetPage()
-            Helpers.contentSave = mutableListOf()
 
+            //reset data
+            Global.contentSave = mutableListOf()
+
+            //get new data
             newsViewModel.getListNews(
                 context,
                 newsViewModel.getPage(),
                 loadOnline = true)
+
             newsViewModel.getListMatch()
 
             newsViewModel.getListCompetition()
 
+
+            //increase page
             newsViewModel.increasePage()
 
         }

@@ -1,13 +1,13 @@
 package com.example.football.data.remote
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.example.football.data.local.NewsLocal
 import com.example.football.data.model.HomeBaoMoiData
 import com.example.football.data.model.detail.DetailBaoMoiData
 import com.example.football.data.model.home.CompetitionHomeBaoMoiData
 import com.example.football.data.model.home.MatchHomeBaoMoiData
-import com.example.football.utils.Helpers
+import com.example.football.utils.Converter
+import com.example.football.utils.Global
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -15,28 +15,34 @@ import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import kotlin.concurrent.thread
 
 object NewsRemote {
-        //request API get list new data
+
+        //Request API get list new data
         @OptIn(DelicateCoroutinesApi::class)
         fun loadListNews(data : MutableLiveData<HomeBaoMoiData>, page: Int = 0, loadOnline: Boolean= false){
+            //Create retro instance to load data
             val retroInstance = RetroInstance.getRetroInstance().create(RetroService::class.java)
             val call = retroInstance.getNewsList(page*20,20)
             call.enqueue(object : Callback<HomeBaoMoiData> {
+
+                //Fail data
                 override fun onFailure(call: Call<HomeBaoMoiData>, t: Throwable) {
                     data.postValue(null)
                 }
 
+                //Success data
                 override fun onResponse(call: Call<HomeBaoMoiData>, response: Response<HomeBaoMoiData>) {
+                    //If using this function for loading page on Home
                     if(loadOnline)
                     {
                         GlobalScope.launch(Dispatchers.IO) {
+                            //Get bitmap from URL for custom view
                             for(content in response.body()?.data!!.contents){
-                                content.bitmapAvatar = Helpers.mLoad(content.avatarUrl)
-                                content.bitmapLogo= Helpers.mLoad(content.publisherLogo)
+                                content.bitmapAvatar = Converter.loadBitmapFromUrl(content.avatarUrl)
+                                content.bitmapLogo= Converter.loadBitmapFromUrl(content.publisherLogo)
                             }
-                            Log.e("respone",response.body().toString())
+
                             data.postValue(response.body())
                         }
 
@@ -48,26 +54,37 @@ object NewsRemote {
             })
         }
 
+        //Request API to load detail news ( content of news)
         @OptIn(DelicateCoroutinesApi::class)
         fun loadContentNews(data : MutableLiveData<DetailBaoMoiData>, id: Int, isSave: Boolean = false){
+            //Create retro instance to load data
             val retroInstance = RetroInstance.getRetroInstance().create(RetroService::class.java)
             val call = retroInstance.getDetailNew(id)
+
             call.enqueue(object : Callback<DetailBaoMoiData> {
+
+                //Fail data
                 override fun onFailure(call: Call<DetailBaoMoiData>, t: Throwable) {
                     data.postValue(null)
                 }
+
+                //Success data
                 override fun onResponse(call: Call<DetailBaoMoiData>, response: Response<DetailBaoMoiData>) {
+                    //Load from UI thread for better performance
                     GlobalScope.launch(Dispatchers.IO) {
+                        //Get bitmap from URL for custom view
                         for(related in response.body()?.data?.related?.contents!!){
                             if(related.avatarUrl!=null)
-                                related.bitmapAvatar = Helpers.mLoad(related.avatarUrl)
+                                related.bitmapAvatar = Converter.loadBitmapFromUrl(related.avatarUrl)
                             if(related.publisherLogo!=null)
-                                related.bitmapLogo = Helpers.mLoad(related.publisherLogo)
+                                related.bitmapLogo = Converter.loadBitmapFromUrl(related.publisherLogo)
                         }
 
                         data.postValue(response.body())
 
-                        if(Helpers.isOfflineMode){
+                        //If user have offline mode, save data to local for the next time
+                        if(Global.isOfflineMode){
+                            //If is save mode
                             if(isSave){
                                 GlobalScope.launch(Dispatchers.IO){
                                     NewsLocal.saveDetailContentNews(data)
@@ -83,6 +100,7 @@ object NewsRemote {
             })
         }
 
+        //Request API to get list match on Home page
         fun loadListMatchHome(data : MutableLiveData<MatchHomeBaoMoiData>){
             val retroInstance = RetroInstance.getRetroInstance().create(RetroService::class.java)
             val call = retroInstance.getMatchByDates(0,0,0,20)
@@ -97,6 +115,7 @@ object NewsRemote {
             })
         }
 
+        //Request API to get list competition on Home page
         fun loadCompetitionHome(data : MutableLiveData<CompetitionHomeBaoMoiData>){
             val retroInstance = RetroInstance.getRetroInstance().create(RetroService::class.java)
             val call = retroInstance.getCompetitions()

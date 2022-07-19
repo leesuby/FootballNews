@@ -1,6 +1,5 @@
 package com.example.football.data.local
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.example.football.data.local.database.BaoMoiDatabase
 import com.example.football.data.local.database.detail.*
@@ -11,37 +10,54 @@ import com.example.football.data.model.HomeBaoMoiData
 import com.example.football.data.model.detail.DetailBaoMoiData
 import com.example.football.data.model.detail.Related
 import com.example.football.data.remote.NewsRemote
-import com.example.football.utils.Helpers
+import com.example.football.utils.Converter
+import com.example.football.utils.Global
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
+//Object to save and load data from local
 object NewsLocal {
-    //DAO
+
+    //DAO for home list news
     var homeContentDao: HomeContentDao = BaoMoiDatabase.getDatabase().HomeContentDao()
+
+    //DAO for detail news (content of news)
     var detailContentDao: DetailContentDao = BaoMoiDatabase.getDatabase().DetailContentDao()
+
+    //DAO for related news on detail news
     var relatedContentDao: RelatedContentDao = BaoMoiDatabase.getDatabase().RelatedContentDao()
+
+    //DAO for body news on detail news
     var bodyDetailContentDao: BodyDetailContentDao =
         BaoMoiDatabase.getDatabase().BodyDetailContentDao()
 
-    suspend fun saveData(homeData: MutableLiveData<HomeBaoMoiData>) {
+
+    //Function to save news data from remote to local (Save news and content of it)
+    fun saveData(homeData: MutableLiveData<HomeBaoMoiData>) {
+
+        //Save list news
         saveListNews(homeData)
+
+        //Save content of list news
         saveDetailNews(homeData)
     }
 
-    //save list news to local
-    private suspend fun saveListNews(homeData: MutableLiveData<HomeBaoMoiData>) {
-        for (content in homeData.value!!.data!!.contents) {
-            var homeContent = HomeContent(
+    //Save list news to local
+    @OptIn(DelicateCoroutinesApi::class)
+    private fun saveListNews(homeData: MutableLiveData<HomeBaoMoiData>) {
+        for (content in homeData.value!!.data.contents) {
+            val homeContent = HomeContent(
                 content.contentId,
                 content.title,
                 content.date,
-                Helpers.saveImageToExternalStorage(
+                Converter.saveImageToExternalStorage(
                     content.publisherLogo,
                     content.contentId.toString(),
                     "logo"
                 ),
-                Helpers.saveImageToExternalStorage(
+                Converter.saveImageToExternalStorage(
                     content.avatarUrl,
                     content.contentId.toString(),
                     "avatar"
@@ -50,40 +66,43 @@ object NewsLocal {
                 avatarURL = content.avatarUrl
             )
 
-            homeContentDao.addContent(homeContent)
+            GlobalScope.launch(Dispatchers.IO) {
+                homeContentDao.addContent(homeContent)
+            }
+
         }
 
-        //list news is saved to database
-        Helpers.isListNewsSaved = true
+        //List news is saved to database
+        Global.isListNewsSaved = true
     }
 
-    //save detail contents news to local
+    //Save detail contents news to local
     private fun saveDetailNews(homeData: MutableLiveData<HomeBaoMoiData>) {
-        for (content in homeData.value!!.data!!.contents) {
-            var getDataFromRetro: MutableLiveData<DetailBaoMoiData> = MutableLiveData()
+        for (content in homeData.value!!.data.contents) {
+            val getDataFromRetro: MutableLiveData<DetailBaoMoiData> = MutableLiveData()
             NewsRemote.loadContentNews(getDataFromRetro, content.contentId, true)
         }
     }
 
-    //get detail content from retrofit
+    //Get detail content from retrofit
     suspend fun saveDetailContentNews(getDataFromRetro: MutableLiveData<DetailBaoMoiData>) {
 
         //TODO: Solve Null case
-        if (getDataFromRetro.value == null || getDataFromRetro.value!!.data == null)
+        if (getDataFromRetro.value == null)
             return
 
-        var content = getDataFromRetro.value!!.data.content
-        var related = getDataFromRetro.value!!.data.related.contents
+        val content = getDataFromRetro.value!!.data.content
+        val related = getDataFromRetro.value!!.data.related.contents
 
 
-        //get body of news
+        //Get body of news
         var num = 0
         for (body in content.body) {
-            var bodyContent = BodyDetailContent(
+            val bodyContent = BodyDetailContent(
                 contentId = content.contentId,
                 type = body.type,
                 content = body.content,
-                originUrl = Helpers.saveImageToExternalStorage(
+                originUrl = Converter.saveImageToExternalStorage(
                     body.originUrl,
                     content.contentId.toString(),
                     num.toString()
@@ -95,19 +114,19 @@ object NewsLocal {
             num++
         }
 
-        //get related news
+        //Get related news
         for (relatedNews in related) {
-            var relatedContent = RelatedContent(
+            val relatedContent = RelatedContent(
                 contentId = relatedNews.contentId,
                 relatedId = content.contentId,
                 title = relatedNews.title,
                 date = relatedNews.date,
-                avatar = Helpers.saveImageToExternalStorage(
+                avatar = Converter.saveImageToExternalStorage(
                     relatedNews.avatarUrl,
                     relatedNews.contentId.toString(),
                     "avatar"
                 ),
-                publisherLogo = Helpers.saveImageToExternalStorage(
+                publisherLogo = Converter.saveImageToExternalStorage(
                     relatedNews.publisherLogo,
                     relatedNews.contentId.toString(),
                     "logo"
@@ -119,8 +138,8 @@ object NewsLocal {
             relatedContentDao.addRelatedContent(relatedContent)
         }
 
-        //get basic info of news
-        var detailContent = DetailContent(
+        //Get basic info of news
+        val detailContent = DetailContent(
             content.contentId,
             content.title,
             content.date,
@@ -129,14 +148,15 @@ object NewsLocal {
         detailContentDao.addDetailContent(detailContent)
     }
 
-    //load list news from local
+    //Load list news from local by page
+    @OptIn(DelicateCoroutinesApi::class)
     fun loadListNewsByPage(data: MutableLiveData<HomeBaoMoiData>, page: Int) {
         GlobalScope.launch(Dispatchers.IO) {
             data.postValue(
                 HomeBaoMoiData(
                     Data(
                         null,
-                        Helpers.convert(homeContentDao.readAllContentSynchronousByPage(page))
+                        Converter.convert(homeContentDao.readAllContentSynchronousByPage(page))
                     ), 0, ""
                 )
             )
@@ -144,13 +164,16 @@ object NewsLocal {
 
     }
 
+
+    //Load list news all from local
+    @OptIn(DelicateCoroutinesApi::class)
     fun loadListNewsAll(data: MutableLiveData<HomeBaoMoiData>) {
         GlobalScope.launch(Dispatchers.IO) {
             data.postValue(
                 HomeBaoMoiData(
                     Data(
                         null,
-                        Helpers.convert(homeContentDao.readAllContentSynchronous())
+                        Converter.convert(homeContentDao.readAllContentSynchronous())
                     ), 0, ""
                 )
             )
@@ -158,19 +181,24 @@ object NewsLocal {
 
     }
 
+    //Load list news by keyword user input
+    @OptIn(DelicateCoroutinesApi::class)
     fun loadListSearch(data: MutableLiveData<HomeBaoMoiData>, keyword: String) {
         GlobalScope.launch(Dispatchers.IO) {
             data.postValue(
                 HomeBaoMoiData(
                     Data(
                         null,
-                        Helpers.convert(homeContentDao.searchByKeyWord(keyword))
+                        Converter.convert(homeContentDao.searchByKeyWord(keyword))
                     ), 0, ""
                 )
             )
         }
     }
 
+
+    //Load detail content of news
+    @OptIn(DelicateCoroutinesApi::class)
     fun loadDetailContent(data: MutableLiveData<DetailBaoMoiData>, id: Int) {
         GlobalScope.launch(Dispatchers.IO) {
             if (detailContentDao.readAllSynchronous(id).isEmpty()) {
@@ -180,11 +208,11 @@ object NewsLocal {
                     DetailBaoMoiData(
                         com.example.football.data.model.detail.Data(
                             "",
-                            Helpers.convert(
+                            Converter.convert(
                                 detailContentDao.readAllSynchronous(id),
                                 bodyDetailContentDao.readAllSynchronous(id)
                             ),
-                            Related(Helpers.convert(relatedContentDao.readAllSynchronous(id)))
+                            Related(Converter.convert(relatedContentDao.readAllSynchronous(id)))
                         ),
                         0,
                         ""

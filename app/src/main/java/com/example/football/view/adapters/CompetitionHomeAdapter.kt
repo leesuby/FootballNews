@@ -6,15 +6,13 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.bumptech.glide.request.RequestOptions
 import com.example.football.R
 import com.example.football.data.model.SoccerCompetition
 import com.example.football.utils.Helpers
 
-class RecyclerCompetitionHomeAdapter : RecyclerView.Adapter<RecyclerCompetitionHomeAdapter.CompetitionHomeViewHolder>(){
+
+//Adapter for competition on home page
+class CompetitionHomeAdapter : RecyclerView.Adapter<CompetitionHomeAdapter.CompetitionHomeViewHolder>(){
 
     var listCompetition = mutableListOf<SoccerCompetition>()
 
@@ -31,13 +29,13 @@ class RecyclerCompetitionHomeAdapter : RecyclerView.Adapter<RecyclerCompetitionH
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CompetitionHomeViewHolder {
-        var view = LayoutInflater.from(parent.context).inflate(R.layout.custom_homecompetition,parent,false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.custom_homecompetition,parent,false)
         return CompetitionHomeViewHolder(view)
     }
 
 
     override fun onBindViewHolder(holder: CompetitionHomeViewHolder, position: Int) {
-        var competition = listCompetition[position]
+        val competition = listCompetition[position]
 
         Helpers.checkandLoadImageGlide(competition.competitionLogo,holder.itemLogoCompetition,holder.itemView.context)
         holder.itemNameCompetition.text = competition.competitionName

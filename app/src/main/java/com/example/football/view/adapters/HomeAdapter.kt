@@ -1,16 +1,8 @@
 package com.example.football.view.adapters
 
-import android.graphics.Bitmap
-import android.graphics.Color
-import android.graphics.ImageDecoder
-import android.os.Build
-import android.provider.MediaStore
-import android.util.Log
-import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,26 +11,20 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.core.net.toUri
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.bumptech.glide.request.RequestOptions
 import com.example.football.data.model.Content
 import com.example.football.R
-import com.example.football.data.model.Competition
 import com.example.football.data.model.SoccerCompetition
 import com.example.football.data.model.SoccerMatch
+import com.example.football.utils.Global
 import com.example.football.utils.Helpers
 import com.example.football.view.compose.LoadingAnimation
 import com.example.football.view.customview.NewsCustomView
-import java.io.File
 
-class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+//Adapter for home page
+class HomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val MATCH = 0
     private val NEWS = 1
@@ -53,17 +39,21 @@ class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var isLoading = false
 
-    fun setNewsList(newNewsList: MutableList<Content>){
-        val diffUtil = NewsHomeDiffUtil(listNews,newNewsList)
+
+    //set list news by using difUtil not notifydatasetChange
+    fun setNewsList(newNewsList: MutableList<Content>) {
+        val diffUtil = NewsHomeDiffUtil(listNews, newNewsList)
         val diffResult = DiffUtil.calculateDiff(diffUtil)
         listNews = newNewsList
         diffResult.dispatchUpdatesTo(this)
     }
 
+    //adapter is loading more data
     fun setLoading(boolean: Boolean) {
         isLoading = boolean
     }
 
+    //check if data is loading
     fun checkLoading(): Boolean {
         return isLoading
     }
@@ -89,35 +79,26 @@ class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
     }
 
+    //Holder for news
     inner class ViewHolderNews(itemView: View, listener: onNewsClickListener) :
         RecyclerView.ViewHolder(itemView) {
         var customNews: NewsCustomView
-//        var itemImageNews: ImageView
-//        var itemTitle: TextView
-//        var itemLogo: ImageView
-//        var itemTime: TextView
 
         init {
-//
-//            itemImageNews = itemView.findViewById(R.id.img_news)
-//            itemTitle = itemView.findViewById(R.id.txv_title)
-//            itemLogo = itemView.findViewById(R.id.img_logo)
-//            itemTime = itemView.findViewById(R.id.tv_time)
-
             customNews = itemView.findViewById(R.id.custom_news)
             itemView.setOnClickListener {
-                var positionListNews: Int = 0
+                var positionListNews = 0
                 when (adapterPosition) {
                     in 1..3 -> positionListNews = adapterPosition - 1
                     in 5..itemCount -> positionListNews = adapterPosition - 2
                 }
-
-                listener.onItemClick(listNews.get(positionListNews).contentId)
+                listener.onItemClick(listNews[positionListNews].contentId)
             }
         }
 
     }
 
+    //Holder for match
     inner class ViewHolderMatch(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
         var itemMatchRecyclerView: RecyclerView
@@ -130,6 +111,8 @@ class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     }
 
+
+    //Holder for competition
     inner class ViewHolderCompetition(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
         var itemCompetitionRecyclerView: RecyclerView
@@ -141,6 +124,8 @@ class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
     }
 
+
+    //Holder for loading animation
     inner class ViewHolderLoadingAnimate(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
         var loadingAnimate: ComposeView
@@ -150,11 +135,12 @@ class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
     }
 
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): RecyclerView.ViewHolder {
-        var v: View
+        val v: View
         return when (viewType) {
             MATCH -> {
                 v = LayoutInflater.from(parent.context)
@@ -183,6 +169,7 @@ class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder.itemViewType) {
+
             MATCH -> {
                 holder as ViewHolderMatch
 
@@ -191,26 +178,29 @@ class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                     LinearLayoutManager.HORIZONTAL,
                     false
                 )
-                val adapter = RecyclerMatchHomeAdapter()
+                val adapter = MatchHomeAdapter()
                 adapter.listMatch = listMatch
 
                 holder.itemMatchRecyclerView.layoutManager = layoutManager
                 holder.itemMatchRecyclerView.adapter = adapter
 
                 holder.itemNoInternet.visibility =
-                    if (Helpers.internet)
+                    if (Global.internet)
                         View.GONE
-                    else
+                    else{
+                        adapter.listMatch = mutableListOf()
                         View.VISIBLE
+                    }
 
             }
+
             NEWS -> {
                 holder as ViewHolderNews
 
                 if (listNews.size == 0)
                     return
 
-                var positionListNews: Int = 0
+                var positionListNews = 0
                 when (position) {
                     in 1..3 -> positionListNews = position - 1
                     in 5..itemCount -> positionListNews = position - 2
@@ -231,28 +221,8 @@ class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
                 holder.customNews.readyToDraw = true
 
-
-//                holder.itemTime.text =
-//                    Helpers.CalculateDistanceTime(
-//                        news.date
-//                    )
-//                holder.itemTitle.text = news.title ?: "Không có dữ liệu"
-//
-//                Helpers.checkandLoadImageGlide(
-//                    news.avatar_url,
-//                    holder.itemImageNews,
-//                    holder.itemView.context
-//                )
-//
-//                if (!news.publisher_logo.isNullOrBlank()) {
-//                    if (Helpers.internet) {
-//                        Glide.with(holder.itemView).load(news.publisher_logo).into(holder.itemLogo)
-//                    } else {
-//                        Glide.with(holder.itemView).load(File(news.publisher_logo))
-//                            .into(holder.itemLogo)
-//                    }
-//                }
             }
+
             COMPETITION -> {
                 holder as ViewHolderCompetition
                 val layoutManager = LinearLayoutManager(
@@ -260,7 +230,7 @@ class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                     LinearLayoutManager.HORIZONTAL,
                     false
                 )
-                val adapter = RecyclerCompetitionHomeAdapter()
+                val adapter = CompetitionHomeAdapter()
                 adapter.listCompetition = listCompetition
 
                 holder.itemCompetitionRecyclerView.layoutManager = layoutManager
@@ -268,33 +238,36 @@ class RecyclerHomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
 
                 holder.itemNoInternet.visibility =
-                    if (Helpers.internet)
+                    if (Global.internet)
                         View.GONE
                     else
+                    {
+                        adapter.listCompetition = mutableListOf()
                         View.VISIBLE
-
-            }
-
-        LOADING -> {
-            holder as ViewHolderLoadingAnimate
-
-            holder.loadingAnimate.setContent {
-
-                MaterialTheme {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        LoadingAnimation()
                     }
 
+            }
+
+            LOADING -> {
+                holder as ViewHolderLoadingAnimate
+
+                holder.loadingAnimate.setContent {
+
+                    MaterialTheme {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            LoadingAnimation()
+                        }
+
+                    }
                 }
             }
-        }
 
+        }
     }
-}
 
 
 }

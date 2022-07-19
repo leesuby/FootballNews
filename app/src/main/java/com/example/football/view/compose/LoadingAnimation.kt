@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 
+//loading animation by using compose
 @Composable
 fun LoadingAnimation(
     modifier: Modifier = Modifier,
@@ -26,6 +27,7 @@ fun LoadingAnimation(
     spaceBetween: Dp = 8.dp,
     travelDistance: Dp = 20.dp
     ) {
+
     val circles = listOf(
         remember { Animatable(initialValue = 0f) },
         remember { Animatable(initialValue = 0f) },
@@ -51,7 +53,7 @@ fun LoadingAnimation(
         }
     }
 
-    var circleValue = circles.map { it.value }
+    val circleValue = circles.map { it.value }
     val distance = with(LocalDensity.current) {travelDistance.toPx()}
 
     Row(

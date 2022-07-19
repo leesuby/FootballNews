@@ -13,7 +13,7 @@ interface NewsRepository  {
     fun getListNews(data : MutableLiveData<HomeBaoMoiData>, context: Context?, loadToSave: Boolean = false,page : Int)
 
     //get content of a new to show on detail news
-    suspend fun getDetailNews(data : MutableLiveData<DetailBaoMoiData>,id: Int,context: Context?)
+    fun getDetailNews(data : MutableLiveData<DetailBaoMoiData>,id: Int,context: Context?)
 
     //get match to show on Home
     fun getListMatchNews(data : MutableLiveData<MatchHomeBaoMoiData>)

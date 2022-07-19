@@ -1,26 +1,17 @@
 package com.example.football.view.adapters
 
-import android.annotation.SuppressLint
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.bumptech.glide.request.RequestOptions
 import com.example.football.data.model.Content
 import com.example.football.R
 import com.example.football.utils.Helpers
-import com.example.football.utils.Helpers.Companion.margin
+import com.example.football.utils.View.margin
 import com.example.football.view.customview.NewsCustomView
-import java.io.File
 
-class RecyclerRelatedNewsAdapter: RecyclerView.Adapter<RecyclerRelatedNewsAdapter.ViewHolder>() {
+class RelatedNewsAdapter: RecyclerView.Adapter<RelatedNewsAdapter.ViewHolder>() {
 
 
     private lateinit var mListener : onNewsClickListener
@@ -39,13 +30,13 @@ class RecyclerRelatedNewsAdapter: RecyclerView.Adapter<RecyclerRelatedNewsAdapte
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): RecyclerRelatedNewsAdapter.ViewHolder {
+    ): RelatedNewsAdapter.ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.custom_news,parent,false)
         return ViewHolder(v,mListener)
     }
 
 
-    override fun onBindViewHolder(holder: RecyclerRelatedNewsAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: RelatedNewsAdapter.ViewHolder, position: Int) {
         val news : Content = listNews.get(position)
 
 //        holder.itemTime.text = if (news.date == null) "Không có dữ liệu" else Helpers.CalculateDistanceTime(news.date)

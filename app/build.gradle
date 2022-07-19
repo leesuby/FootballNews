@@ -56,8 +56,8 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.7'
 
     //activity fragment
-    implementation "androidx.activity:activity-ktx:1.4.0"
-    implementation "androidx.fragment:fragment-ktx:1.4.1"
+    implementation "androidx.activity:activity-ktx:1.5.0"
+    implementation "androidx.fragment:fragment-ktx:1.5.0"
 
     //glide
     implementation 'com.github.bumptech.glide:glide:4.13.0'
@@ -71,9 +71,6 @@ dependencies {
     implementation("androidx.room:room-ktx:2.4.2")
     androidTestImplementation "androidx.room:room-testing:2.4.2"
 
-    //Navigation
-    implementation("androidx.navigation:navigation-fragment-ktx:2.4.2")
-    implementation("androidx.navigation:navigation-ui-ktx:2.4.2")
 
     //Coroutine
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2")
@@ -81,7 +78,7 @@ dependencies {
 
     //Jetpack Compose
     // Integration with activities
-    implementation 'androidx.activity:activity-compose:1.4.0'
+    implementation 'androidx.activity:activity-compose:1.5.0'
     // Compose Material Design
     implementation 'androidx.compose.material:material:1.1.1'
     // Animations

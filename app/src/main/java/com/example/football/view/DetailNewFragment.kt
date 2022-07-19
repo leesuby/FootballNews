@@ -23,16 +23,15 @@ import com.example.football.R
 import com.example.football.data.model.detail.Content
 import com.example.football.data.model.detail.Data
 import com.example.football.data.model.detail.Related
+import com.example.football.utils.Global
 import com.example.football.utils.Helpers
-import com.example.football.utils.Helpers.Companion.layoutParams
-import com.example.football.utils.Helpers.Companion.margin
-import com.example.football.view.adapters.RecyclerRelatedNewsAdapter
+import com.example.football.utils.View.margin
+import com.example.football.view.adapters.RelatedNewsAdapter
 import com.example.football.viewmodel.DetailsViewModel
 import com.example.football.viewmodel.NewsViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import okhttp3.HttpUrl.Companion.toHttpUrl
 import java.io.File
 
 
@@ -49,17 +48,21 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        //get message from another fragment to start that content
         val bundle = arguments
         message = bundle!!.getInt("idContent")
 
-        toolbar?.setDisplayShowHomeEnabled(true);
-        toolbar?.setDisplayHomeAsUpEnabled(false);
-        toolbar?.setHomeButtonEnabled(true);
+        //setup Toolbar
+        toolbar?.setDisplayShowHomeEnabled(true)
+        toolbar?.setDisplayHomeAsUpEnabled(false)
+        toolbar?.setHomeButtonEnabled(true)
         toolbar?.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back)
 
         //initial ViewModel and data
         detailViewModel = ViewModelProvider(this).get(DetailsViewModel::class.java)
 
+        //IO Thread to get data for content
         CoroutineScope(Dispatchers.IO).launch {
             detailViewModel.getDetailNew(message,context)
         }
@@ -70,6 +73,7 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        //initial view fragment
         viewFragment = inflater.inflate(R.layout.fragment_detail,container,false)
 
         return viewFragment
@@ -77,8 +81,11 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        //init view
         title = viewFragment.findViewById(R.id.tv_detailTitle)
         layout = viewFragment.findViewById(R.id.lo_detail)
+
+        //bind viewmodel
         bindViewModel()
 
     }
@@ -90,6 +97,7 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
             } else {
                 //get content
                 data = it.data
+
                 //TODO : check null for fail data
 
                 if(data.content.title.isNullOrBlank())
@@ -154,7 +162,7 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
                    if(body.originUrl.isNullOrBlank())
                        continue
                     val img = ImageView(context)
-                    if(Helpers.internet)
+                    if(Global.internet)
                         Glide.with(this).load(body.originUrl).into(img)
                     else
                         Glide.with(this).load(File(body.originUrl)).into(img)
@@ -175,11 +183,6 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
                     // videoUrl to the videoView
                     videoView.setVideoURI(uri)
 
-//                    var  param: FrameLayout.LayoutParams =
-//                        FrameLayout.LayoutParams(400,400);
-//                    param.setMargins(0,0,0,0)
-//
-//                    videoView.layoutParams = param
 
                     // creating object of
                     // media controller class
@@ -195,13 +198,7 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
                     // sets the media controller to the videoView
                     videoView.setMediaController(mediaController)
 
-//                    videoView.start()
-
                     layout.addView(videoView)
-
-
-
-
                 }
                 else -> {}
             }
@@ -229,8 +226,8 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
 
         newsList?.layoutManager = layoutManager
 
-        val adapterNewlist = RecyclerRelatedNewsAdapter()
-        adapterNewlist.setOnItemClickListener(object : RecyclerRelatedNewsAdapter.onNewsClickListener{
+        val adapterNewlist = RelatedNewsAdapter()
+        adapterNewlist.setOnItemClickListener(object : RelatedNewsAdapter.onNewsClickListener{
             override fun onItemClick(idContent: Int) {
                 showDetail(idContent)
             }
@@ -252,9 +249,6 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
 
     }
 
-    private fun checkDataNull(data: Data){
-
-    }
 
     //Replace Detail news Fragment with news Details new when user click on Related News
     override fun showDetail(idContent: Int) {
@@ -269,8 +263,6 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
 
         fram.addToBackStack(fragment.toString()).commit()
     }
-
-
 
 
 }

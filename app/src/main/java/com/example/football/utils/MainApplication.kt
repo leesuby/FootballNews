@@ -3,6 +3,8 @@ package com.example.football.utils
 import android.app.Application
 import android.content.Context
 
+
+//Class to get application context
 class MainApplication : Application() {
     init {
         instance = this
@@ -22,6 +24,6 @@ class MainApplication : Application() {
 
         // Use ApplicationContext.
         // example: SharedPreferences etc...
-        val context: Context = MainApplication.applicationContext()
+        val context: Context = applicationContext()
     }
 }

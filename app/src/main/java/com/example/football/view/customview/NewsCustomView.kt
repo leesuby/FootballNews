@@ -6,7 +6,6 @@ import android.graphics.*
 import android.os.Build
 import android.text.*
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
 import androidx.collection.lruCache
 import androidx.core.graphics.withTranslation
@@ -34,19 +33,19 @@ class NewsCustomView(context: Context?, attrs: AttributeSet?) : View(context, at
     private var timePaint: TextPaint = TextPaint()
 
     //For exception image
-    private lateinit var bitmapNull : Bitmap
+    private var bitmapNull : Bitmap
 
 
+    //to check if data is set
     var readyToDraw  = false
 
 
     init {
-        setLayerType(LAYER_TYPE_HARDWARE,null)
+
         //init paint for Title
         titlePaint.color=Color.GRAY
-        titlePaint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD);
+        titlePaint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
         titlePaint.textSize = 42F
-
 
         //init paint for Time
         timePaint.color= Color.LTGRAY
@@ -59,6 +58,8 @@ class NewsCustomView(context: Context?, attrs: AttributeSet?) : View(context, at
 
     fun setAvatarBitmap(bitmap: Bitmap){
         avatar = bitmap
+
+        //get rounded bitmap from bitmap
         avatarRounded = roundedBitmap(bitmap,18F)
     }
 
@@ -81,6 +82,7 @@ class NewsCustomView(context: Context?, attrs: AttributeSet?) : View(context, at
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
+        //if data is ready
         if(readyToDraw) {
 
             canvas.drawColor(Color.WHITE)
@@ -92,7 +94,7 @@ class NewsCustomView(context: Context?, attrs: AttributeSet?) : View(context, at
 
             drawLogo(canvas,width,height)
 
-            drawTitle(canvas,width,height)
+            drawTitle(canvas, width)
 
             drawTime(canvas,width,height)
         }
@@ -120,7 +122,7 @@ class NewsCustomView(context: Context?, attrs: AttributeSet?) : View(context, at
 
     }
 
-    private fun drawTitle(canvas: Canvas,width: Int,height : Int){
+    private fun drawTitle(canvas: Canvas, width: Int){
         canvas.drawMultilineText(title,titlePaint,width,2/5F* width,0F)
 
     }
@@ -130,7 +132,7 @@ class NewsCustomView(context: Context?, attrs: AttributeSet?) : View(context, at
     }
 
 
-    //for storing layout on cache
+    //for storing layout on cache to not call many time on onDraw
     private object StaticLayoutCache {
 
         private const val MAX_SIZE = 50 // Max number of cached items
@@ -199,197 +201,37 @@ class NewsCustomView(context: Context?, attrs: AttributeSet?) : View(context, at
 
     private fun roundedBitmap(bitmap:Bitmap,cornerRadius: Float) : Bitmap{
         // Initialize a new instance of Bitmap
-        // Initialize a new instance of Bitmap
         val dstBitmap = Bitmap.createBitmap(
-            bitmap.getWidth(),  // Width
-            bitmap.getHeight(),  // Height
+            bitmap.width,  // Width
+            bitmap.height,  // Height
             Bitmap.Config.ARGB_8888 // Config
         )
 
-        /*
-            Canvas
-                The Canvas class holds the "draw" calls. To draw something, you need 4 basic
-                components: A Bitmap to hold the pixels, a Canvas to host the draw calls (writing
-                into the bitmap), a drawing primitive (e.g. Rect, Path, text, Bitmap), and a paint
-                (to describe the colors and styles for the drawing).
-        */
-        // Initialize a new Canvas to draw rounded bitmap
-
-        /*
-            Canvas
-                The Canvas class holds the "draw" calls. To draw something, you need 4 basic
-                components: A Bitmap to hold the pixels, a Canvas to host the draw calls (writing
-                into the bitmap), a drawing primitive (e.g. Rect, Path, text, Bitmap), and a paint
-                (to describe the colors and styles for the drawing).
-        */
         // Initialize a new Canvas to draw rounded bitmap
         val canvas = Canvas(dstBitmap)
-
-        // Initialize a new Paint instance
 
         // Initialize a new Paint instance
         val paint = Paint()
         paint.isAntiAlias = true
 
-        /*
-            Rect
-                Rect holds four integer coordinates for a rectangle. The rectangle is represented by
-                the coordinates of its 4 edges (left, top, right bottom). These fields can be accessed
-                directly. Use width() and height() to retrieve the rectangle's width and height.
-                Note: most methods do not check to see that the coordinates are sorted correctly
-                (i.e. left <= right and top <= bottom).
-        */
-        /*
-            Rect(int left, int top, int right, int bottom)
-                Create a new rectangle with the specified coordinates.
-        */
-        // Initialize a new Rect instance
 
-        /*
-            Rect
-                Rect holds four integer coordinates for a rectangle. The rectangle is represented by
-                the coordinates of its 4 edges (left, top, right bottom). These fields can be accessed
-                directly. Use width() and height() to retrieve the rectangle's width and height.
-                Note: most methods do not check to see that the coordinates are sorted correctly
-                (i.e. left <= right and top <= bottom).
-        */
-        /*
-            Rect(int left, int top, int right, int bottom)
-                Create a new rectangle with the specified coordinates.
-        */
         // Initialize a new Rect instance
         val rect = Rect(0, 0, bitmap.getWidth(), bitmap.getHeight())
 
-        /*
-            RectF
-                RectF holds four float coordinates for a rectangle. The rectangle is represented by
-                the coordinates of its 4 edges (left, top, right bottom). These fields can be
-                accessed directly. Use width() and height() to retrieve the rectangle's width and
-                height. Note: most methods do not check to see that the coordinates are sorted
-                correctly (i.e. left <= right and top <= bottom).
-        */
-        // Initialize a new RectF instance
 
-        /*
-            RectF
-                RectF holds four float coordinates for a rectangle. The rectangle is represented by
-                the coordinates of its 4 edges (left, top, right bottom). These fields can be
-                accessed directly. Use width() and height() to retrieve the rectangle's width and
-                height. Note: most methods do not check to see that the coordinates are sorted
-                correctly (i.e. left <= right and top <= bottom).
-        */
         // Initialize a new RectF instance
         val rectF = RectF(rect)
 
-        /*
-            public void drawRoundRect (RectF rect, float rx, float ry, Paint paint)
-                Draw the specified round-rect using the specified paint. The roundrect will be
-                filled or framed based on the Style in the paint.
 
-            Parameters
-                rect : The rectangular bounds of the roundRect to be drawn
-                rx : The x-radius of the oval used to round the corners
-                ry : The y-radius of the oval used to round the corners
-                paint : The paint used to draw the roundRect
-        */
-        // Draw a rounded rectangle object on canvas
-
-        /*
-            public void drawRoundRect (RectF rect, float rx, float ry, Paint paint)
-                Draw the specified round-rect using the specified paint. The roundrect will be
-                filled or framed based on the Style in the paint.
-
-            Parameters
-                rect : The rectangular bounds of the roundRect to be drawn
-                rx : The x-radius of the oval used to round the corners
-                ry : The y-radius of the oval used to round the corners
-                paint : The paint used to draw the roundRect
-        */
         // Draw a rounded rectangle object on canvas
         canvas.drawRoundRect(rectF, cornerRadius, cornerRadius, paint)
 
-        /*
-            public Xfermode setXfermode (Xfermode xfermode)
-                Set or clear the xfermode object.
-                Pass null to clear any previous xfermode. As a convenience, the parameter passed
-                is also returned.
+        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
 
-            Parameters
-                xfermode : May be null. The xfermode to be installed in the paint
-            Returns
-                xfermode
-        */
-        /*
-            public PorterDuffXfermode (PorterDuff.Mode mode)
-                Create an xfermode that uses the specified porter-duff mode.
 
-            Parameters
-                mode : The porter-duff mode that is applied
 
-        */
-
-        /*
-            public Xfermode setXfermode (Xfermode xfermode)
-                Set or clear the xfermode object.
-                Pass null to clear any previous xfermode. As a convenience, the parameter passed
-                is also returned.
-
-            Parameters
-                xfermode : May be null. The xfermode to be installed in the paint
-            Returns
-                xfermode
-        */
-        /*
-            public PorterDuffXfermode (PorterDuff.Mode mode)
-                Create an xfermode that uses the specified porter-duff mode.
-
-            Parameters
-                mode : The porter-duff mode that is applied
-
-        */paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
-
-        /*
-            public void drawBitmap (Bitmap bitmap, float left, float top, Paint paint)
-                Draw the specified bitmap, with its top/left corner at (x,y), using the specified
-                paint, transformed by the current matrix.
-
-                Note: if the paint contains a maskfilter that generates a mask which extends beyond
-                the bitmap's original width/height (e.g. BlurMaskFilter), then the bitmap will be
-                drawn as if it were in a Shader with CLAMP mode. Thus the color outside of the
-                original width/height will be the edge color replicated.
-
-                If the bitmap and canvas have different densities, this function will take care of
-                automatically scaling the bitmap to draw at the same density as the canvas.
-
-            Parameters
-                bitmap : The bitmap to be drawn
-                left : The position of the left side of the bitmap being drawn
-                top : The position of the top side of the bitmap being drawn
-                paint : The paint used to draw the bitmap (may be null)
-        */
         // Make a rounded image by copying at the exact center position of source image
-
-        /*
-            public void drawBitmap (Bitmap bitmap, float left, float top, Paint paint)
-                Draw the specified bitmap, with its top/left corner at (x,y), using the specified
-                paint, transformed by the current matrix.
-
-                Note: if the paint contains a maskfilter that generates a mask which extends beyond
-                the bitmap's original width/height (e.g. BlurMaskFilter), then the bitmap will be
-                drawn as if it were in a Shader with CLAMP mode. Thus the color outside of the
-                original width/height will be the edge color replicated.
-
-                If the bitmap and canvas have different densities, this function will take care of
-                automatically scaling the bitmap to draw at the same density as the canvas.
-
-            Parameters
-                bitmap : The bitmap to be drawn
-                left : The position of the left side of the bitmap being drawn
-                top : The position of the top side of the bitmap being drawn
-                paint : The paint used to draw the bitmap (may be null)
-        */
-        // Make a rounded image by copying at the exact center position of source image
-        var copyBitmap =bitmap.copy(Bitmap.Config.ARGB_8888,false)
+        val copyBitmap =bitmap.copy(Bitmap.Config.ARGB_8888,false)
         canvas.drawBitmap(copyBitmap, 0F, 0F, paint)
 
         // Free the native object associated with this bitmap.
