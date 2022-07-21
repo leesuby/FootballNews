@@ -216,7 +216,7 @@ class NewsCustomView(context: Context?, attrs: AttributeSet?) : View(context, at
 
 
         // Initialize a new Rect instance
-        val rect = Rect(0, 0, bitmap.getWidth(), bitmap.getHeight())
+        val rect = Rect(0, 0, bitmap.width, bitmap.height)
 
 
         // Initialize a new RectF instance
@@ -236,7 +236,6 @@ class NewsCustomView(context: Context?, attrs: AttributeSet?) : View(context, at
 
         // Free the native object associated with this bitmap.
         copyBitmap.recycle()
-
 
         // Return the circular bitmap
         return dstBitmap

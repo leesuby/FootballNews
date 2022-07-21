@@ -147,6 +147,8 @@ class HomeNewsFragment : Fragment(), CoroutineScope, SwipeRefreshLayout.OnRefres
     fun bindViewModel(){
         //News ViewModel
         newsViewModel.getListNewsObservable().observe(viewLifecycleOwner) {
+
+
             if (it == null) {
 
             } else {
@@ -243,14 +245,19 @@ class HomeNewsFragment : Fragment(), CoroutineScope, SwipeRefreshLayout.OnRefres
             Global.contentSave = mutableListOf()
 
             //get new data
-            newsViewModel.getListNews(
+            launch { newsViewModel.getListNews(
                 context,
                 newsViewModel.getPage(),
-                loadOnline = true)
+                loadOnline = true) }
 
-            newsViewModel.getListMatch()
+            launch{
+                newsViewModel.getListMatch()
+            }
 
-            newsViewModel.getListCompetition()
+            launch {
+                newsViewModel.getListCompetition()
+            }
+
 
 
             //increase page

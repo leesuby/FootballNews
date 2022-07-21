@@ -126,7 +126,7 @@ object Converter {
         if (string.isNullOrBlank())
             return null
 
-        val url: URL = mStringToURL(string)!!
+        val url: URL = convertStringToURL(string)!!
         val connection: HttpURLConnection?
         try {
             connection = url.openConnection() as HttpURLConnection
@@ -188,7 +188,7 @@ object Converter {
     }
 
     // Function to convert string to URL
-    private fun mStringToURL(string: String): URL? {
+    private fun convertStringToURL(string: String): URL? {
         try {
             return URL(string)
         } catch (e: MalformedURLException) {

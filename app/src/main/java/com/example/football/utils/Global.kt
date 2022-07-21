@@ -26,4 +26,7 @@ object Global {
 
     //save content news for Home if user onPause, onStop or something else which lost data
     var contentSave: MutableList<Content> = mutableListOf()
+
+    //calculate time
+    var curtime: Long = 0
 }

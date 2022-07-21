@@ -78,6 +78,9 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , Check
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+
+        Global.curtime = System.currentTimeMillis()
+
         //get cache path to save local data
         Global.cacheDir = this.cacheDir.toString()
 
@@ -90,13 +93,9 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , Check
         //register broadcast to check internet
         registerNetworkReceiver()
 
-        //check permission for save data on local for OFFLINE mode
-        if(!managePermissions.checkPermission()){
-            managePermissions.showAlert()
-        }
-        else{
-            loadHomePage(true)
-        }
+
+        loadHomePage(true)
+
 
 
     }

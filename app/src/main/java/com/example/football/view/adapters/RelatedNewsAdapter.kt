@@ -39,19 +39,6 @@ class RelatedNewsAdapter: RecyclerView.Adapter<RelatedNewsAdapter.ViewHolder>() 
     override fun onBindViewHolder(holder: RelatedNewsAdapter.ViewHolder, position: Int) {
         val news : Content = listNews.get(position)
 
-//        holder.itemTime.text = if (news.date == null) "Không có dữ liệu" else Helpers.CalculateDistanceTime(news.date)
-//        holder.itemTitle.text = news.title ?: "Không có dữ liệu"
-//
-//        Helpers.checkandLoadImageGlide(news.avatar_url,holder.itemImageNews,holder.itemView.context)
-//
-//        if(!news.publisher_logo.isNullOrBlank()){
-//            if(Helpers.internet){
-//                Glide.with(holder.itemView).load(news.publisher_logo).into(holder.itemLogo)
-//            }
-//            else{
-//                Glide.with(holder.itemView).load(File(news.publisher_logo)).into(holder.itemLogo)
-//            }
-//        }
 
         holder.customNews.setTitle(news.title)
         holder.customNews.setTime(Helpers.CalculateDistanceTime(news.date))
@@ -78,17 +65,9 @@ class RelatedNewsAdapter: RecyclerView.Adapter<RelatedNewsAdapter.ViewHolder>() 
     }
 
     inner class ViewHolder(itemView: View,listener: onNewsClickListener) : RecyclerView.ViewHolder(itemView) {
-//        var itemImageNews : ImageView
-//        var itemTitle : TextView
-//        var itemLogo : ImageView
-//        var itemTime : TextView
             var customNews: NewsCustomView
 
         init {
-//            itemImageNews = itemView.findViewById(R.id.img_news)
-//            itemTitle = itemView.findViewById(R.id.txv_title)
-//            itemLogo = itemView.findViewById(R.id.img_logo)
-//            itemTime = itemView.findViewById(R.id.tv_time)
 
             customNews = itemView.findViewById(R.id.custom_news)
             itemView.setOnClickListener{

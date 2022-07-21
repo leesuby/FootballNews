@@ -1,5 +1,6 @@
 package com.example.football.data.remote
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.example.football.data.local.NewsLocal
 import com.example.football.data.model.HomeBaoMoiData
@@ -48,7 +49,10 @@ object NewsRemote {
 
                     }
                     else
+                    {
                         data.postValue(response.body())
+
+                    }
 
                 }
             })

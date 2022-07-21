@@ -1,5 +1,6 @@
 package com.example.football.data.local
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.example.football.data.local.database.BaoMoiDatabase
 import com.example.football.data.local.database.detail.*

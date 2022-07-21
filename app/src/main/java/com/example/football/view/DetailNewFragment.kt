@@ -43,6 +43,7 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
 
     private lateinit var title : TextView
     private lateinit var layout : LinearLayout
+    private lateinit var scrollView : ScrollView
     private var toolbar: ActionBar? = activity?.actionBar
     private var message : Int = 0
 
@@ -84,6 +85,7 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
         //init view
         title = viewFragment.findViewById(R.id.tv_detailTitle)
         layout = viewFragment.findViewById(R.id.lo_detail)
+        scrollView = viewFragment.findViewById(R.id.scrollView_Detail)
 
         //bind viewmodel
         bindViewModel()
@@ -246,6 +248,8 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
         adapterNewlist.listNews=related.contents.toMutableList()
         layout.addView(newsList)
         newsList?.margin(left = -15F)
+
+        scrollView.fullScroll(ScrollView.FOCUS_DOWN)
 
     }
 
