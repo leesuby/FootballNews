@@ -39,7 +39,6 @@ class HomeNewsFragment : Fragment(), CoroutineScope, SwipeRefreshLayout.OnRefres
         get() = Dispatchers.IO
 
     interface GetIDContent {
-
         fun showDetail(idContent: Int)
     }
 
@@ -127,7 +126,7 @@ class HomeNewsFragment : Fragment(), CoroutineScope, SwipeRefreshLayout.OnRefres
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 if (!recyclerView.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
                     if (Global.internet) {
-                        if (!adapterNewlist.checkLoading() && !swipeLayout.isRefreshing) {
+                        if (!adapterNewlist.checkLoading() && !swipeLayout.isRefreshing && Global.serviceIsBound) {
                             adapterNewlist.setLoading(true)
                             newsViewModel.getListNews(
                                 this@HomeNewsFragment.context,
@@ -247,7 +246,7 @@ class HomeNewsFragment : Fragment(), CoroutineScope, SwipeRefreshLayout.OnRefres
             //get new data
             launch { newsViewModel.getListNews(
                 context,
-                newsViewModel.getPage(),
+                0,
                 loadOnline = true) }
 
             launch{

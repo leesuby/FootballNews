@@ -35,11 +35,12 @@
         <entry key="app/src/main/res/layout/custom_news.xml" value="0.1" />
         <entry key="app/src/main/res/layout/customview_news.xml" value="0.14933675130208332" />
         <entry key="app/src/main/res/layout/fragment_club_news.xml" value="0.14052583862194015" />
-        <entry key="app/src/main/res/layout/fragment_detail.xml" value="0.10410334346504559" />
+        <entry key="app/src/main/res/layout/fragment_detail.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_home_news.xml" value="0.14052583862194015" />
         <entry key="app/src/main/res/layout/fragment_news.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_schedule_news.xml" value="0.17272338606241983" />
         <entry key="app/src/main/res/layout/fragment_search.xml" value="0.13327289211242066" />
+        <entry key="app/src/main/res/layout/fragment_splash.xml" value="0.1774262505344164" />
         <entry key="app/src/main/res/layout/fragment_standing_news.xml" value="0.14052583862194015" />
         <entry key="app/src/main/res/layout/navigator_header.xml" value="0.19021759033203123" />
         <entry key="app/src/main/res/menu-v26/bottom_menu.xml" value="0.1" />

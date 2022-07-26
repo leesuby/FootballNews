@@ -14,6 +14,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.MaterialTheme
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,6 +34,7 @@ import com.example.football.utils.Global
 import com.example.football.utils.Helpers
 import com.example.football.utils.View.margin
 import com.example.football.view.adapters.RelatedNewsAdapter
+import com.example.football.view.compose.LoadingAnimation
 import com.example.football.viewmodel.DetailsViewModel
 import com.example.football.viewmodel.NewsViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -44,6 +52,7 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
     private lateinit var title : TextView
     private lateinit var layout : LinearLayout
     private lateinit var scrollView : ScrollView
+    private lateinit var animateLoading : ComposeView
     private var toolbar: ActionBar? = activity?.actionBar
     private var message : Int = 0
 
@@ -86,6 +95,19 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
         title = viewFragment.findViewById(R.id.tv_detailTitle)
         layout = viewFragment.findViewById(R.id.lo_detail)
         scrollView = viewFragment.findViewById(R.id.scrollView_Detail)
+        animateLoading = viewFragment.findViewById(R.id.animate_loading_detail)
+        animateLoading.setContent {
+            MaterialTheme {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    LoadingAnimation()
+                }
+
+            }
+        }
 
         //bind viewmodel
         bindViewModel()
@@ -93,14 +115,19 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
     }
 
     private fun bindViewModel(){
+
         detailViewModel.getDetailNewObservable().observe(viewLifecycleOwner) {
             if (it == null) {
-                title.text="Không có dữ liệu Offline về bài báo này.Xin hãy xem ở chế độ Online"
+                title.text="Không có dữ liệu lưu trữ về bài báo này.Xin hãy xem ở chế độ Online"
+                animateLoading.visibility=View.GONE
+                title.visibility=View.VISIBLE
             } else {
                 //get content
                 data = it.data
 
                 //TODO : check null for fail data
+                animateLoading.visibility=View.GONE
+                title.visibility=View.VISIBLE
 
                 if(data.content.title.isNullOrBlank())
                     title.text="Không có dữ liệu Offline về bài báo này.Xin hãy xem ở chế độ Online"
@@ -116,6 +143,7 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
 
         //title
         title.text = data.title
+
 
         //time
         val time = TextView(context)
@@ -250,6 +278,8 @@ class DetailNewFragment : Fragment(), HomeNewsFragment.GetIDContent{
         newsList?.margin(left = -15F)
 
         scrollView.fullScroll(ScrollView.FOCUS_DOWN)
+
+
 
     }
 

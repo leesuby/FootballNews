@@ -3,7 +3,7 @@
     <string name="competition">GIẢI ĐẤU</string>
     <string name="match">TRẬN ĐẤU</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="no_internet">Không có dữ liệu Offline</string>
+    <string name="no_internet">Không có kết nối mạng</string>
     <string name="close">Đóng</string>
     <string name="open">Mở</string>
     <string name="menu_home">Tin tức</string>

@@ -42,12 +42,12 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 
-class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , CheckConnectionListener{
+class MainActivity : AppCompatActivity(), HomeNewsFragment.GetIDContent, CheckConnectionListener {
     private val viewModel: NewsViewModel by viewModels()
-    private val managePermissions : ManagePermissions = ManagePermissions(this)
-    private val checkConnectionReceiver : CheckConnectionReceiver = CheckConnectionReceiver(this)
-    private lateinit var actionAppBar : Toolbar
-    private lateinit var navBar : BottomNavigationView
+    private val managePermissions: ManagePermissions = ManagePermissions(this)
+    private val checkConnectionReceiver: CheckConnectionReceiver = CheckConnectionReceiver(this)
+    private lateinit var actionAppBar: Toolbar
+    private lateinit var navBar: BottomNavigationView
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var toggle: ActionBarDrawerToggle
     private lateinit var searchButton: ImageButton
@@ -63,13 +63,13 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , Check
             // We've bound to OfflineService, cast the IBinder and get OfflineService instance
             val binder = service as OfflineService.OfflineBinder
             mService = binder.getService()
-            mBound  = true
-            Global.serviceIsBound= true
+            mBound = true
+            Global.serviceIsBound = true
         }
 
         override fun onServiceDisconnected(arg0: ComponentName) {
             mBound = false
-            Global.serviceIsBound= false
+            Global.serviceIsBound = false
         }
     }
 
@@ -77,6 +77,7 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , Check
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
 
 
         Global.curtime = System.currentTimeMillis()
@@ -97,7 +98,6 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , Check
         loadHomePage(true)
 
 
-
     }
 
 
@@ -106,26 +106,26 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , Check
 
         unregisterReceiver(checkConnectionReceiver)
 
-        if(mBound)
+        if (mBound)
             unbindService(connection)
 
         //release save data
-        Global.contentSave= mutableListOf()
+        Global.contentSave = mutableListOf()
 
     }
 
-    private fun initView(){
+    private fun initView() {
         drawerLayout = findViewById(R.id.layout_drawer)
         actionAppBar = findViewById(R.id.toolbar)
 
         //Navigation bar
         navBar = findViewById(R.id.bottomNavigationView)
         navBar.setOnItemSelectedListener {
-            when(it.itemId){
-                R.id.nav_home -> showFragment(HomeNewsFragment(),false)
-                R.id.nav_schedule -> showFragment(ScheduleNewsFragment(),false)
-                R.id.nav_club -> showFragment(ClubNewsFragment(),false)
-                R.id.nav_standing -> showFragment(StandingNewsFragment(),false)
+            when (it.itemId) {
+                R.id.nav_home -> showFragment(HomeNewsFragment(), false)
+                R.id.nav_schedule -> showFragment(ScheduleNewsFragment(), false)
+                R.id.nav_club -> showFragment(ClubNewsFragment(), false)
+                R.id.nav_standing -> showFragment(StandingNewsFragment(), false)
             }
             true
         }
@@ -158,8 +158,8 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , Check
 
     }
 
-    private fun setupToolbar(){
-        actionAppBar.title=""
+    private fun setupToolbar() {
+        actionAppBar.title = ""
 
         setSupportActionBar(actionAppBar)
 
@@ -190,30 +190,31 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , Check
         toggle.syncState()
     }
 
-    private fun setupNavBar(){
+    private fun setupNavBar() {
         navBar.setOnItemSelectedListener {
-            Log.e("itemid",it.itemId.toString())
-            when(it.itemId){
-                R.id.nav_home -> {val fragmentHome = HomeNewsFragment()
-                                    fragmentHome.getIDContent = this@MainActivity
-                                    showFragment(fragmentHome, false)}
-                R.id.nav_schedule -> showFragment(ScheduleNewsFragment(),false)
-                R.id.nav_club -> showFragment(ClubNewsFragment(),false)
-                R.id.nav_standing -> showFragment(StandingNewsFragment(),false)
+            Log.e("itemid", it.itemId.toString())
+            when (it.itemId) {
+                R.id.nav_home -> {
+                    val fragmentHome = HomeNewsFragment()
+                    fragmentHome.getIDContent = this@MainActivity
+                    showFragment(fragmentHome, false)
+                }
+                R.id.nav_schedule -> showFragment(ScheduleNewsFragment(), false)
+                R.id.nav_club -> showFragment(ClubNewsFragment(), false)
+                R.id.nav_standing -> showFragment(StandingNewsFragment(), false)
             }
             true
         }
     }
 
-    private fun registerNetworkReceiver(){
-        Global.internet=Network.isNetworkAvailable(this)
+    private fun registerNetworkReceiver() {
+        Global.internet = Network.isNetworkAvailable(this)
 
         val intentFilter = IntentFilter()
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION)
         registerReceiver(checkConnectionReceiver, intentFilter)
 
     }
-
 
 
     //start splash screen
@@ -234,33 +235,31 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , Check
     }
 
 
-
-
     //use to load list if user enable write and read SD
     @OptIn(DelicateCoroutinesApi::class)
-    fun loadHomePage(offlineMode : Boolean){
+    fun loadHomePage(offlineMode: Boolean) {
         Global.isOfflineMode = offlineMode
 
-        if(Global.internet){
+        if (Global.internet) {
 
             //Thread check data is saved and load list news
-            GlobalScope.launch(Dispatchers.Default){
+            GlobalScope.launch(Dispatchers.Default) {
                 val timeLast = System.currentTimeMillis()
-                while(!Global.isListNewsSaved){
+                while (!Global.isListNewsSaved) {
                     val timeNow = System.currentTimeMillis()
-                    if(!Global.internet){
+                    if (!Global.internet) {
                         val fragmentHome = HomeNewsFragment()
                         fragmentHome.getIDContent = this@MainActivity
                         showFragment(fragmentHome, false)
                         break
                     }
-                    if(Global.isListNewsSaved)
+                    if (Global.isListNewsSaved)
                         break
 
-                    Log.e("time",(timeNow - timeLast).toString())
-                    if(timeNow - timeLast > 10000){
+                    Log.e("time", (timeNow - timeLast).toString())
+                    if (timeNow - timeLast > 13000) {
                         launch(Dispatchers.Main) {
-                            showNotifyDialog(Gravity.CENTER,true)
+                            showNotifyDialog(Gravity.CENTER, true)
                         }
                         break
                     }
@@ -270,8 +269,8 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , Check
                 launch(Dispatchers.Main) {
                     setLayout(0.81f)
 
-                    actionAppBar.visibility= View.VISIBLE
-                    navBar.visibility= View.VISIBLE
+                    actionAppBar.visibility = View.VISIBLE
+                    navBar.visibility = View.VISIBLE
 
                 }
 
@@ -281,13 +280,11 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , Check
                 fragmentHome.getIDContent = this@MainActivity
                 showFragment(fragmentHome, false)
             }
-        }
-
-        else{
+        } else {
             setLayout(0.81f)
 
-            actionAppBar.visibility= View.VISIBLE
-            navBar.visibility= View.VISIBLE
+            actionAppBar.visibility = View.VISIBLE
+            navBar.visibility = View.VISIBLE
 
             //start fragment
             val fragmentHome = HomeNewsFragment()
@@ -303,9 +300,9 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , Check
         return true
     }
 
-    private fun showFragment (fragment: Fragment, addtoBackStack : Boolean = true): Boolean {
+    private fun showFragment(fragment: Fragment, addtoBackStack: Boolean = true): Boolean {
         val fram = supportFragmentManager.beginTransaction()
-        fram.replace(R.id.fragment_main,fragment)
+        fram.replace(R.id.fragment_main, fragment)
 
         if (!addtoBackStack)
             fram.commit()
@@ -326,8 +323,8 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , Check
 
         setLayout(0.84f)
 
-        navBar.visibility= View.GONE
-        searchButton.visibility= View.GONE
+        navBar.visibility = View.GONE
+        searchButton.visibility = View.GONE
 
         showBackButton(true)
 
@@ -354,15 +351,14 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , Check
     override fun onBackPressed() {
         if (supportFragmentManager.backStackEntryCount > 0) {
             supportFragmentManager.popBackStack()
-            if(supportFragmentManager.backStackEntryCount==1)
-            {
+            if (supportFragmentManager.backStackEntryCount == 1) {
                 showBackButton(false)
 
                 setLayout(0.81f)
 
-                navBar.visibility= View.VISIBLE
-                if(searchButton.visibility== View.GONE)
-                    searchButton.visibility= View.VISIBLE
+                navBar.visibility = View.VISIBLE
+                if (searchButton.visibility == View.GONE)
+                    searchButton.visibility = View.VISIBLE
 
             }
         } else {
@@ -384,12 +380,12 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , Check
                 val WRITE_EXTERNAL_STORAGE = grantResults[1] == PackageManager.PERMISSION_GRANTED
                 if (READ_EXTERNAL_STORAGE && WRITE_EXTERNAL_STORAGE) {
                     loadHomePage(true)
-                    }
-                } else {
-                    loadHomePage(false)
                 }
+            } else {
+                loadHomePage(false)
             }
         }
+    }
 
 
     // Check request for android 11 above
@@ -399,33 +395,33 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , Check
             if (SDK_INT >= Build.VERSION_CODES.R) {
                 if (Environment.isExternalStorageManager()) {
                     loadHomePage(true)
-                    }
-                } else {
-                    loadHomePage(false)
                 }
+            } else {
+                loadHomePage(false)
             }
         }
+    }
 
-    override fun transMode(internet: Boolean,timeCall: Int) {
-        Global.internet=internet
-        Log.e("timecall1",timeCall.toString())
+    override fun transMode(internet: Boolean, timeCall: Int) {
+        Global.internet = internet
+        Log.e("timecall1", timeCall.toString())
 
-        if(timeCall==0 && internet){
+        if (timeCall == 0 && internet) {
             //bind service
             Intent(this, OfflineService::class.java).also { intent ->
                 bindService(intent, connection, Context.BIND_AUTO_CREATE)
             }
         }
 
-        if(timeCall!=0 && !mBound && Global.internet){
-            Log.e("timecall",timeCall.toString())
+        if (timeCall != 0 && !mBound && Global.internet) {
+            Log.e("timecall", timeCall.toString())
             showNotifyDialog(Gravity.CENTER)
         }
 
     }
 
     //dialog for change mode online/offline
-    private fun showNotifyDialog(gravity: Int,isError : Boolean = false) {
+    private fun showNotifyDialog(gravity: Int, isError: Boolean = false) {
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setCancelable(false)
@@ -433,23 +429,25 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , Check
 
         val window = dialog.window ?: return
 
-        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT,WindowManager.LayoutParams.WRAP_CONTENT)
+        window.setLayout(
+            WindowManager.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.WRAP_CONTENT
+        )
         window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         val windowAttribute = window.attributes
-        windowAttribute.gravity=gravity
+        windowAttribute.gravity = gravity
 
-        window.attributes=windowAttribute
+        window.attributes = windowAttribute
 
-        if(Gravity.BOTTOM == gravity){
+        if (Gravity.BOTTOM == gravity) {
             dialog.setCancelable(true)
-        }
-        else
+        } else
             dialog.setCancelable(false)
 
         val textNoti = dialog.findViewById(R.id.tv_swaponline_noti) as TextView
 
-        if(isError){
+        if (isError) {
             textNoti.setText("Hãy kiểm tra lại đường truyền mạng và truy cập lại")
         }
 
@@ -458,8 +456,9 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , Check
             dialog.dismiss()
 
             finish()
-            if(!isError)
-            startActivity(intent)
+            if (!isError) {
+                startActivity(intent)
+            }
 
             // this basically provides animation
             overridePendingTransition(0, 0)
@@ -468,7 +467,7 @@ class MainActivity : AppCompatActivity() , HomeNewsFragment.GetIDContent , Check
 
     }
 
-    private fun setLayout(sizeF: Float){
+    private fun setLayout(sizeF: Float) {
         val mConstrainLayout = findViewById<FrameLayout>(R.id.fragment_main)
         val lp = mConstrainLayout.layoutParams as ConstraintLayout.LayoutParams
         lp.matchConstraintPercentHeight = sizeF
